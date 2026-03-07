@@ -53,7 +53,7 @@ const MarketplacePage = () => {
     if (error) {
       toast.error("Failed to load products");
     } else {
-      setProducts(data as Product[]);
+      setProducts((data || []) as Product[]);
     }
     setLoading(false);
   };
