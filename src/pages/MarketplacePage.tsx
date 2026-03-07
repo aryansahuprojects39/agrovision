@@ -46,7 +46,7 @@ const MarketplacePage = () => {
   const fetchProducts = async () => {
     const { data, error } = await supabase
       .from("products")
-      .select("*, profiles(full_name)")
+      .select("*")
       .eq("is_available", true)
       .order("created_at", { ascending: false });
 
