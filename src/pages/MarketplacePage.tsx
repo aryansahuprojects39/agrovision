@@ -211,9 +211,7 @@ const MarketplacePage = () => {
                       <MapPin className="h-3 w-3" />{product.location}
                     </span>
                   )}
-                  <span className="text-xs text-muted-foreground">
-                    by {(product.profiles as any)?.full_name || "Farmer"}
-                  </span>
+                  <span className="text-xs text-muted-foreground">by Farmer</span>
                 </CardFooter>
               </Card>
             ))}
