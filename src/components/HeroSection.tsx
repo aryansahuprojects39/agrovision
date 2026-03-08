@@ -3,7 +3,7 @@ import { ArrowRight, Leaf } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEnvironment } from "@/contexts/EnvironmentContext";
-import { Suspense, lazy, useEffect, useRef, useState, useMemo } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 
 import heroSpring from "@/assets/hero-spring.jpg";
 import heroSummer from "@/assets/hero-summer.jpg";
