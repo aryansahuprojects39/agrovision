@@ -184,7 +184,7 @@ const HolographicNav = () => {
     if (!hasDraggedRef.current) setIsOpen((prev) => !prev);
   }, []);
 
-  // 3-row × 2-col pyramid grid, direction-aware
+  // Semicircular arc layout
   const getItemPositions = () => {
     const vw = typeof window !== "undefined" ? window.innerWidth : 1280;
     const vh = typeof window !== "undefined" ? window.innerHeight : 720;
@@ -192,36 +192,20 @@ const HolographicNav = () => {
     const cy = vh - 24 - 28 + position.y;
 
     const expandUp = cy > vh / 2;
-    const expandRight = cx < vw / 2;
+    const radius = 200;
+    const count = NAV_ITEMS.length;
+    // Spread items across 180° arc
+    const startAngle = Math.PI; // left
+    const endAngle = 0; // right
 
-    // Fixed grid positions relative to button (matching the reference image)
-    // Row 0 (closest to button): AI Crop Doctor (left), Gov Schemes (right)
-    // Row 1 (middle): Farm Dashboard (left), Community (right)
-    // Row 2 (farthest): Marketplace (left-center), Weather (right-center)
-    const colGap = 160; // horizontal distance between left and right columns
-    const rowGap = 110; // vertical distance between rows
-    const innerOffset = 40; // how much the top row narrows inward
-
-    const rawPositions = [
-      // Row 2 (top/farthest): narrower spread
-      { x: -colGap / 2, y: -3 * rowGap + rowGap },
-      { x: colGap / 2, y: -3 * rowGap + rowGap },
-      // Row 1 (middle): full spread
-      { x: -colGap / 2 - 20, y: -2 * rowGap + rowGap },
-      { x: colGap / 2 + 20, y: -2 * rowGap + rowGap },
-      // Row 0 (bottom/closest): widest spread
-      { x: -colGap / 2 - 40, y: -rowGap + rowGap },
-      { x: colGap / 2 + 40, y: -rowGap + rowGap },
-    ];
-
-    const margin = 50;
+    const margin = 60;
     const itemHalfW = 55;
     const itemHalfH = 42;
 
-    return rawPositions.map((p) => {
-      // Flip vertically if button is in top half
-      let x = expandRight ? p.x : -p.x;
-      let y = expandUp ? p.y - rowGap : -(p.y - rowGap);
+    return NAV_ITEMS.map((_, i) => {
+      const angle = startAngle - (i / (count - 1)) * (startAngle - endAngle);
+      let x = Math.cos(angle) * radius;
+      let y = expandUp ? -Math.sin(angle) * radius : Math.sin(angle) * radius;
 
       // Clamp to viewport
       if (cx + x - itemHalfW < margin) x = margin - cx + itemHalfW;
