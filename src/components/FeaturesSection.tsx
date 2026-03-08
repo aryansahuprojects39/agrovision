@@ -1,7 +1,8 @@
 import { Leaf, Droplets, FlaskConical, ShoppingCart, CloudSun, Landmark } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import ScrollReveal from "@/components/ScrollReveal";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
+import { Link } from "react-router-dom";
 
 const features = [
   {
