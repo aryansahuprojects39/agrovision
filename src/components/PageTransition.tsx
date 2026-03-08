@@ -139,7 +139,7 @@ const PageTransition = ({ children }: PageTransitionProps) => {
       exit.cancel();
       animatingRef.current = false;
     };
-  }, [location.pathname, location.key]);
+  }, [location.pathname]);
 
   return (
     <div
