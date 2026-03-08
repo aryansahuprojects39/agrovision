@@ -67,6 +67,7 @@ interface PageTransitionProps {
 const PageTransition = ({ children }: PageTransitionProps) => {
   const location = useLocation();
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const progressRef = useRef<HTMLDivElement>(null);
   const [current, setCurrent] = useState<{ children: ReactNode; pathname: string }>({
     children,
     pathname: location.pathname,
@@ -74,21 +75,45 @@ const PageTransition = ({ children }: PageTransitionProps) => {
   const animatingRef = useRef(false);
   const isFirst = useRef(true);
 
+  const animateProgress = (show: boolean) => {
+    const bar = progressRef.current;
+    if (!bar) return;
+    if (show) {
+      bar.style.opacity = "1";
+      bar.animate(
+        [
+          { transform: "scaleX(0)", transformOrigin: "left" },
+          { transform: "scaleX(0.7)", transformOrigin: "left" },
+        ],
+        { duration: DURATION_EXIT + DURATION_ENTER, easing: "ease-out", fill: "forwards" }
+      );
+    } else {
+      const finish = bar.animate(
+        [
+          { transform: "scaleX(0.7)", transformOrigin: "left" },
+          { transform: "scaleX(1)", transformOrigin: "left" },
+        ],
+        { duration: 150, easing: "ease-in", fill: "forwards" }
+      );
+      finish.onfinish = () => {
+        bar.style.opacity = "0";
+        bar.getAnimations().forEach((a) => a.cancel());
+      };
+    }
+  };
+
   useEffect(() => {
-    // Skip animation on first mount
     if (isFirst.current) {
       isFirst.current = false;
       setCurrent({ children, pathname: location.pathname });
       return;
     }
 
-    // Same page — just update children
     if (location.pathname === current.pathname) {
       setCurrent({ children, pathname: location.pathname });
       return;
     }
 
-    // Don't stack animations
     if (animatingRef.current) {
       setCurrent({ children, pathname: location.pathname });
       return;
@@ -102,8 +127,8 @@ const PageTransition = ({ children }: PageTransitionProps) => {
 
     animatingRef.current = true;
     const transition = getTransition(location.pathname);
+    animateProgress(true);
 
-    // Exit old content
     const exit = el.animate(exitKeyframes[transition], {
       duration: DURATION_EXIT,
       easing: EASING,
@@ -111,15 +136,11 @@ const PageTransition = ({ children }: PageTransitionProps) => {
     });
 
     exit.onfinish = () => {
-      // Swap content
       setCurrent({ children, pathname: location.pathname });
 
-      // Small frame delay to let React render
       requestAnimationFrame(() => {
-        // Scroll to top for new page
         window.scrollTo(0, 0);
 
-        // Enter new content
         const enter = el.animate(enterKeyframes[transition], {
           duration: DURATION_ENTER,
           easing: EASING,
@@ -127,10 +148,10 @@ const PageTransition = ({ children }: PageTransitionProps) => {
         });
 
         enter.onfinish = () => {
-          // Clear the fill so element returns to normal flow
           el.style.transform = "";
           el.style.opacity = "";
           animatingRef.current = false;
+          animateProgress(false);
         };
       });
     };
@@ -138,20 +159,35 @@ const PageTransition = ({ children }: PageTransitionProps) => {
     return () => {
       exit.cancel();
       animatingRef.current = false;
+      animateProgress(false);
     };
   }, [location.pathname]);
 
   return (
-    <div
-      ref={wrapperRef}
-      className="min-h-screen overflow-hidden"
-      style={{
-        transformOrigin: "center center",
-        willChange: "transform, opacity",
-        backfaceVisibility: "hidden",
-      }}
-    >
-      {current.children}
+    <div className="relative">
+      {/* Progress bar */}
+      <div
+        ref={progressRef}
+        className="fixed top-0 left-0 right-0 h-[3px] z-[9999] opacity-0"
+        style={{
+          background: "linear-gradient(90deg, hsl(var(--primary)), hsl(var(--primary) / 0.6))",
+          transform: "scaleX(0)",
+          transformOrigin: "left",
+          borderRadius: "0 2px 2px 0",
+          boxShadow: "0 0 8px hsl(var(--primary) / 0.4)",
+        }}
+      />
+      <div
+        ref={wrapperRef}
+        className="min-h-screen overflow-hidden"
+        style={{
+          transformOrigin: "center center",
+          willChange: "transform, opacity",
+          backfaceVisibility: "hidden",
+        }}
+      >
+        {current.children}
+      </div>
     </div>
   );
 };
