@@ -76,7 +76,7 @@ const Navbar = () => {
         <div className="md:hidden bg-card/98 backdrop-blur-md border-b border-border px-4 pb-4 space-y-3">
           {navLinks.map((link) =>
             link.href.startsWith("/") && !link.href.includes("#") ? (
-              <Link key={link.href} to={link.href} onClick={() => setOpen(false)} className="block text-sm font-medium text-hero-dark-foreground/70 hover:text-secondary py-2">
+              <Link key={link.href} to={link.href} onClick={() => setOpen(false)} className="block text-sm font-medium text-foreground/70 hover:text-primary py-2">
                 {link.label}
               </Link>
             ) : (
