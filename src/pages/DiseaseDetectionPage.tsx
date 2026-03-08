@@ -238,15 +238,17 @@ const DiseaseDetectionPage = () => {
               </Card>
 
               {/* Right: 3D Visualization */}
-              {show3D && result.disease !== "Healthy" && result.disease !== "Not a crop image" && (
+              {show3D && result.disease !== "Not a crop image" && (
                 <Card className="overflow-hidden">
                   <CardHeader>
                     <CardTitle className="text-base flex items-center gap-2">
                       <Eye className="h-4 w-4 text-primary" />
-                      3D Disease Visualization
+                      3D {result.disease === "Healthy" ? "Health" : "Disease"} Visualization
                     </CardTitle>
                     <p className="text-xs text-muted-foreground">
-                      Rotate the plant model and zoom into infected areas
+                      {result.disease === "Healthy"
+                        ? "Your crop is healthy — rotate to inspect the 3D model"
+                        : "Rotate the plant model and zoom into infected areas"}
                     </p>
                   </CardHeader>
                   <CardContent>
@@ -258,29 +260,14 @@ const DiseaseDetectionPage = () => {
                       <Disease3DVisualization
                         data={{
                           disease: result.disease,
-                          severity_level: result.severity_level || "moderate",
-                          infected_area_percent: result.infected_area_percent || 30,
+                          severity_level: result.severity_level || (result.disease === "Healthy" ? "healthy" : "moderate"),
+                          infected_area_percent: result.infected_area_percent || (result.disease === "Healthy" ? 0 : 30),
                           spread_pattern: result.spread_pattern || "spots",
-                          affected_zones: result.affected_zones || [
-                            { x: 0.3, y: 0.5, radius: 0.15 },
-                            { x: 0.7, y: 0.6, radius: 0.1 },
-                          ],
+                          affected_zones: result.affected_zones || [],
+                          cropImageUrl: image || undefined,
                         }}
                       />
                     </Suspense>
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* Show placeholder if healthy */}
-              {(result.disease === "Healthy") && (
-                <Card className="flex items-center justify-center">
-                  <CardContent className="text-center py-12">
-                    <CheckCircle className="h-16 w-16 text-primary mx-auto mb-4" />
-                    <h3 className="text-xl font-bold text-foreground">Plant is Healthy!</h3>
-                    <p className="text-sm text-muted-foreground mt-2">
-                      No disease detected. Your crop looks great! 🌱
-                    </p>
                   </CardContent>
                 </Card>
               )}
