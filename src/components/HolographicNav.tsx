@@ -204,8 +204,8 @@ const HolographicNav = () => {
 
     const rawPositions = [
       // Row 2 (top/farthest): narrower spread
-      { x: -colGap / 2 + innerOffset, y: -3 * rowGap + rowGap },
-      { x: colGap / 2 - innerOffset, y: -3 * rowGap + rowGap },
+      { x: -colGap / 2, y: -3 * rowGap + rowGap },
+      { x: colGap / 2, y: -3 * rowGap + rowGap },
       // Row 1 (middle): full spread
       { x: -colGap / 2 - 20, y: -2 * rowGap + rowGap },
       { x: colGap / 2 + 20, y: -2 * rowGap + rowGap },
