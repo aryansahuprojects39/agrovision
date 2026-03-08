@@ -364,6 +364,17 @@ const WeatherPage = () => {
                         dot={false}
                         activeDot={{ r: 3, fill: "#3b82f6" }}
                       />
+                      <Area
+                        yAxisId="humidity"
+                        type="monotone"
+                        dataKey="wind"
+                        stroke="#f59e0b"
+                        strokeWidth={1.5}
+                        strokeDasharray="2 2"
+                        fill="transparent"
+                        dot={false}
+                        activeDot={{ r: 3, fill: "#f59e0b" }}
+                      />
                     </AreaChart>
                   </ResponsiveContainer>
                 </div>
