@@ -1,6 +1,9 @@
 import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, Legend } from "recharts";
+import { Button } from "@/components/ui/button";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from "recharts";
+import { Download, FileText } from "lucide-react";
+import { exportToCSV, exportToPDF } from "@/lib/exportUtils";
 
 interface AdminAnalyticsProps {
   profiles: any[];
@@ -75,9 +78,46 @@ const AdminAnalytics = ({ profiles, products, detections, activities }: AdminAna
       .slice(0, 10);
   }, [activities]);
 
+  const handleExportCSV = () => {
+    exportToCSV(
+      activities.map((a) => ({
+        Type: formatActivityType(a.activity_type),
+        User: a.metadata?.email || a.user_id,
+        Name: a.metadata?.name || "",
+        Date: new Date(a.created_at).toLocaleString(),
+      })),
+      "admin-analytics"
+    );
+  };
+
+  const handleExportPDF = () => {
+    exportToPDF("AgroVision Admin Report", [
+      {
+        heading: "Feature Usage",
+        rows: [["Feature", "Count"], ...featureUsageData.map((d) => [d.name, String(d.count)])],
+      },
+      {
+        heading: "Recent Logins",
+        rows: [["Email", "Name", "Date"], ...recentLogins.map((a) => [a.metadata?.email || "", a.metadata?.name || "", new Date(a.created_at).toLocaleString()])],
+      },
+      {
+        heading: "Top Diseases",
+        rows: [["Disease", "Count"], ...detectionsByDisease.map((d) => [d.name, String(d.value)])],
+      },
+    ]);
+  };
+
   return (
     <div className="space-y-6">
-      {/* Summary cards */}
+      {/* Export buttons */}
+      <div className="flex gap-2 justify-end">
+        <Button variant="outline" size="sm" onClick={handleExportCSV}>
+          <Download className="h-4 w-4 mr-2" />Export CSV
+        </Button>
+        <Button variant="outline" size="sm" onClick={handleExportPDF}>
+          <FileText className="h-4 w-4 mr-2" />Export PDF
+        </Button>
+      </div>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card>
           <CardContent className="pt-6 text-center">
