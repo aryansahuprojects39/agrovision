@@ -304,7 +304,7 @@ const HolographicNav = () => {
     <>
       {isOpen && (
         <div
-          className="fixed inset-0 z-[99] transition-opacity duration-500"
+          className="fixed inset-0 z-[40] transition-opacity duration-500"
           style={{
             background: "radial-gradient(circle at 50% 100%, hsl(var(--primary) / 0.12) 0%, hsl(0 0% 0% / 0.7) 100%)",
             backdropFilter: "blur(6px)",
@@ -314,7 +314,7 @@ const HolographicNav = () => {
       )}
       <div
         ref={containerRef}
-        className="fixed z-[100]"
+        className="fixed z-[45]"
         style={{
           bottom: "24px",
           left: "50%",
