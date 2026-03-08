@@ -38,6 +38,8 @@ interface ThemeVars {
   foreground: string;
   card: string;
   cardForeground: string;
+  popover: string;
+  popoverForeground: string;
   primary: string;
   primaryForeground: string;
   secondary: string;
