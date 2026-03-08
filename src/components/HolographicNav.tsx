@@ -203,24 +203,46 @@ const HolographicNav = () => {
     const centeredness = Math.min(centerX, centerY);
 
     // When centered: full 360° circle. At edge: 150° arc upward
-    const radius = 250; // large enough so 6 items (100px wide) never overlap
+    const radius = 250;
     const isCircle = centeredness > 0.5;
-    const spreadAngle = isCircle
-      ? 2 * Math.PI
-      : (180 * Math.PI) / 180; // full 180° semicircle for max spread
+    const spreadAngle = isCircle ? 2 * Math.PI : Math.PI; // 180° arc
 
-    // Determine base direction (away from nearest edge)
-    const expandUp = cy > vh / 2;
-    const baseAngle = expandUp ? Math.PI / 2 : -Math.PI / 2;
+    // Determine which edge is nearest and point arc away from it
+    const distTop = cy;
+    const distBottom = vh - cy;
+    const distLeft = cx;
+    const distRight = vw - cx;
+    const minDist = Math.min(distTop, distBottom, distLeft, distRight);
 
-    const yOffset = isCircle ? 0 : expandUp ? -50 : 50;
+    let baseAngle: number;
+    let yOffset = 0;
+    let xOffset = 0;
+
+    if (isCircle) {
+      baseAngle = Math.PI / 2; // doesn't matter for full circle
+    } else if (minDist === distBottom) {
+      // Near bottom → fan upward
+      baseAngle = Math.PI / 2;
+      yOffset = -50;
+    } else if (minDist === distTop) {
+      // Near top → fan downward
+      baseAngle = -Math.PI / 2;
+      yOffset = 50;
+    } else if (minDist === distLeft) {
+      // Near left → fan rightward (vertical semicircle)
+      baseAngle = 0;
+      xOffset = 50;
+    } else {
+      // Near right → fan leftward (vertical semicircle)
+      baseAngle = Math.PI;
+      xOffset = -50;
+    }
 
     return NAV_ITEMS.map((_, i) => {
-      // For full circle, use count divisor (evenly spaced). For arc, use count-1.
       const angle = isCircle
         ? baseAngle + spreadAngle / 2 - (i / count) * spreadAngle
         : baseAngle + spreadAngle / 2 - (i / (count - 1)) * spreadAngle;
-      let x = Math.cos(angle) * radius;
+      let x = Math.cos(angle) * radius + xOffset;
       let y = -Math.sin(angle) * radius + yOffset;
 
       // Clamp to viewport
