@@ -7,7 +7,6 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { EnvironmentProvider } from "@/contexts/EnvironmentContext";
 import PageTransition from "@/components/PageTransition";
 import HolographicNav from "@/components/HolographicNav";
-import FloatingSeasonalParticles from "@/components/FloatingSeasonalParticles";
 import Index from "./pages/Index";
 import AuthPage from "./pages/AuthPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
@@ -44,7 +43,7 @@ const AnimatedRoutes = () => {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </PageTransition>
-      <FloatingSeasonalParticles />
+      
       <HolographicNav />
     </>
   );

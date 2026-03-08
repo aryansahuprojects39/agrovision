@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Microscope, LayoutDashboard, ShoppingCart, CloudSun, Users, Landmark, X, Shield } from "lucide-react";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 const BASE_NAV_ITEMS = [
   { label: "Marketplace", href: "/marketplace", icon: ShoppingCart, color: "#f59e0b", desc: "Buy & sell farm products" },
@@ -134,6 +135,7 @@ function NavCard({
 }
 
 const HolographicNav = () => {
+  const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -374,7 +376,7 @@ const HolographicNav = () => {
 
   const itemPositions = getItemPositions();
 
-  if (isHidden) return null;
+  if (isHidden || !user) return null;
 
   return (
     <>
