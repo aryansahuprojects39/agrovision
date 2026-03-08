@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEnvironment } from "@/contexts/EnvironmentContext";
 import { useEffect, useRef, useState, useMemo } from "react";
+import FloatingSeasonalParticles from "@/components/FloatingSeasonalParticles";
 
 import heroSpring from "@/assets/hero-spring.jpg";
 import heroSummer from "@/assets/hero-summer.jpg";
