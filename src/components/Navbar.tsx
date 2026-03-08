@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Menu, X, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import ThemeToggle from "@/components/ThemeToggle";
 import logo from "@/assets/logo.png";
 
@@ -16,8 +17,21 @@ const navLinks = [
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkAdmin = async () => {
+      if (!user) { setIsAdmin(false); return; }
+      const { data } = await supabase.rpc("has_role", { _user_id: user.id, _role: "admin" as const });
+      setIsAdmin(data === true);
+    };
+    checkAdmin();
+  }, [user]);
+
+  const dashboardPath = isAdmin ? "/admin" : "/dashboard";
+  const dashboardLabel = isAdmin ? "Admin Panel" : "Dashboard";
 
   const handleSignOut = async () => {
     try {
@@ -54,7 +68,7 @@ const Navbar = () => {
           {user ? (
             <>
               <Button size="sm" className="rounded-full bg-secondary text-secondary-foreground hover:bg-secondary/90" asChild>
-                <Link to="/dashboard">Dashboard</Link>
+                <Link to={dashboardPath}>{dashboardLabel}</Link>
               </Button>
               <Button size="sm" variant="ghost" className="text-foreground/70 hover:text-foreground" onClick={handleSignOut}>
                 <LogOut className="mr-2 h-4 w-4" /> Sign Out
@@ -93,7 +107,7 @@ const Navbar = () => {
           {user ? (
             <>
               <Button size="sm" className="w-full rounded-full bg-secondary text-secondary-foreground" asChild>
-                <Link to="/dashboard" onClick={() => setOpen(false)}>Dashboard</Link>
+                <Link to={dashboardPath} onClick={() => setOpen(false)}>{dashboardLabel}</Link>
               </Button>
               <Button size="sm" variant="ghost" className="w-full text-foreground/70" onClick={() => { handleSignOut(); setOpen(false); }}>
                 <LogOut className="mr-2 h-4 w-4" /> Sign Out
