@@ -292,6 +292,7 @@ const WeatherPage = () => {
                         time: new Date(h.time).toLocaleTimeString("en", { hour: "numeric", hour12: true }),
                         temp: h.temp,
                         humidity: h.humidity,
+                        wind: h.windSpeed,
                       }))}
                       margin={{ top: 5, right: 10, left: -10, bottom: 0 }}
                     >
