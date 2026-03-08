@@ -250,20 +250,10 @@ function createCropGeometry(cropType: string): THREE.ExtrudeGeometry {
   return geo;
 }
 
-function LeafShape({ severity, cropImageUrl, plantName }: { severity: string; cropImageUrl?: string; plantName: string }) {
+function LeafShape({ severity, plantName }: { severity: string; plantName: string }) {
   const ref = useRef<THREE.Mesh>(null);
   const healthyColor = "#43a047";
-  const sickColor = severityColors[severity] || "#f44336";
   const cropType = getCropType(plantName);
-
-  const texture = useMemo(() => {
-    if (!cropImageUrl) return null;
-    const loader = new THREE.TextureLoader();
-    const tex = loader.load(cropImageUrl);
-    tex.wrapS = THREE.ClampToEdgeWrapping;
-    tex.wrapT = THREE.ClampToEdgeWrapping;
-    return tex;
-  }, [cropImageUrl]);
 
   const geometry = useMemo(() => createCropGeometry(cropType), [cropType]);
 
@@ -275,22 +265,12 @@ function LeafShape({ severity, cropImageUrl, plantName }: { severity: string; cr
 
   return (
     <mesh ref={ref} geometry={geometry} rotation={[0, 0, 0]} castShadow receiveShadow>
-      {texture ? (
-        <meshStandardMaterial
-          map={texture}
-          roughness={0.6}
-          metalness={0.1}
-          side={THREE.DoubleSide}
-          color="#ffffff"
-        />
-      ) : (
-        <meshStandardMaterial
-          color={healthyColor}
-          roughness={0.6}
-          metalness={0.1}
-          side={THREE.DoubleSide}
-        />
-      )}
+      <meshStandardMaterial
+        color={healthyColor}
+        roughness={0.6}
+        metalness={0.1}
+        side={THREE.DoubleSide}
+      />
     </mesh>
   );
 }
