@@ -1,5 +1,6 @@
 import { Leaf, Droplets, FlaskConical, ShoppingCart, CloudSun, Landmark } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import ScrollReveal from "@/components/ScrollReveal";
 
 const features = [
   {
@@ -38,30 +39,31 @@ const FeaturesSection = () => {
   return (
     <section id="features" className="py-20 lg:py-28 bg-muted/50">
       <div className="container mx-auto px-4 lg:px-8">
-        <div className="text-center max-w-2xl mx-auto mb-14">
-          <p className="text-sm font-semibold uppercase tracking-wider text-primary mb-2">Features</p>
-          <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
-            Everything Your Farm Needs
-          </h2>
-          <p className="mt-4 text-muted-foreground">
-            From AI diagnostics to marketplace access, AgroVision AI brings modern technology to every farmer.
-          </p>
-        </div>
+        <ScrollReveal>
+          <div className="text-center max-w-2xl mx-auto mb-14">
+            <p className="text-sm font-semibold uppercase tracking-wider text-primary mb-2">Features</p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
+              Everything Your Farm Needs
+            </h2>
+            <p className="mt-4 text-muted-foreground">
+              From AI diagnostics to marketplace access, AgroVision AI brings modern technology to every farmer.
+            </p>
+          </div>
+        </ScrollReveal>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {features.map((feature) => (
-            <Card
-              key={feature.title}
-              className="group hover:shadow-lg transition-all duration-300 border-border/60 hover:border-primary/30"
-            >
-              <CardContent className="p-6 space-y-4">
-                <div className="h-12 w-12 rounded-lg bg-accent flex items-center justify-center group-hover:bg-primary/10 transition-colors">
-                  <feature.icon className="h-6 w-6 text-primary" />
-                </div>
-                <h3 className="text-lg font-semibold text-foreground">{feature.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
-              </CardContent>
-            </Card>
+          {features.map((feature, i) => (
+            <ScrollReveal key={feature.title} delay={i * 100} direction={i % 2 === 0 ? "up" : "scale"}>
+              <Card className="group hover:shadow-lg transition-all duration-300 border-border/60 hover:border-primary/30 hover:-translate-y-1 h-full">
+                <CardContent className="p-6 space-y-4">
+                  <div className="h-12 w-12 rounded-lg bg-accent flex items-center justify-center group-hover:bg-primary/10 group-hover:scale-110 transition-all duration-300">
+                    <feature.icon className="h-6 w-6 text-primary" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-foreground">{feature.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
+                </CardContent>
+              </Card>
+            </ScrollReveal>
           ))}
         </div>
       </div>
