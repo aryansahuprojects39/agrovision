@@ -242,35 +242,130 @@ function PollenParticle({
   );
 }
 
+// Indian seasons based on month
+type IndiaSeason = "winter" | "spring" | "summer" | "monsoon" | "autumn";
+
+function getIndiaSeason(): IndiaSeason {
+  const month = new Date().getMonth(); // 0-11
+  if (month === 11 || month === 0 || month === 1) return "winter";
+  if (month === 2 || month === 3) return "spring";
+  if (month === 4 || month === 5) return "summer";
+  if (month >= 6 && month <= 8) return "monsoon";
+  return "autumn"; // Oct-Nov
+}
+
+const SEASON_CONFIG: Record<IndiaSeason, {
+  leafColors: string[];
+  flowerColors: { color: string; center: string }[];
+  particleColor: string;
+  particleEmissive: string;
+  lightColor1: string;
+  lightColor2: string;
+}> = {
+  // Winter (Dec-Feb): Muted greens, frost whites, bare branches
+  winter: {
+    leafColors: ["#78909c", "#90a4ae", "#b0bec5", "#546e7a", "#607d8b", "#455a64", "#cfd8dc", "#37474f"],
+    flowerColors: [
+      { color: "#e0e0e0", center: "#ffcc80" },
+      { color: "#b0bec5", center: "#fff9c4" },
+      { color: "#cfd8dc", center: "#ffe0b2" },
+    ],
+    particleColor: "#eceff1",
+    particleEmissive: "#b0bec5",
+    lightColor1: "#90a4ae",
+    lightColor2: "#b0bec5",
+  },
+  // Spring (Mar-Apr): Blooming flowers, fresh greens, vibrant colors
+  spring: {
+    leafColors: ["#43a047", "#66bb6a", "#81c784", "#4caf50", "#388e3c", "#a5d6a7", "#2e7d32", "#7cb342"],
+    flowerColors: [
+      { color: "#f8bbd0", center: "#ffeb3b" },
+      { color: "#fff9c4", center: "#ff9800" },
+      { color: "#e1bee7", center: "#ffc107" },
+      { color: "#ffccbc", center: "#e91e63" },
+      { color: "#c8e6c9", center: "#ff5722" },
+      { color: "#f3e5f5", center: "#ff6f00" },
+    ],
+    particleColor: "#f9fbe7",
+    particleEmissive: "#cddc39",
+    lightColor1: "#66bb6a",
+    lightColor2: "#f8bbd0",
+  },
+  // Summer (May-Jun): Harsh sun, dry yellows, scorched earth tones
+  summer: {
+    leafColors: ["#827717", "#9e9d24", "#f9a825", "#c0ca33", "#afb42b", "#8d6e63", "#bcaaa4", "#d4e157"],
+    flowerColors: [
+      { color: "#fff176", center: "#e65100" },
+      { color: "#ffe082", center: "#bf360c" },
+      { color: "#ffcc80", center: "#f57f17" },
+    ],
+    particleColor: "#fff8e1",
+    particleEmissive: "#ffb300",
+    lightColor1: "#ffa000",
+    lightColor2: "#ff6f00",
+  },
+  // Monsoon (Jul-Sep): Lush greens, rain drops, tropical vibrancy
+  monsoon: {
+    leafColors: ["#1b5e20", "#2e7d32", "#388e3c", "#43a047", "#4caf50", "#00695c", "#00796b", "#004d40"],
+    flowerColors: [
+      { color: "#b2dfdb", center: "#00bcd4" },
+      { color: "#c8e6c9", center: "#009688" },
+      { color: "#e0f2f1", center: "#26a69a" },
+      { color: "#b3e5fc", center: "#0288d1" },
+    ],
+    particleColor: "#e0f7fa",
+    particleEmissive: "#4dd0e1",
+    lightColor1: "#26a69a",
+    lightColor2: "#4fc3f7",
+  },
+  // Autumn (Oct-Nov): Harvest golds, falling leaves, warm earth tones
+  autumn: {
+    leafColors: ["#e65100", "#bf360c", "#ff6f00", "#f57f17", "#e53935", "#d84315", "#ff8f00", "#6d4c41"],
+    flowerColors: [
+      { color: "#ffcc80", center: "#795548" },
+      { color: "#ffe0b2", center: "#d84315" },
+      { color: "#ffab91", center: "#4e342e" },
+    ],
+    particleColor: "#fff3e0",
+    particleEmissive: "#ff9800",
+    lightColor1: "#ff8f00",
+    lightColor2: "#d84315",
+  },
+};
+
 // Shared pointer context component
 function SceneContent() {
   const pointer = usePointer();
+  const season = useMemo(() => getIndiaSeason(), []);
+  const config = SEASON_CONFIG[season];
+
+  const leafPositions = useMemo(() => [
+    [-3.5, 1.8, -2], [3.8, -0.3, -1.5], [-2.2, -1.8, -3], [2.2, 2.2, -2.5],
+    [4.2, 0.8, -1], [-4.2, 0.2, -2], [0.5, -2.2, -2], [-1.2, 2.8, -1.5],
+    [1.5, 1.0, -2.8], [-0.8, -0.5, -1.8],
+  ] as [number, number, number][], []);
 
   const leaves = useMemo(
-    () => [
-      { pos: [-3.5, 1.8, -2] as [number, number, number], scale: 0.9, color: "#43a047" },
-      { pos: [3.8, -0.3, -1.5] as [number, number, number], scale: 0.7, color: "#66bb6a" },
-      { pos: [-2.2, -1.8, -3] as [number, number, number], scale: 1.1, color: "#2e7d32" },
-      { pos: [2.2, 2.2, -2.5] as [number, number, number], scale: 0.6, color: "#81c784" },
-      { pos: [4.2, 0.8, -1] as [number, number, number], scale: 0.5, color: "#388e3c" },
-      { pos: [-4.2, 0.2, -2] as [number, number, number], scale: 0.8, color: "#4caf50" },
-      { pos: [0.5, -2.2, -2] as [number, number, number], scale: 0.65, color: "#a5d6a7" },
-      { pos: [-1.2, 2.8, -1.5] as [number, number, number], scale: 0.55, color: "#1b5e20" },
-      { pos: [1.5, 1.0, -2.8] as [number, number, number], scale: 0.75, color: "#558b2f" },
-      { pos: [-0.8, -0.5, -1.8] as [number, number, number], scale: 0.45, color: "#7cb342" },
-    ],
-    []
+    () => leafPositions.map((pos, i) => ({
+      pos,
+      scale: 0.45 + Math.random() * 0.65,
+      color: config.leafColors[i % config.leafColors.length],
+    })),
+    [config.leafColors, leafPositions]
   );
 
+  const flowerPositions = useMemo(() => [
+    [1.5, 1.5, -1.2], [-2, -0.5, -1.8], [3, -1.5, -2],
+    [-3.5, 2.2, -1.5], [0, 2.5, -2.2], [2.5, -2, -1.8],
+  ] as [number, number, number][], []);
+
   const flowers = useMemo(
-    () => [
-      { pos: [1.5, 1.5, -1.2] as [number, number, number], scale: 0.5, color: "#f8bbd0", center: "#ffeb3b" },
-      { pos: [-2, -0.5, -1.8] as [number, number, number], scale: 0.4, color: "#fff9c4", center: "#ff9800" },
-      { pos: [3, -1.5, -2] as [number, number, number], scale: 0.35, color: "#e1bee7", center: "#ffc107" },
-      { pos: [-3.5, 2.2, -1.5] as [number, number, number], scale: 0.45, color: "#ffccbc", center: "#e91e63" },
-      { pos: [0, 2.5, -2.2] as [number, number, number], scale: 0.3, color: "#b2dfdb", center: "#ff5722" },
-    ],
-    []
+    () => flowerPositions.slice(0, config.flowerColors.length).map((pos, i) => ({
+      pos,
+      scale: 0.3 + Math.random() * 0.25,
+      ...config.flowerColors[i % config.flowerColors.length],
+    })),
+    [config.flowerColors, flowerPositions]
   );
 
   const pollen = useMemo(
@@ -290,8 +385,8 @@ function SceneContent() {
       <InteractiveCameraRig />
       <ambientLight intensity={0.6} />
       <directionalLight position={[5, 5, 5]} intensity={0.7} />
-      <pointLight position={[-3, 2, 2]} intensity={0.4} color="#66bb6a" />
-      <pointLight position={[3, -1, 1]} intensity={0.3} color="#f8bbd0" />
+      <pointLight position={[-3, 2, 2]} intensity={0.4} color={config.lightColor1} />
+      <pointLight position={[3, -1, 1]} intensity={0.3} color={config.lightColor2} />
 
       {leaves.map((l, i) => (
         <SeasonalLeaf key={`leaf-${i}`} position={l.pos} scale={l.scale} color={l.color} pointer={pointer} />
@@ -300,7 +395,7 @@ function SceneContent() {
         <SeasonalFlower key={`flower-${i}`} position={f.pos} scale={f.scale} color={f.color} centerColor={f.center} pointer={pointer} />
       ))}
       {pollen.map((p, i) => (
-        <PollenParticle key={`pollen-${i}`} position={p.pos} pointer={pointer} />
+        <PollenParticle key={`pollen-${i}`} position={p.pos} pointer={pointer} particleColor={config.particleColor} particleEmissive={config.particleEmissive} />
       ))}
     </>
   );
