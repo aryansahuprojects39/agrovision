@@ -15,7 +15,10 @@ const ScrollReveal = ({ children, className, delay = 0, direction = "up" }: Scro
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setVisible(entry.isIntersecting);
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.disconnect();
+        }
       },
       { threshold: 0.15 }
     );
