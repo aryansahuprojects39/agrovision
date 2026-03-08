@@ -3,6 +3,7 @@ import farmAerial from "@/assets/farm-aerial.jpg";
 import farmTech from "@/assets/farm-tech.jpg";
 import farmCrops from "@/assets/farm-crops.jpg";
 import farmResearch from "@/assets/farm-research.jpg";
+import farmSustainable from "@/assets/farm-sustainable.jpg";
 
 const articles = [
   {
@@ -21,6 +22,10 @@ const articles = [
   {
     image: farmResearch,
     title: "Sustainable Farming in the Modern Era",
+  },
+  {
+    image: farmSustainable,
+    title: "Solar-Powered Agriculture for a Sustainable Tomorrow",
   },
 ];
 
