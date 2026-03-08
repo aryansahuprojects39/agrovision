@@ -32,7 +32,7 @@ const HeroSection = () => {
           className="w-full h-[120%] object-cover will-change-transform"
           style={{ transform: `translateY(-${parallaxOffset}px) scale(1.05)` }}
         />
-        <div className="absolute inset-0 bg-black/55 dark:bg-black/65" />
+        <div className="absolute inset-0 bg-hero-dark/60 dark:bg-hero-dark/75" />
       </div>
 
       {/* 3D Floating Elements */}
@@ -44,36 +44,33 @@ const HeroSection = () => {
         className="relative z-10 container mx-auto px-4 lg:px-8 py-20 pt-28 will-change-transform"
         style={{ transform: `translateY(${textParallax}px)`, opacity }}
       >
-        <div className="max-w-2xl space-y-6">
-          <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-sm text-primary-foreground backdrop-blur-sm animate-fade-in">
+        <div className="max-w-3xl space-y-6">
+          <div className="inline-flex items-center gap-2 rounded-full border border-secondary/40 bg-secondary/15 px-4 py-1.5 text-sm text-hero-dark-foreground backdrop-blur-sm animate-fade-in">
             <Leaf className="h-4 w-4" />
-            <span>Smart Farming & Crop Intelligence</span>
+            <span>Sustainable Farming</span>
           </div>
 
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-primary-foreground leading-tight animate-fade-in [animation-delay:200ms]">
-            AI-Powered Agriculture for a{" "}
-            <span className="text-secondary">Smarter Future</span>
+          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight text-hero-dark-foreground leading-tight animate-fade-in [animation-delay:200ms]">
+            Grow the Future with{" "}
+            <span className="text-secondary">Sustainable Agriculture</span>
           </h1>
 
-          <p className="text-lg sm:text-xl text-primary-foreground/80 max-w-xl animate-fade-in [animation-delay:400ms]">
-            Detect crop diseases, monitor soil health, optimize irrigation, and connect directly with buyers — all from one platform.
+          <p className="text-lg sm:text-xl text-hero-dark-foreground/80 max-w-xl animate-fade-in [animation-delay:400ms]">
+            We empower farmers with AI, modern technology, and smart practices to grow smarter, naturally and sustainably.
           </p>
 
           {!user ? (
             <div className="flex flex-col sm:flex-row gap-3 pt-2 animate-fade-in [animation-delay:600ms]">
-              <Button size="lg" className="text-base" asChild>
+              <Button size="lg" className="text-base bg-secondary text-secondary-foreground hover:bg-secondary/90 rounded-full px-8" asChild>
                 <Link to="/auth">
-                  Get Started
+                  Explore Our Farms
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
-              </Button>
-              <Button size="lg" variant="outline" className="text-base border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 bg-transparent" asChild>
-                <a href="/#features">Explore Features</a>
               </Button>
             </div>
           ) : (
             <div className="flex flex-col sm:flex-row gap-3 pt-2 animate-fade-in [animation-delay:600ms]">
-              <Button size="lg" className="text-base" asChild>
+              <Button size="lg" className="text-base bg-secondary text-secondary-foreground hover:bg-secondary/90 rounded-full px-8" asChild>
                 <Link to="/dashboard">
                   Go to Dashboard
                   <ArrowRight className="ml-2 h-4 w-4" />
@@ -81,12 +78,6 @@ const HeroSection = () => {
               </Button>
             </div>
           )}
-
-          <div className="flex flex-wrap gap-x-8 gap-y-2 pt-4 text-sm text-primary-foreground/70 animate-fade-in [animation-delay:800ms]">
-            <span>✓ Free for Small Farmers</span>
-            <span>✓ AI Disease Detection</span>
-            <span>✓ Real-time Monitoring</span>
-          </div>
         </div>
       </div>
 
