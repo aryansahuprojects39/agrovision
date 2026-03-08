@@ -234,7 +234,45 @@ const WeatherPage = () => {
               </CardContent>
             </Card>
 
-            {/* 7-Day Forecast */}
+            {/* Hourly Forecast */}
+            <Card>
+              <CardHeader><CardTitle className="text-base flex items-center gap-2"><Thermometer className="h-4 w-4" /> 24-Hour Forecast</CardTitle></CardHeader>
+              <CardContent>
+                <div className="overflow-x-auto -mx-2 px-2">
+                  <div className="flex gap-2 min-w-max pb-2">
+                    {weather.hourly.map((hour, i) => {
+                      const info = weatherCodeToInfo(hour.weatherCode);
+                      const timeStr = new Date(hour.time).toLocaleTimeString("en", { hour: "numeric", hour12: true });
+                      const isNow = i === 0;
+                      return (
+                        <div
+                          key={hour.time}
+                          className={`text-center p-3 rounded-lg min-w-[72px] transition-colors ${
+                            isNow ? "bg-primary/10 border border-primary/30" : "bg-muted/50"
+                          }`}
+                        >
+                          <p className={`text-xs font-medium ${isNow ? "text-primary" : "text-muted-foreground"}`}>
+                            {isNow ? "Now" : timeStr}
+                          </p>
+                          <WeatherIcon code={hour.weatherCode} className={`h-5 w-5 mx-auto my-2 ${isNow ? "text-primary" : "text-muted-foreground"}`} />
+                          <p className="text-sm font-semibold text-foreground">{hour.temp}°</p>
+                          <div className="mt-1 space-y-0.5">
+                            <p className="text-[10px] text-muted-foreground flex items-center justify-center gap-0.5">
+                              <Droplets className="h-2.5 w-2.5" />{hour.humidity}%
+                            </p>
+                            <p className="text-[10px] text-muted-foreground flex items-center justify-center gap-0.5">
+                              <Wind className="h-2.5 w-2.5" />{hour.windSpeed}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+
             <Card>
               <CardHeader><CardTitle className="text-base">7-Day Forecast</CardTitle></CardHeader>
               <CardContent>
