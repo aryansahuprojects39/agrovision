@@ -10,6 +10,8 @@ const navLinks = [
   { label: "Features", href: "/#features" },
   { label: "Marketplace", href: "/marketplace" },
   { label: "Disease Detection", href: "/disease-detection" },
+  { label: "Weather", href: "/weather" },
+  { label: "Schemes", href: "/government-schemes" },
 ];
 
 const Navbar = () => {
