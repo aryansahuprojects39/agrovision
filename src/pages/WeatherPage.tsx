@@ -292,6 +292,7 @@ const WeatherPage = () => {
                         time: new Date(h.time).toLocaleTimeString("en", { hour: "numeric", hour12: true }),
                         temp: h.temp,
                         humidity: h.humidity,
+                        wind: h.windSpeed,
                       }))}
                       margin={{ top: 5, right: 10, left: -10, bottom: 0 }}
                     >
@@ -338,8 +339,8 @@ const WeatherPage = () => {
                           color: "hsl(var(--foreground))",
                         }}
                         formatter={(value: number, name: string) => [
-                          name === "temp" ? `${value}°C` : `${value}%`,
-                          name === "temp" ? "Temperature" : "Humidity",
+                          name === "temp" ? `${value}°C` : name === "humidity" ? `${value}%` : `${value} km/h`,
+                          name === "temp" ? "Temperature" : name === "humidity" ? "Humidity" : "Wind Speed",
                         ]}
                       />
                       <Area
@@ -362,6 +363,17 @@ const WeatherPage = () => {
                         fill="url(#humidityGradient)"
                         dot={false}
                         activeDot={{ r: 3, fill: "#3b82f6" }}
+                      />
+                      <Area
+                        yAxisId="humidity"
+                        type="monotone"
+                        dataKey="wind"
+                        stroke="#f59e0b"
+                        strokeWidth={1.5}
+                        strokeDasharray="2 2"
+                        fill="transparent"
+                        dot={false}
+                        activeDot={{ r: 3, fill: "#f59e0b" }}
                       />
                     </AreaChart>
                   </ResponsiveContainer>
