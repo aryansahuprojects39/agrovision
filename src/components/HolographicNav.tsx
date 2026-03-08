@@ -183,41 +183,38 @@ const HolographicNav = () => {
   }, []);
 
   const totalItems = NAV_ITEMS.length;
-  const radius = 190;
 
-  // Compute adaptive arc direction based on button position in viewport
-  const getArcParams = () => {
+  // Grid layout that adapts direction based on available viewport space
+  const getItemPositions = () => {
     const vw = typeof window !== "undefined" ? window.innerWidth : 1280;
     const vh = typeof window !== "undefined" ? window.innerHeight : 720;
     const cx = vw / 2 + position.x;
     const cy = vh - 24 - 28 + position.y;
-    const nx = cx / vw;
-    const ny = cy / vh;
 
-    // Center angle: point away from nearest edge
-    let centerAngle = -90; // default: upward
-    if (ny < 0.3) centerAngle = 90; // near top → fan down
-    else if (ny > 0.7) centerAngle = -90; // near bottom → fan up
+    const spaceLeft = cx;
+    const spaceRight = vw - cx;
+    const spaceUp = cy;
+    const spaceDown = vh - cy;
 
-    // Horizontal bias: shift arc away from nearest side
-    if (nx < 0.25) centerAngle += 30; // near left → shift right
-    else if (nx > 0.75) centerAngle -= 30; // near right → shift left
+    const dirX = spaceRight >= spaceLeft ? 1 : -1;
+    const dirY = spaceUp >= spaceDown ? -1 : 1;
 
-    return { centerAngle, arcSpread: 160 };
+    const colGap = 120;
+    const rowGap = 95;
+
+    const positions = [];
+    for (let i = 0; i < totalItems; i++) {
+      const row = Math.floor(i / 2);
+      const col = i % 2;
+      positions.push({
+        x: (col - 0.5) * colGap * dirX,
+        y: dirY * (-85 - row * rowGap),
+      });
+    }
+    return positions;
   };
 
-  const { centerAngle, arcSpread } = getArcParams();
-
-  // Place items in 3 rows of 2 for a grid-like arc layout
-  const getItemPosition = (index: number) => {
-    // Evenly distribute along the arc
-    const angle = centerAngle - arcSpread / 2 + (arcSpread / (totalItems - 1)) * index;
-    const rad = (angle * Math.PI) / 180;
-    return {
-      x: Math.cos(rad) * radius,
-      y: Math.sin(rad) * radius,
-    };
-  };
+  const itemPositions = getItemPositions();
 
   if (isHidden) return null;
 
@@ -243,10 +240,9 @@ const HolographicNav = () => {
           cursor: isDragging ? "grabbing" : "default",
         }}
       >
-        {/* Menu items */}
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" style={{ width: 0, height: 0 }}>
           {NAV_ITEMS.map((item, i) => {
-            const { x, y } = getItemPosition(i);
+            const { x, y } = itemPositions[i];
             const isActive = location.pathname === item.href;
             return (
               <NavCard
