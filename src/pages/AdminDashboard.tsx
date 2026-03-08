@@ -92,7 +92,7 @@ const AdminDashboard = () => {
 
   return (
     <div className="flex min-h-screen bg-background">
-      <AdminSidebar activeTab={activeTab} onTabChange={setActiveTab} userEmail={user?.email} />
+      <AdminSidebar activeTab={activeTab} onTabChange={setActiveTab} userEmail={user?.email} profiles={profiles} detections={detections} />
 
       {/* Mobile header */}
       <div className="flex-1 flex flex-col">
