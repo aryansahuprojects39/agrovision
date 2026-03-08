@@ -59,8 +59,10 @@ function NavCard({
           : `translate(0px, 0px) scale(0)`,
         opacity: isOpen ? 1 : 0,
         transition: `all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) ${delay}ms`,
-        left: "-44px",
-        top: "-36px",
+        left: "0px",
+        top: "0px",
+        marginLeft: "-50px",
+        marginTop: "-35px",
       }}
     >
       <div
