@@ -3,13 +3,14 @@ import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import Navbar from "@/components/Navbar";
+import TiltCard from "@/components/TiltCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Trash2, Edit2, Save, MapPin, Leaf, ShoppingCart, User, Home } from "lucide-react";
+import { Loader2, Trash2, Edit2, Save, MapPin, Leaf, ShoppingCart, User, Home, CloudSun, FlaskConical, TrendingUp, Heart } from "lucide-react";
 import { toast } from "sonner";
 
 interface Profile {
@@ -124,6 +125,65 @@ const DashboardPage = () => {
               <Home className="mr-2 h-4 w-4" /> Back to Home
             </Link>
           </Button>
+        </div>
+
+        {/* 3D Summary Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+          <TiltCard className="shadow-lg">
+            <div className="p-5">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="p-2.5 rounded-lg bg-primary/10">
+                  <Heart className="h-5 w-5 text-primary" />
+                </div>
+                <h3 className="font-semibold text-foreground">Crop Health</h3>
+              </div>
+              <p className="text-2xl font-bold text-primary">{history.filter(h => h.disease === "Healthy").length}/{history.length}</p>
+              <p className="text-xs text-muted-foreground mt-1">Healthy scans from history</p>
+            </div>
+          </TiltCard>
+
+          <TiltCard className="shadow-lg" glareColor="hsl(var(--secondary))">
+            <div className="p-5">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="p-2.5 rounded-lg bg-secondary/10">
+                  <CloudSun className="h-5 w-5 text-secondary" />
+                </div>
+                <h3 className="font-semibold text-foreground">Weather</h3>
+              </div>
+              <p className="text-2xl font-bold text-foreground">Check Now</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                <Link to="/weather" className="text-primary hover:underline">View forecast →</Link>
+              </p>
+            </div>
+          </TiltCard>
+
+          <TiltCard className="shadow-lg" glareColor="hsl(var(--accent))">
+            <div className="p-5">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="p-2.5 rounded-lg bg-accent">
+                  <FlaskConical className="h-5 w-5 text-accent-foreground" />
+                </div>
+                <h3 className="font-semibold text-foreground">Soil Nutrients</h3>
+              </div>
+              <p className="text-2xl font-bold text-foreground">{profile.soil_type || "N/A"}</p>
+              <p className="text-xs text-muted-foreground mt-1">Soil type on record</p>
+            </div>
+          </TiltCard>
+
+          <TiltCard className="shadow-lg" glareColor="hsl(var(--primary))">
+            <div className="p-5">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="p-2.5 rounded-lg bg-primary/10">
+                  <TrendingUp className="h-5 w-5 text-primary" />
+                </div>
+                <h3 className="font-semibold text-foreground">Market Prices</h3>
+              </div>
+              <p className="text-2xl font-bold text-foreground">{products.length} Listed</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                <Link to="/marketplace" className="text-primary hover:underline">Go to marketplace →</Link>
+              </p>
+            </div>
+          </TiltCard>
         </div>
 
         <Tabs defaultValue="profile" className="space-y-6">
