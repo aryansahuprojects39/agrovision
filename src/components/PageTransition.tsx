@@ -165,6 +165,11 @@ const PageTransition = ({ children }: PageTransitionProps) => {
     activeTransitionRef.current = transition;
     animateProgress(true);
 
+    // Cancel any lingering animations to prevent double-firing
+    el.getAnimations().forEach((a) => a.cancel());
+    el.style.transform = "";
+    el.style.opacity = "";
+
     const exit = el.animate(exitKeyframes[transition], {
       duration: DURATION_EXIT,
       easing: EASING,
@@ -172,6 +177,9 @@ const PageTransition = ({ children }: PageTransitionProps) => {
     });
 
     exit.onfinish = () => {
+      // Cancel exit fill before swapping
+      exit.cancel();
+      el.style.opacity = "0";
       setCurrent({ children, pathname: location.pathname });
 
       requestAnimationFrame(() => {
@@ -184,6 +192,7 @@ const PageTransition = ({ children }: PageTransitionProps) => {
         });
 
         enter.onfinish = () => {
+          enter.cancel();
           el.style.transform = "";
           el.style.opacity = "";
           animatingRef.current = false;
