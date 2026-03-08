@@ -127,77 +127,16 @@ const HolographicNav = () => {
             const isActive = location.pathname === item.href;
             const Icon = item.icon;
 
-            return (
-              <Link
+              <NavCard
                 key={item.href}
-                to={item.href}
-                onClick={() => setIsOpen(false)}
-                className="absolute group"
-                style={{
-                  transform: isOpen
-                    ? `translate(${x}px, ${y}px) scale(1)`
-                    : `translate(0px, 0px) scale(0)`,
-                  opacity: isOpen ? 1 : 0,
-                  transition: `all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) ${i * 60}ms`,
-                  left: "-32px",
-                  top: "-32px",
-                }}
-              >
-                <div
-                  className="relative flex flex-col items-center gap-1.5 p-3 rounded-2xl backdrop-blur-xl border cursor-pointer"
-                  style={{
-                    background: `linear-gradient(135deg, ${item.color}15, ${item.color}08, transparent)`,
-                    borderColor: isActive ? item.color : `${item.color}40`,
-                    boxShadow: isActive
-                      ? `0 0 20px ${item.color}50, 0 0 40px ${item.color}20, inset 0 1px 0 ${item.color}30`
-                      : `0 4px 20px ${item.color}15, inset 0 1px 0 ${item.color}20`,
-                    minWidth: "72px",
-                    transition: "all 0.3s ease",
-                  }}
-                  onMouseEnter={(e) => {
-                    const el = e.currentTarget;
-                    el.style.boxShadow = `0 0 24px ${item.color}60, 0 0 48px ${item.color}30, inset 0 1px 0 ${item.color}40`;
-                    el.style.borderColor = item.color;
-                    el.style.transform = "scale(1.1) translateY(-4px)";
-                  }}
-                  onMouseLeave={(e) => {
-                    const el = e.currentTarget;
-                    el.style.boxShadow = isActive
-                      ? `0 0 20px ${item.color}50, 0 0 40px ${item.color}20, inset 0 1px 0 ${item.color}30`
-                      : `0 4px 20px ${item.color}15, inset 0 1px 0 ${item.color}20`;
-                    el.style.borderColor = isActive ? item.color : `${item.color}40`;
-                    el.style.transform = "scale(1) translateY(0)";
-                  }}
-                >
-                  <div
-                    className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none"
-                    style={{ opacity: isOpen ? 1 : 0, transition: "opacity 0.5s" }}
-                  >
-                    <div
-                      className="absolute inset-0"
-                      style={{
-                        background: `repeating-linear-gradient(0deg, transparent, transparent 3px, ${item.color}06 3px, ${item.color}06 4px)`,
-                      }}
-                    />
-                  </div>
-
-                  <Icon
-                    className="h-5 w-5 relative z-10"
-                    style={{ color: item.color, filter: `drop-shadow(0 0 6px ${item.color}80)` }}
-                  />
-                  <span
-                    className="text-[10px] font-semibold whitespace-nowrap relative z-10"
-                    style={{ color: item.color }}
-                  >
-                    {item.label}
-                  </span>
-
-                  {isActive && (
-                    <div
-                      className="absolute -bottom-1 left-1/2 -translate-x-1/2 h-1.5 w-1.5 rounded-full"
-                      style={{
-                        backgroundColor: item.color,
-                        boxShadow: `0 0 8px ${item.color}`,
+                item={item}
+                isOpen={isOpen}
+                isActive={isActive}
+                x={x}
+                y={y}
+                delay={i * 60}
+                onClose={() => setIsOpen(false)}
+              />
                       }}
                     />
                   )}
