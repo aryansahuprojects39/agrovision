@@ -10,6 +10,8 @@ const navLinks = [
   { label: "Features", href: "/#features" },
   { label: "Marketplace", href: "/marketplace" },
   { label: "Disease Detection", href: "/disease-detection" },
+  { label: "Weather", href: "/weather" },
+  { label: "Schemes", href: "/government-schemes" },
 ];
 
 const Navbar = () => {
@@ -48,9 +50,14 @@ const Navbar = () => {
             {theme === "light" ? <Moon size={18} /> : <Sun size={18} />}
           </button>
           {user ? (
-            <Button size="sm" variant="outline" onClick={handleSignOut}>
-              <LogOut className="mr-2 h-4 w-4" /> Sign Out
-            </Button>
+            <>
+              <Button size="sm" variant="outline" asChild>
+                <Link to="/dashboard">Dashboard</Link>
+              </Button>
+              <Button size="sm" variant="ghost" onClick={handleSignOut}>
+                <LogOut className="mr-2 h-4 w-4" /> Sign Out
+              </Button>
+            </>
           ) : (
             <Button size="sm" asChild>
               <Link to="/auth">Get Started</Link>
@@ -84,9 +91,14 @@ const Navbar = () => {
             )
           )}
           {user ? (
-            <Button size="sm" variant="outline" className="w-full" onClick={() => { handleSignOut(); setOpen(false); }}>
-              <LogOut className="mr-2 h-4 w-4" /> Sign Out
-            </Button>
+            <>
+              <Button size="sm" variant="outline" className="w-full" asChild>
+                <Link to="/dashboard" onClick={() => setOpen(false)}>Dashboard</Link>
+              </Button>
+              <Button size="sm" variant="ghost" className="w-full" onClick={() => { handleSignOut(); setOpen(false); }}>
+                <LogOut className="mr-2 h-4 w-4" /> Sign Out
+              </Button>
+            </>
           ) : (
             <Button size="sm" className="w-full" asChild>
               <Link to="/auth" onClick={() => setOpen(false)}>Get Started</Link>

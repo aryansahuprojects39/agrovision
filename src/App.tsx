@@ -8,6 +8,9 @@ import Index from "./pages/Index";
 import AuthPage from "./pages/AuthPage";
 import MarketplacePage from "./pages/MarketplacePage";
 import DiseaseDetectionPage from "./pages/DiseaseDetectionPage";
+import DashboardPage from "./pages/DashboardPage";
+import WeatherPage from "./pages/WeatherPage";
+import GovernmentSchemesPage from "./pages/GovernmentSchemesPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +27,9 @@ const App = () => (
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/marketplace" element={<MarketplacePage />} />
             <Route path="/disease-detection" element={<DiseaseDetectionPage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/weather" element={<WeatherPage />} />
+            <Route path="/government-schemes" element={<GovernmentSchemesPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>

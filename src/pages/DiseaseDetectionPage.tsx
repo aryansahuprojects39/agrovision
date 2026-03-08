@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Upload, Loader2, Leaf, AlertTriangle, CheckCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 
 interface DiagnosisResult {
@@ -15,6 +16,7 @@ interface DiagnosisResult {
 }
 
 const DiseaseDetectionPage = () => {
+  const { user } = useAuth();
   const [image, setImage] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
@@ -46,6 +48,17 @@ const DiseaseDetectionPage = () => {
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
       setResult(data);
+      // Save to detection history if logged in
+      if (user) {
+        await supabase.from("detection_history").insert({
+          user_id: user.id,
+          disease: data.disease,
+          confidence: data.confidence,
+          description: data.description,
+          treatment: data.treatment,
+          prevention: data.prevention,
+        });
+      }
       toast.success("Analysis complete!");
     } catch (err: any) {
       toast.error(err.message || "Analysis failed. Please try again.");

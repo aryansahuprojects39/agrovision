@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      detection_history: {
+        Row: {
+          confidence: string | null
+          created_at: string
+          description: string | null
+          disease: string
+          id: string
+          image_url: string | null
+          prevention: string[] | null
+          treatment: string[] | null
+          user_id: string
+        }
+        Insert: {
+          confidence?: string | null
+          created_at?: string
+          description?: string | null
+          disease: string
+          id?: string
+          image_url?: string | null
+          prevention?: string[] | null
+          treatment?: string[] | null
+          user_id: string
+        }
+        Update: {
+          confidence?: string | null
+          created_at?: string
+          description?: string | null
+          disease?: string
+          id?: string
+          image_url?: string | null
+          prevention?: string[] | null
+          treatment?: string[] | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       products: {
         Row: {
           category: string
