@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, useCallback, type ReactNode } from "react";
 import { useLocation } from "react-router-dom";
 
 type TransitionType = "cube" | "slide" | "zoom" | "fade";
@@ -11,6 +11,24 @@ const ROUTE_TRANSITIONS: Record<string, TransitionType> = {
   "/weather": "slide",
   "/government-schemes": "slide",
   "/community": "slide",
+};
+const TRANSITION_COLORS: Record<TransitionType, { gradient: string; glow: string }> = {
+  cube: {
+    gradient: "linear-gradient(90deg, #3b82f6, #60a5fa, #93c5fd)",
+    glow: "0 0 12px rgba(59, 130, 246, 0.6), 0 0 24px rgba(59, 130, 246, 0.3)",
+  },
+  slide: {
+    gradient: "linear-gradient(90deg, #22c55e, #4ade80, #86efac)",
+    glow: "0 0 12px rgba(34, 197, 94, 0.6), 0 0 24px rgba(34, 197, 94, 0.3)",
+  },
+  zoom: {
+    gradient: "linear-gradient(90deg, #a855f7, #c084fc, #d8b4fe)",
+    glow: "0 0 12px rgba(168, 85, 247, 0.6), 0 0 24px rgba(168, 85, 247, 0.3)",
+  },
+  fade: {
+    gradient: "linear-gradient(90deg, hsl(var(--primary)), hsl(var(--primary) / 0.6))",
+    glow: "0 0 12px hsl(var(--primary) / 0.5)",
+  },
 };
 
 function getTransition(pathname: string): TransitionType {
@@ -75,11 +93,28 @@ const PageTransition = ({ children }: PageTransitionProps) => {
   const animatingRef = useRef(false);
   const isFirst = useRef(true);
 
-  const animateProgress = (show: boolean) => {
+  const activeTransitionRef = useRef<TransitionType>("fade");
+
+  const animateProgress = useCallback((show: boolean) => {
     const bar = progressRef.current;
     if (!bar) return;
+    const colors = TRANSITION_COLORS[activeTransitionRef.current];
+
     if (show) {
       bar.style.opacity = "1";
+      bar.style.background = colors.gradient;
+      bar.style.boxShadow = colors.glow;
+
+      // Pulsing glow animation
+      bar.animate(
+        [
+          { boxShadow: colors.glow, offset: 0 },
+          { boxShadow: colors.glow.replace(/0\.6/g, "0.9").replace(/0\.3/g, "0.6"), offset: 0.5 },
+          { boxShadow: colors.glow, offset: 1 },
+        ],
+        { duration: 600, iterations: Infinity, easing: "ease-in-out" }
+      );
+
       bar.animate(
         [
           { transform: "scaleX(0)", transformOrigin: "left" },
@@ -100,7 +135,7 @@ const PageTransition = ({ children }: PageTransitionProps) => {
         bar.getAnimations().forEach((a) => a.cancel());
       };
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (isFirst.current) {
@@ -127,6 +162,7 @@ const PageTransition = ({ children }: PageTransitionProps) => {
 
     animatingRef.current = true;
     const transition = getTransition(location.pathname);
+    activeTransitionRef.current = transition;
     animateProgress(true);
 
     const exit = el.animate(exitKeyframes[transition], {
@@ -168,13 +204,11 @@ const PageTransition = ({ children }: PageTransitionProps) => {
       {/* Progress bar */}
       <div
         ref={progressRef}
-        className="fixed top-0 left-0 right-0 h-[3px] z-[9999] opacity-0"
+        className="fixed top-0 left-0 right-0 h-[5px] z-[9999] opacity-0"
         style={{
-          background: "linear-gradient(90deg, hsl(var(--primary)), hsl(var(--primary) / 0.6))",
           transform: "scaleX(0)",
           transformOrigin: "left",
-          borderRadius: "0 2px 2px 0",
-          boxShadow: "0 0 8px hsl(var(--primary) / 0.4)",
+          borderRadius: "0 3px 3px 0",
         }}
       />
       <div
