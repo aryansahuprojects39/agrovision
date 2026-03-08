@@ -158,52 +158,58 @@ const HolographicNav = () => {
         })}
       </div>
 
-      {/* Central button */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="relative h-14 w-14 rounded-full flex items-center justify-center transition-all duration-300 group"
-        style={{
-          background: isOpen
-            ? "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary) / 0.8))"
-            : "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary) / 0.9))",
-          boxShadow: isOpen
-            ? "0 0 30px hsl(var(--primary) / 0.5), 0 0 60px hsl(var(--primary) / 0.2), inset 0 2px 0 hsl(var(--primary) / 0.3)"
-            : "0 4px 20px hsl(var(--primary) / 0.4), 0 0 40px hsl(var(--primary) / 0.1)",
-          transform: isOpen ? "scale(0.9)" : "scale(1)",
-        }}
-        aria-label={isOpen ? "Close navigation" : "Open navigation"}
-      >
-        {/* Rotating ring */}
-        <div
-          className="absolute inset-[-3px] rounded-full border-2 border-dashed pointer-events-none"
-          style={{
-            borderColor: "hsl(var(--primary) / 0.4)",
-            animation: isOpen ? "spin 8s linear infinite" : "none",
-          }}
-        />
-        {/* Pulsing ring */}
-        <div
-          className="absolute inset-[-8px] rounded-full pointer-events-none"
-          style={{
-            border: "1px solid hsl(var(--primary) / 0.2)",
-            animation: isOpen ? "ping 2s cubic-bezier(0, 0, 0.2, 1) infinite" : "none",
-          }}
-        />
-        {/* Icon */}
-        <div
-          className="transition-transform duration-300"
-          style={{ transform: isOpen ? "rotate(180deg)" : "rotate(0deg)" }}
-        >
-          {isOpen ? (
-            <X className="h-6 w-6 text-primary-foreground" />
-          ) : (
-            <svg className="h-6 w-6 text-primary-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M4 8h16M4 16h16" strokeLinecap="round" />
-              <circle cx="12" cy="12" r="2" fill="currentColor" stroke="none" />
-            </svg>
-          )}
-        </div>
-      </button>
+      {/* Central button with tooltip */}
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="relative h-14 w-14 rounded-full flex items-center justify-center transition-all duration-300 group"
+            style={{
+              background: isOpen
+                ? "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary) / 0.8))"
+                : "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary) / 0.9))",
+              boxShadow: isOpen
+                ? "0 0 30px hsl(var(--primary) / 0.5), 0 0 60px hsl(var(--primary) / 0.2), inset 0 2px 0 hsl(var(--primary) / 0.3)"
+                : "0 4px 20px hsl(var(--primary) / 0.4), 0 0 40px hsl(var(--primary) / 0.1)",
+              transform: isOpen ? "scale(0.9)" : "scale(1)",
+            }}
+            aria-label={isOpen ? "Close navigation" : "Open navigation"}
+          >
+            <div
+              className="absolute inset-[-3px] rounded-full border-2 border-dashed pointer-events-none"
+              style={{
+                borderColor: "hsl(var(--primary) / 0.4)",
+                animation: isOpen ? "spin 8s linear infinite" : "none",
+              }}
+            />
+            <div
+              className="absolute inset-[-8px] rounded-full pointer-events-none"
+              style={{
+                border: "1px solid hsl(var(--primary) / 0.2)",
+                animation: isOpen ? "ping 2s cubic-bezier(0, 0, 0.2, 1) infinite" : "none",
+              }}
+            />
+            <div
+              className="transition-transform duration-300"
+              style={{ transform: isOpen ? "rotate(180deg)" : "rotate(0deg)" }}
+            >
+              {isOpen ? (
+                <X className="h-6 w-6 text-primary-foreground" />
+              ) : (
+                <svg className="h-6 w-6 text-primary-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M4 8h16M4 16h16" strokeLinecap="round" />
+                  <circle cx="12" cy="12" r="2" fill="currentColor" stroke="none" />
+                </svg>
+              )}
+            </div>
+          </button>
+        </TooltipTrigger>
+        {!isOpen && (
+          <TooltipContent side="top" className="font-semibold">
+            Navigation Menu
+          </TooltipContent>
+        )}
+      </Tooltip>
 
       {/* CSS animations */}
       <style>{`
