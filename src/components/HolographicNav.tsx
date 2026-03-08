@@ -1,18 +1,22 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Microscope, LayoutDashboard, ShoppingCart, CloudSun, Users, Landmark, X } from "lucide-react";
+import { Microscope, LayoutDashboard, ShoppingCart, CloudSun, Users, Landmark, X, Shield } from "lucide-react";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+import { supabase } from "@/integrations/supabase/client";
 
-const NAV_ITEMS = [
+const BASE_NAV_ITEMS = [
   { label: "Marketplace", href: "/marketplace", icon: ShoppingCart, color: "#f59e0b", desc: "Buy & sell farm products" },
   { label: "Weather", href: "/weather", icon: CloudSun, color: "#06b6d4", desc: "Real-time weather forecasts" },
-  { label: "Farm Dashboard", href: "/dashboard", icon: LayoutDashboard, color: "#3b82f6", desc: "Monitor your farm stats" },
+  // Dashboard item is dynamic — inserted at runtime
   { label: "Community", href: "/community", icon: Users, color: "#a855f7", desc: "Connect with other farmers" },
   { label: "AI Crop Doctor", href: "/disease-detection", icon: Microscope, color: "#22c55e", desc: "Detect crop diseases with AI" },
   { label: "Gov Schemes", href: "/government-schemes", icon: Landmark, color: "#ef4444", desc: "Explore government benefits" },
 ];
 
-const HIDDEN_ROUTES = ["/auth", "/admin", "/forgot-password", "/reset-password"];
+const FARM_DASHBOARD = { label: "Farm Dashboard", href: "/dashboard", icon: LayoutDashboard, color: "#3b82f6", desc: "Monitor your farm stats" };
+const ADMIN_DASHBOARD = { label: "Admin Panel", href: "/admin", icon: Shield, color: "#3b82f6", desc: "Manage platform & users" };
+
+const HIDDEN_ROUTES = ["/auth", "/forgot-password", "/reset-password"];
 
 // 3D tilt card for nav items
 function NavCard({
@@ -24,7 +28,7 @@ function NavCard({
   delay,
   onClose,
 }: {
-  item: (typeof NAV_ITEMS)[0];
+  item: typeof FARM_DASHBOARD;
   isOpen: boolean;
   isActive: boolean;
   x: number;
@@ -133,11 +137,32 @@ const HolographicNav = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const dragStartRef = useRef<{ x: number; y: number; posX: number; posY: number } | null>(null);
   const hasDraggedRef = useRef(false);
   const location = useLocation();
   const containerRef = useRef<HTMLDivElement>(null);
   const isHidden = HIDDEN_ROUTES.some((r) => location.pathname.startsWith(r));
+
+  // Check admin role
+  useEffect(() => {
+    const checkAdmin = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) { setIsAdmin(false); return; }
+      const { data } = await supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin").maybeSingle();
+      setIsAdmin(!!data);
+    };
+    checkAdmin();
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => checkAdmin());
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const NAV_ITEMS = useMemo(() => {
+    const dashboardItem = isAdmin ? ADMIN_DASHBOARD : FARM_DASHBOARD;
+    const items = [...BASE_NAV_ITEMS];
+    items.splice(2, 0, dashboardItem); // Insert dashboard at position 2
+    return items;
+  }, [isAdmin]);
 
   useEffect(() => { setIsOpen(false); }, [location.pathname]);
 
