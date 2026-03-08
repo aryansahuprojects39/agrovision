@@ -337,11 +337,147 @@ const SEASON_CONFIG: Record<IndiaSeason, {
   },
 };
 
+// Climate types based on weather
+type Climate = "clear" | "cloudy" | "rainy" | "windy" | "sunny" | "stormy" | "foggy";
+
+function getClimateFromWeatherCode(code: number, windSpeed: number): Climate {
+  if (windSpeed > 30) return "windy";
+  if ([0, 1].includes(code)) return "sunny";
+  if ([2].includes(code)) return "clear";
+  if ([3, 45, 48].includes(code)) return "cloudy";
+  if (code === 45 || code === 48) return "foggy";
+  if ([51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82].includes(code)) return "rainy";
+  if ([95, 96, 99].includes(code)) return "stormy";
+  return "clear";
+}
+
+// Raindrop that falls down
+function Raindrop({ pointer }: { pointer: React.MutableRefObject<{ x: number; y: number }> }) {
+  const ref = useRef<THREE.Mesh>(null);
+  const startPos = useMemo(() => ({
+    x: (Math.random() - 0.5) * 10,
+    y: 4 + Math.random() * 2,
+    z: -1 - Math.random() * 3,
+  }), []);
+  const speed = useMemo(() => 2 + Math.random() * 3, []);
+
+  useFrame(() => {
+    if (!ref.current) return;
+    ref.current.position.y -= speed * 0.016;
+    ref.current.position.x += pointer.current.x * 0.005;
+    if (ref.current.position.y < -4) {
+      ref.current.position.y = 4 + Math.random() * 2;
+      ref.current.position.x = (Math.random() - 0.5) * 10;
+    }
+  });
+
+  return (
+    <mesh ref={ref} position={[startPos.x, startPos.y, startPos.z]}>
+      <cylinderGeometry args={[0.008, 0.008, 0.2, 4]} />
+      <meshStandardMaterial color="#90caf9" transparent opacity={0.5} emissive="#64b5f6" emissiveIntensity={0.3} />
+    </mesh>
+  );
+}
+
+// Cloud puff
+function CloudPuff({ position, pointer }: { position: [number, number, number]; pointer: React.MutableRefObject<{ x: number; y: number }> }) {
+  const ref = useRef<THREE.Group>(null);
+  const speed = useMemo(() => 0.1 + Math.random() * 0.15, []);
+
+  useFrame((state) => {
+    if (!ref.current) return;
+    ref.current.position.x += speed * 0.01 + pointer.current.x * 0.002;
+    if (ref.current.position.x > 6) ref.current.position.x = -6;
+    ref.current.position.y += Math.sin(state.clock.elapsedTime * 0.3) * 0.001;
+  });
+
+  return (
+    <group ref={ref} position={position}>
+      {[0, 0.3, -0.25, 0.15].map((offset, i) => (
+        <mesh key={i} position={[offset, Math.random() * 0.1, 0]}>
+          <sphereGeometry args={[0.25 + Math.random() * 0.15, 8, 8]} />
+          <meshStandardMaterial color="#cfd8dc" transparent opacity={0.25} roughness={1} />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
+// Wind streak line
+function WindStreak({ pointer }: { pointer: React.MutableRefObject<{ x: number; y: number }> }) {
+  const ref = useRef<THREE.Mesh>(null);
+  const startPos = useMemo(() => ({
+    x: -6 + Math.random() * 2,
+    y: (Math.random() - 0.5) * 5,
+    z: -1 - Math.random() * 3,
+  }), []);
+  const speed = useMemo(() => 3 + Math.random() * 4, []);
+
+  useFrame(() => {
+    if (!ref.current) return;
+    ref.current.position.x += speed * 0.016;
+    ref.current.position.y += pointer.current.y * 0.002;
+    if (ref.current.position.x > 6) {
+      ref.current.position.x = -6;
+      ref.current.position.y = (Math.random() - 0.5) * 5;
+    }
+  });
+
+  return (
+    <mesh ref={ref} position={[startPos.x, startPos.y, startPos.z]} rotation={[0, 0, -0.1]}>
+      <planeGeometry args={[0.8 + Math.random() * 0.5, 0.01]} />
+      <meshStandardMaterial color="#e0e0e0" transparent opacity={0.2} side={THREE.DoubleSide} />
+    </mesh>
+  );
+}
+
+// Sun rays
+function SunRay({ angle }: { angle: number }) {
+  const ref = useRef<THREE.Mesh>(null);
+
+  useFrame((state) => {
+    if (!ref.current) return;
+    ref.current.rotation.z = angle + Math.sin(state.clock.elapsedTime * 0.5) * 0.05;
+    const pulse = 0.8 + Math.sin(state.clock.elapsedTime * 1.5 + angle) * 0.2;
+    ref.current.scale.set(1, pulse, 1);
+  });
+
+  return (
+    <mesh ref={ref} position={[4, 2.5, -3]} rotation={[0, 0, angle]}>
+      <planeGeometry args={[2, 0.03]} />
+      <meshStandardMaterial color="#fff9c4" transparent opacity={0.12} emissive="#ffee58" emissiveIntensity={0.3} side={THREE.DoubleSide} />
+    </mesh>
+  );
+}
+
 // Shared pointer context component
 function SceneContent() {
   const pointer = usePointer();
   const season = useMemo(() => getIndiaSeason(), []);
   const config = SEASON_CONFIG[season];
+  const [climate, setClimate] = useState<Climate>("clear");
+
+  // Fetch current weather from Open-Meteo (New Delhi coordinates)
+  useEffect(() => {
+    const fetchWeather = async () => {
+      try {
+        const res = await fetch(
+          "https://api.open-meteo.com/v1/forecast?latitude=28.6139&longitude=77.209&current=weather_code,wind_speed_10m"
+        );
+        const data = await res.json();
+        if (data.current) {
+          const detected = getClimateFromWeatherCode(data.current.weather_code, data.current.wind_speed_10m);
+          setClimate(detected);
+        }
+      } catch {
+        // Fallback to clear
+      }
+    };
+    fetchWeather();
+    // Refresh every 15 minutes
+    const interval = setInterval(fetchWeather, 15 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   const leafPositions = useMemo(() => [
     [-3.5, 1.8, -2], [3.8, -0.3, -1.5], [-2.2, -1.8, -3], [2.2, 2.2, -2.5],
@@ -384,14 +520,39 @@ function SceneContent() {
     []
   );
 
+  // Climate-specific element counts
+  const rainCount = (climate === "rainy" || climate === "stormy") ? 40 : 0;
+  const cloudCount = (climate === "cloudy" || climate === "rainy" || climate === "foggy") ? 6 : 0;
+  const windCount = (climate === "windy" || climate === "stormy") ? 15 : 0;
+  const sunRayCount = (climate === "sunny") ? 8 : (climate === "clear" ? 4 : 0);
+
+  const cloudPositions = useMemo(() =>
+    Array.from({ length: 8 }, () => [
+      (Math.random() - 0.5) * 10,
+      1.5 + Math.random() * 2,
+      -2 - Math.random() * 2,
+    ] as [number, number, number]),
+  []);
+
+  // Adjust ambient light based on climate
+  const ambientIntensity = climate === "cloudy" || climate === "foggy" ? 0.35 :
+    climate === "rainy" || climate === "stormy" ? 0.3 :
+    climate === "sunny" ? 0.8 : 0.6;
+
   return (
     <>
       <InteractiveCameraRig />
-      <ambientLight intensity={0.6} />
-      <directionalLight position={[5, 5, 5]} intensity={0.7} />
+      <ambientLight intensity={ambientIntensity} />
+      <directionalLight position={[5, 5, 5]} intensity={climate === "sunny" ? 1.0 : 0.7} />
       <pointLight position={[-3, 2, 2]} intensity={0.4} color={config.lightColor1} />
       <pointLight position={[3, -1, 1]} intensity={0.3} color={config.lightColor2} />
 
+      {/* Sun rays */}
+      {Array.from({ length: sunRayCount }).map((_, i) => (
+        <SunRay key={`sun-${i}`} angle={(i / sunRayCount) * Math.PI * 2} />
+      ))}
+
+      {/* Seasonal elements */}
       {leaves.map((l, i) => (
         <SeasonalLeaf key={`leaf-${i}`} position={l.pos} scale={l.scale} color={l.color} pointer={pointer} />
       ))}
@@ -400,6 +561,17 @@ function SceneContent() {
       ))}
       {pollen.map((p, i) => (
         <PollenParticle key={`pollen-${i}`} position={p.pos} pointer={pointer} particleColor={config.particleColor} particleEmissive={config.particleEmissive} />
+      ))}
+
+      {/* Climate overlays */}
+      {Array.from({ length: rainCount }).map((_, i) => (
+        <Raindrop key={`rain-${i}`} pointer={pointer} />
+      ))}
+      {cloudPositions.slice(0, cloudCount).map((pos, i) => (
+        <CloudPuff key={`cloud-${i}`} position={pos} pointer={pointer} />
+      ))}
+      {Array.from({ length: windCount }).map((_, i) => (
+        <WindStreak key={`wind-${i}`} pointer={pointer} />
       ))}
     </>
   );
