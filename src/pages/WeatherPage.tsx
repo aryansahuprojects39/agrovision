@@ -55,12 +55,14 @@ const WeatherPage = () => {
   const fetchWeather = async (lat: number, lon: number, name: string) => {
     setLoading(true);
     try {
-      const [currentRes, forecastRes] = await Promise.all([
+      const [currentRes, forecastRes, hourlyRes] = await Promise.all([
         fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,wind_speed_10m,weather_code,surface_pressure&timezone=auto`),
         fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=auto&forecast_days=7`),
+        fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,weather_code,relative_humidity_2m,wind_speed_10m&timezone=auto&forecast_hours=24`),
       ]);
       const current = await currentRes.json();
       const forecast = await forecastRes.json();
+      const hourlyData = await hourlyRes.json();
 
       const code = current.current.weather_code;
       const info = weatherCodeToInfo(code);
