@@ -80,7 +80,7 @@ const Navbar = () => {
                 {link.label}
               </Link>
             ) : (
-              <a key={link.href} href={link.href} onClick={() => setOpen(false)} className="block text-sm font-medium text-hero-dark-foreground/70 hover:text-secondary py-2">
+              <a key={link.href} href={link.href} onClick={() => setOpen(false)} className="block text-sm font-medium text-foreground/70 hover:text-primary py-2">
                 {link.label}
               </a>
             )
