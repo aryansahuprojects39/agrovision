@@ -99,9 +99,22 @@ const WeatherPage = () => {
 
   const handleUseMyLocation = () => {
     if (!navigator.geolocation) { toast.error("Geolocation not supported"); return; }
+    setLoading(true);
     navigator.geolocation.getCurrentPosition(
-      (pos) => fetchWeather(pos.coords.latitude, pos.coords.longitude, "Your Location"),
-      () => toast.error("Location access denied")
+      async (pos) => {
+        const { latitude, longitude } = pos.coords;
+        try {
+          const res = await fetch(`https://geocoding-api.open-meteo.com/v1/reverse?latitude=${latitude}&longitude=${longitude}&count=1`);
+          const data = await res.json();
+          const name = data.results?.length
+            ? `${data.results[0].name}, ${data.results[0].country}`
+            : `${latitude.toFixed(2)}°N, ${longitude.toFixed(2)}°E`;
+          await fetchWeather(latitude, longitude, name);
+        } catch {
+          await fetchWeather(latitude, longitude, `${latitude.toFixed(2)}°N, ${longitude.toFixed(2)}°E`);
+        }
+      },
+      () => { toast.error("Location access denied"); setLoading(false); }
     );
   };
 
