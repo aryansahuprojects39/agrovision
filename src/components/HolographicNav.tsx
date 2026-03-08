@@ -376,7 +376,7 @@ const HolographicNav = () => {
 
   const itemPositions = getItemPositions();
 
-  if (isHidden) return null;
+  if (isHidden || !user) return null;
 
   return (
     <>
