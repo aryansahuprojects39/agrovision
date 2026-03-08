@@ -67,14 +67,14 @@ function NavCard({
     >
       <div
         ref={cardRef}
-        className="relative flex flex-col items-center gap-2 px-4 py-3.5 rounded-2xl border cursor-pointer"
+        className="relative flex flex-col items-center gap-2.5 px-5 py-4 rounded-2xl border cursor-pointer"
         style={{
-          background: `linear-gradient(145deg, ${item.color}30, ${item.color}12 40%, hsl(0 0% 8% / 0.85))`,
+          background: `linear-gradient(145deg, ${item.color}40, ${item.color}18 40%, hsl(0 0% 6% / 0.92))`,
           borderColor: isActive ? item.color : `${item.color}50`,
           boxShadow: isActive
             ? `0 8px 32px ${item.color}40, 0 0 48px ${item.color}15, inset 0 1px 0 ${item.color}40`
             : `0 8px 24px hsl(0 0% 0% / 0.4), 0 0 20px ${item.color}15, inset 0 1px 0 ${item.color}25`,
-          width: "100px",
+          width: "110px",
           transition: "transform 0.15s ease-out, box-shadow 0.3s ease, border-color 0.3s ease",
           backdropFilter: "blur(16px)",
           transformStyle: "preserve-3d",
@@ -99,12 +99,12 @@ function NavCard({
         />
 
         <Icon
-          className="h-6 w-6 relative z-10"
-          style={{ color: item.color, filter: `drop-shadow(0 0 8px ${item.color})` }}
+          className="h-7 w-7 relative z-10"
+          style={{ color: item.color, filter: `drop-shadow(0 0 10px ${item.color})` }}
         />
         <span
-          className="text-xs font-bold whitespace-nowrap relative z-10"
-          style={{ color: item.color, textShadow: `0 0 12px ${item.color}60` }}
+          className="text-sm font-extrabold whitespace-nowrap relative z-10"
+          style={{ color: item.color, textShadow: `0 0 14px ${item.color}80, 0 1px 2px hsl(0 0% 0% / 0.6)` }}
         >
           {item.label}
         </span>
