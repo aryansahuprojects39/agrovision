@@ -582,33 +582,36 @@ function SceneContent() {
   );
 
   // Climate-specific element counts
-  const rainCount = (climate === "rainy" || climate === "stormy") ? 40 : 0;
-  const cloudCount = (climate === "cloudy" || climate === "rainy" || climate === "foggy") ? 6 : 0;
-  const windCount = (climate === "windy" || climate === "stormy") ? 15 : 0;
-  const sunRayCount = (climate === "sunny") ? 8 : (climate === "clear" ? 4 : 0);
+  const rainCount = (climate === "rainy" || climate === "stormy") ? 60 : 0;
+  const cloudCount = (climate === "cloudy" || climate === "rainy" || climate === "foggy" || climate === "stormy") ? 8 : 0;
+  const windCount = (climate === "windy" || climate === "stormy") ? 20 : 0;
+  const sunRayCount = (climate === "sunny") ? 10 : (climate === "clear" ? 5 : 0);
+  const showSun = climate === "sunny" || climate === "clear";
+  const fogCount = (climate === "foggy") ? 8 : (climate === "cloudy" ? 3 : 0);
 
   const cloudPositions = useMemo(() =>
-    Array.from({ length: 8 }, () => [
-      (Math.random() - 0.5) * 10,
+    Array.from({ length: 10 }, () => [
+      (Math.random() - 0.5) * 12,
       1.5 + Math.random() * 2,
-      -2 - Math.random() * 2,
+      -1.5 - Math.random() * 2,
     ] as [number, number, number]),
   []);
 
   // Adjust ambient light based on climate
   const ambientIntensity = climate === "cloudy" || climate === "foggy" ? 0.35 :
-    climate === "rainy" || climate === "stormy" ? 0.3 :
-    climate === "sunny" ? 0.8 : 0.6;
+    climate === "rainy" || climate === "stormy" ? 0.25 :
+    climate === "sunny" ? 0.85 : 0.6;
 
   return (
     <>
       <InteractiveCameraRig />
       <ambientLight intensity={ambientIntensity} />
-      <directionalLight position={[5, 5, 5]} intensity={climate === "sunny" ? 1.0 : 0.7} />
+      <directionalLight position={[5, 5, 5]} intensity={climate === "sunny" ? 1.2 : 0.7} />
       <pointLight position={[-3, 2, 2]} intensity={0.4} color={config.lightColor1} />
       <pointLight position={[3, -1, 1]} intensity={0.3} color={config.lightColor2} />
 
-      {/* Sun rays */}
+      {/* Sun orb + rays */}
+      {showSun && <SunGlow />}
       {Array.from({ length: sunRayCount }).map((_, i) => (
         <SunRay key={`sun-${i}`} angle={(i / sunRayCount) * Math.PI * 2} />
       ))}
@@ -633,6 +636,9 @@ function SceneContent() {
       ))}
       {Array.from({ length: windCount }).map((_, i) => (
         <WindStreak key={`wind-${i}`} pointer={pointer} />
+      ))}
+      {Array.from({ length: fogCount }).map((_, i) => (
+        <FogLayer key={`fog-${i}`} pointer={pointer} />
       ))}
     </>
   );
