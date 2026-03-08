@@ -228,6 +228,7 @@ const HolographicNav = () => {
         }
       `}</style>
     </div>
+    </>
   );
 };
 
