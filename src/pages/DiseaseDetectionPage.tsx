@@ -48,6 +48,17 @@ const DiseaseDetectionPage = () => {
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
       setResult(data);
+      // Save to detection history if logged in
+      if (user) {
+        await supabase.from("detection_history").insert({
+          user_id: user.id,
+          disease: data.disease,
+          confidence: data.confidence,
+          description: data.description,
+          treatment: data.treatment,
+          prevention: data.prevention,
+        });
+      }
       toast.success("Analysis complete!");
     } catch (err: any) {
       toast.error(err.message || "Analysis failed. Please try again.");
