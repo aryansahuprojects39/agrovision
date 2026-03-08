@@ -227,21 +227,68 @@ const HolographicNav = () => {
     if (!hasDraggedRef.current) setIsOpen((prev) => !prev);
   }, []);
 
-  // Adaptive arc layout: semicircle at edges, full circle when centered
+  // Adaptive layout: grid on mobile, arc on desktop
   const getItemPositions = () => {
     const vw = typeof window !== "undefined" ? window.innerWidth : 1280;
     const vh = typeof window !== "undefined" ? window.innerHeight : 720;
     const cx = vw / 2 + position.x;
     const cy = vh - 24 - 28 + position.y;
-
     const count = NAV_ITEMS.length;
-    const marginTop = 100; // below navbar
+    const marginTop = 100;
     const marginSide = 30;
     const marginBottom = 50;
     const itemHalfW = 60;
     const itemHalfH = 48;
+    const isMobile = vw < 640;
 
-    // How centered is the button? (0 = edge, 1 = perfect center)
+    if (isMobile) {
+      // Grid layout for mobile: 2 columns (or 3) arranged above the button
+      const cols = count <= 4 ? 2 : 3;
+      const rows = Math.ceil(count / cols);
+      const cellW = 125;
+      const cellH = 90;
+      const gap = 8;
+      const gridW = cols * cellW + (cols - 1) * gap;
+      const gridH = rows * cellH + (rows - 1) * gap;
+
+      // Detect which edge/corner the button is near
+      const nearLeft = cx < vw * 0.33;
+      const nearRight = cx > vw * 0.67;
+      const nearBottom = cy > vh * 0.6;
+      const nearTop = cy < vh * 0.4;
+
+      // Determine grid origin relative to button
+      let gridCenterX = 0;
+      let gridCenterY = -(gridH / 2 + 60); // default: above
+
+      if (nearBottom) {
+        gridCenterY = -(gridH / 2 + 60);
+      } else if (nearTop) {
+        gridCenterY = gridH / 2 + 60;
+      }
+
+      if (nearLeft) {
+        gridCenterX = gridW / 2 - 20;
+      } else if (nearRight) {
+        gridCenterX = -(gridW / 2 - 20);
+      }
+
+      return NAV_ITEMS.map((_, i) => {
+        const col = i % cols;
+        const row = Math.floor(i / cols);
+        // Center the grid
+        const x = gridCenterX + (col - (cols - 1) / 2) * (cellW + gap);
+        let y = gridCenterY + (row - (rows - 1) / 2) * (cellH + gap);
+
+        // Clamp to viewport
+        const finalX = Math.max(marginSide - cx + itemHalfW, Math.min(vw - marginSide - cx - itemHalfW, x));
+        const finalY = Math.max(marginTop - cy + itemHalfH, Math.min(vh - marginBottom - cy - itemHalfH, y));
+
+        return { x: finalX, y: finalY };
+      });
+    }
+
+    // Desktop: original arc/circle layout
     const edgeMargin = 120;
     const centerX = Math.max(0, Math.min(1, 1 - Math.abs(cx - vw / 2) / (vw / 2 - edgeMargin)));
     const centerY = Math.max(0, Math.min(1, 1 - Math.abs(cy - vh / 2) / (vh / 2 - edgeMargin)));
@@ -250,7 +297,6 @@ const HolographicNav = () => {
     const radius = 300;
     const innerRadius = 180;
 
-    // Detect position zones
     const distTop = cy;
     const distBottom = vh - cy;
     const distLeft = cx;
@@ -261,15 +307,13 @@ const HolographicNav = () => {
       Math.min(distLeft, distRight) < cornerThreshold;
 
     if (isCorner) {
-      // Quadrant: 90° arc, two rings (outer 3 + inner 3)
       const nearTop = distTop < distBottom;
-      const nearLeft = distLeft < distRight;
-      // Base angle points diagonally away from corner
+      const nearLeftSide = distLeft < distRight;
       const baseAngle = nearTop
-        ? nearLeft ? -Math.PI / 4 : -3 * Math.PI / 4  // bottom-right / bottom-left
-        : nearLeft ? Math.PI / 4 : 3 * Math.PI / 4;    // top-right / top-left
+        ? nearLeftSide ? -Math.PI / 4 : -3 * Math.PI / 4
+        : nearLeftSide ? Math.PI / 4 : 3 * Math.PI / 4;
 
-      const quadSpread = Math.PI / 2; // 90°
+      const quadSpread = Math.PI / 2;
 
       return NAV_ITEMS.map((_, i) => {
         const isOuter = i < 3;
@@ -279,7 +323,6 @@ const HolographicNav = () => {
         let x = Math.cos(angle) * r;
         let y = -Math.sin(angle) * r;
 
-        // Clamp
         if (cx + x - itemHalfW < marginSide) x = marginSide - cx + itemHalfW;
         if (cx + x + itemHalfW > vw - marginSide) x = vw - marginSide - cx - itemHalfW;
         if (cy + y - itemHalfH < marginTop) y = marginTop - cy + itemHalfH;
