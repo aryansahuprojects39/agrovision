@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Microscope, LayoutDashboard, ShoppingCart, CloudSun, Users, Landmark, X } from "lucide-react";
+import { Microscope, LayoutDashboard, ShoppingCart, CloudSun, Users, Landmark, X, GripVertical } from "lucide-react";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 
 const NAV_ITEMS = [
@@ -16,16 +16,18 @@ const HIDDEN_ROUTES = ["/auth", "/admin", "/forgot-password", "/reset-password"]
 
 const HolographicNav = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const dragStartRef = useRef<{ x: number; y: number; posX: number; posY: number } | null>(null);
+  const hasDraggedRef = useRef(false);
   const location = useLocation();
   const containerRef = useRef<HTMLDivElement>(null);
   const isHidden = HIDDEN_ROUTES.some((r) => location.pathname.startsWith(r));
 
-  // Close on route change
   useEffect(() => {
     setIsOpen(false);
   }, [location.pathname]);
 
-  // Close on outside click
   useEffect(() => {
     if (!isOpen) return;
     const handler = (e: MouseEvent) => {
@@ -37,7 +39,6 @@ const HolographicNav = () => {
     return () => document.removeEventListener("mousedown", handler);
   }, [isOpen]);
 
-  // Close on Escape
   useEffect(() => {
     if (!isOpen) return;
     const handler = (e: KeyboardEvent) => {
@@ -46,6 +47,45 @@ const HolographicNav = () => {
     document.addEventListener("keydown", handler);
     return () => document.removeEventListener("keydown", handler);
   }, [isOpen]);
+
+  // Drag handlers
+  const handlePointerDown = useCallback((e: React.PointerEvent) => {
+    if (isOpen) return;
+    dragStartRef.current = { x: e.clientX, y: e.clientY, posX: position.x, posY: position.y };
+    hasDraggedRef.current = false;
+    setIsDragging(true);
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+  }, [isOpen, position]);
+
+  const handlePointerMove = useCallback((e: React.PointerEvent) => {
+    if (!dragStartRef.current) return;
+    const dx = e.clientX - dragStartRef.current.x;
+    const dy = e.clientY - dragStartRef.current.y;
+    if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
+      hasDraggedRef.current = true;
+    }
+    const newX = dragStartRef.current.posX + dx;
+    const newY = dragStartRef.current.posY + dy;
+    // Clamp to viewport
+    const halfW = 28;
+    const maxX = window.innerWidth / 2 - halfW;
+    const maxY = window.innerHeight / 2 - halfW - 24;
+    setPosition({
+      x: Math.max(-maxX, Math.min(maxX, newX)),
+      y: Math.max(-maxY, Math.min(maxY, newY)),
+    });
+  }, []);
+
+  const handlePointerUp = useCallback(() => {
+    dragStartRef.current = null;
+    setIsDragging(false);
+  }, []);
+
+  const handleButtonClick = useCallback(() => {
+    if (!hasDraggedRef.current) {
+      setIsOpen((prev) => !prev);
+    }
+  }, []);
 
   const totalItems = NAV_ITEMS.length;
   const arcSpread = 180;
@@ -67,167 +107,183 @@ const HolographicNav = () => {
           onClick={() => setIsOpen(false)}
         />
       )}
-    <div ref={containerRef} className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100]">
+      <div
+        ref={containerRef}
+        className="fixed z-[100]"
+        style={{
+          bottom: "24px",
+          left: "50%",
+          transform: `translate(calc(-50% + ${position.x}px), ${position.y}px)`,
+          cursor: isDragging ? "grabbing" : "default",
+        }}
+      >
+        {/* Menu items */}
+        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4" style={{ width: 0, height: 0 }}>
+          {NAV_ITEMS.map((item, i) => {
+            const angle = startAngle + (arcSpread / (totalItems - 1)) * i;
+            const rad = (angle * Math.PI) / 180;
+            const x = Math.cos(rad) * radius;
+            const y = Math.sin(rad) * radius;
+            const isActive = location.pathname === item.href;
+            const Icon = item.icon;
 
-      {/* Menu items - arranged in arc above button */}
-      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4" style={{ width: 0, height: 0 }}>
-        {NAV_ITEMS.map((item, i) => {
-          const angle = startAngle + (arcSpread / (totalItems - 1)) * i;
-          const rad = (angle * Math.PI) / 180;
-          const x = Math.cos(rad) * radius;
-          const y = Math.sin(rad) * radius;
-          const isActive = location.pathname === item.href;
-          const Icon = item.icon;
-
-          return (
-            <Link
-              key={item.href}
-              to={item.href}
-              onClick={() => setIsOpen(false)}
-              className="absolute group"
-              style={{
-                transform: isOpen
-                  ? `translate(${x}px, ${y}px) scale(1)`
-                  : `translate(0px, 0px) scale(0)`,
-                opacity: isOpen ? 1 : 0,
-                transition: `all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) ${i * 60}ms`,
-                left: "-32px",
-                top: "-32px",
-              }}
-            >
-              {/* Holographic card */}
-              <div
-                className="relative flex flex-col items-center gap-1.5 p-3 rounded-2xl backdrop-blur-xl border cursor-pointer"
+            return (
+              <Link
+                key={item.href}
+                to={item.href}
+                onClick={() => setIsOpen(false)}
+                className="absolute group"
                 style={{
-                  background: `linear-gradient(135deg, ${item.color}15, ${item.color}08, transparent)`,
-                  borderColor: isActive ? item.color : `${item.color}40`,
-                  boxShadow: isActive
-                    ? `0 0 20px ${item.color}50, 0 0 40px ${item.color}20, inset 0 1px 0 ${item.color}30`
-                    : `0 4px 20px ${item.color}15, inset 0 1px 0 ${item.color}20`,
-                  minWidth: "72px",
-                  transition: "all 0.3s ease",
-                }}
-                onMouseEnter={(e) => {
-                  const el = e.currentTarget;
-                  el.style.boxShadow = `0 0 24px ${item.color}60, 0 0 48px ${item.color}30, inset 0 1px 0 ${item.color}40`;
-                  el.style.borderColor = item.color;
-                  el.style.transform = "scale(1.1) translateY(-4px)";
-                }}
-                onMouseLeave={(e) => {
-                  const el = e.currentTarget;
-                  el.style.boxShadow = isActive
-                    ? `0 0 20px ${item.color}50, 0 0 40px ${item.color}20, inset 0 1px 0 ${item.color}30`
-                    : `0 4px 20px ${item.color}15, inset 0 1px 0 ${item.color}20`;
-                  el.style.borderColor = isActive ? item.color : `${item.color}40`;
-                  el.style.transform = "scale(1) translateY(0)";
+                  transform: isOpen
+                    ? `translate(${x}px, ${y}px) scale(1)`
+                    : `translate(0px, 0px) scale(0)`,
+                  opacity: isOpen ? 1 : 0,
+                  transition: `all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) ${i * 60}ms`,
+                  left: "-32px",
+                  top: "-32px",
                 }}
               >
-                {/* Scan line effect */}
                 <div
-                  className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none"
-                  style={{ opacity: isOpen ? 1 : 0, transition: "opacity 0.5s" }}
+                  className="relative flex flex-col items-center gap-1.5 p-3 rounded-2xl backdrop-blur-xl border cursor-pointer"
+                  style={{
+                    background: `linear-gradient(135deg, ${item.color}15, ${item.color}08, transparent)`,
+                    borderColor: isActive ? item.color : `${item.color}40`,
+                    boxShadow: isActive
+                      ? `0 0 20px ${item.color}50, 0 0 40px ${item.color}20, inset 0 1px 0 ${item.color}30`
+                      : `0 4px 20px ${item.color}15, inset 0 1px 0 ${item.color}20`,
+                    minWidth: "72px",
+                    transition: "all 0.3s ease",
+                  }}
+                  onMouseEnter={(e) => {
+                    const el = e.currentTarget;
+                    el.style.boxShadow = `0 0 24px ${item.color}60, 0 0 48px ${item.color}30, inset 0 1px 0 ${item.color}40`;
+                    el.style.borderColor = item.color;
+                    el.style.transform = "scale(1.1) translateY(-4px)";
+                  }}
+                  onMouseLeave={(e) => {
+                    const el = e.currentTarget;
+                    el.style.boxShadow = isActive
+                      ? `0 0 20px ${item.color}50, 0 0 40px ${item.color}20, inset 0 1px 0 ${item.color}30`
+                      : `0 4px 20px ${item.color}15, inset 0 1px 0 ${item.color}20`;
+                    el.style.borderColor = isActive ? item.color : `${item.color}40`;
+                    el.style.transform = "scale(1) translateY(0)";
+                  }}
                 >
                   <div
-                    className="absolute inset-0"
-                    style={{
-                      background: `repeating-linear-gradient(0deg, transparent, transparent 3px, ${item.color}06 3px, ${item.color}06 4px)`,
-                    }}
+                    className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none"
+                    style={{ opacity: isOpen ? 1 : 0, transition: "opacity 0.5s" }}
+                  >
+                    <div
+                      className="absolute inset-0"
+                      style={{
+                        background: `repeating-linear-gradient(0deg, transparent, transparent 3px, ${item.color}06 3px, ${item.color}06 4px)`,
+                      }}
+                    />
+                  </div>
+
+                  <Icon
+                    className="h-5 w-5 relative z-10"
+                    style={{ color: item.color, filter: `drop-shadow(0 0 6px ${item.color}80)` }}
                   />
+                  <span
+                    className="text-[10px] font-semibold whitespace-nowrap relative z-10"
+                    style={{ color: item.color }}
+                  >
+                    {item.label}
+                  </span>
+
+                  {isActive && (
+                    <div
+                      className="absolute -bottom-1 left-1/2 -translate-x-1/2 h-1.5 w-1.5 rounded-full"
+                      style={{
+                        backgroundColor: item.color,
+                        boxShadow: `0 0 8px ${item.color}`,
+                      }}
+                    />
+                  )}
                 </div>
+              </Link>
+            );
+          })}
+        </div>
 
-                <Icon
-                  className="h-5 w-5 relative z-10"
-                  style={{ color: item.color, filter: `drop-shadow(0 0 6px ${item.color}80)` }}
-                />
-                <span
-                  className="text-[10px] font-semibold whitespace-nowrap relative z-10"
-                  style={{ color: item.color }}
-                >
-                  {item.label}
-                </span>
-
-                {/* Active indicator dot */}
-                {isActive && (
-                  <div
-                    className="absolute -bottom-1 left-1/2 -translate-x-1/2 h-1.5 w-1.5 rounded-full"
-                    style={{
-                      backgroundColor: item.color,
-                      boxShadow: `0 0 8px ${item.color}`,
-                    }}
-                  />
+        {/* Central button */}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              onPointerDown={handlePointerDown}
+              onPointerMove={handlePointerMove}
+              onPointerUp={handlePointerUp}
+              onClick={handleButtonClick}
+              className="relative h-14 w-14 rounded-full flex items-center justify-center transition-all duration-300 group touch-none select-none"
+              style={{
+                background: isOpen
+                  ? "linear-gradient(135deg, hsl(var(--primary) / 0.85), hsl(var(--primary) / 0.65))"
+                  : "linear-gradient(135deg, hsl(var(--primary) / 0.7), hsl(var(--primary) / 0.55))",
+                boxShadow: isOpen
+                  ? "0 0 30px hsl(var(--primary) / 0.4), 0 0 60px hsl(var(--primary) / 0.15), inset 0 2px 0 hsl(var(--primary) / 0.2)"
+                  : "0 4px 20px hsl(var(--primary) / 0.3), 0 0 40px hsl(var(--primary) / 0.08)",
+                transform: isOpen ? "scale(0.9)" : "scale(1)",
+                backdropFilter: "blur(8px)",
+              }}
+              aria-label={isOpen ? "Close navigation" : "Open navigation"}
+            >
+              <div
+                className="absolute inset-[-3px] rounded-full border-2 border-dashed pointer-events-none"
+                style={{
+                  borderColor: "hsl(var(--primary) / 0.3)",
+                  animation: isOpen ? "holo-spin 8s linear infinite" : "none",
+                }}
+              />
+              <div
+                className="absolute inset-[-8px] rounded-full pointer-events-none"
+                style={{
+                  border: "1px solid hsl(var(--primary) / 0.15)",
+                  animation: isOpen ? "holo-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite" : "none",
+                }}
+              />
+              {/* Drag indicator dots */}
+              {!isOpen && (
+                <div className="absolute -top-1 left-1/2 -translate-x-1/2 flex gap-0.5 opacity-40">
+                  <div className="h-1 w-1 rounded-full bg-primary-foreground" />
+                  <div className="h-1 w-1 rounded-full bg-primary-foreground" />
+                  <div className="h-1 w-1 rounded-full bg-primary-foreground" />
+                </div>
+              )}
+              <div
+                className="transition-transform duration-300"
+                style={{ transform: isOpen ? "rotate(180deg)" : "rotate(0deg)" }}
+              >
+                {isOpen ? (
+                  <X className="h-6 w-6 text-primary-foreground" />
+                ) : (
+                  <svg className="h-6 w-6 text-primary-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M4 8h16M4 16h16" strokeLinecap="round" />
+                    <circle cx="12" cy="12" r="2" fill="currentColor" stroke="none" />
+                  </svg>
                 )}
               </div>
-            </Link>
-          );
-        })}
-      </div>
+            </button>
+          </TooltipTrigger>
+          {!isOpen && (
+            <TooltipContent side="top" className="font-semibold">
+              Drag to move • Click to open
+            </TooltipContent>
+          )}
+        </Tooltip>
 
-      {/* Central button with tooltip */}
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="relative h-14 w-14 rounded-full flex items-center justify-center transition-all duration-300 group"
-            style={{
-              background: isOpen
-                ? "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary) / 0.8))"
-                : "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary) / 0.9))",
-              boxShadow: isOpen
-                ? "0 0 30px hsl(var(--primary) / 0.5), 0 0 60px hsl(var(--primary) / 0.2), inset 0 2px 0 hsl(var(--primary) / 0.3)"
-                : "0 4px 20px hsl(var(--primary) / 0.4), 0 0 40px hsl(var(--primary) / 0.1)",
-              transform: isOpen ? "scale(0.9)" : "scale(1)",
-            }}
-            aria-label={isOpen ? "Close navigation" : "Open navigation"}
-          >
-            <div
-              className="absolute inset-[-3px] rounded-full border-2 border-dashed pointer-events-none"
-              style={{
-                borderColor: "hsl(var(--primary) / 0.4)",
-                animation: isOpen ? "spin 8s linear infinite" : "none",
-              }}
-            />
-            <div
-              className="absolute inset-[-8px] rounded-full pointer-events-none"
-              style={{
-                border: "1px solid hsl(var(--primary) / 0.2)",
-                animation: isOpen ? "ping 2s cubic-bezier(0, 0, 0.2, 1) infinite" : "none",
-              }}
-            />
-            <div
-              className="transition-transform duration-300"
-              style={{ transform: isOpen ? "rotate(180deg)" : "rotate(0deg)" }}
-            >
-              {isOpen ? (
-                <X className="h-6 w-6 text-primary-foreground" />
-              ) : (
-                <svg className="h-6 w-6 text-primary-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M4 8h16M4 16h16" strokeLinecap="round" />
-                  <circle cx="12" cy="12" r="2" fill="currentColor" stroke="none" />
-                </svg>
-              )}
-            </div>
-          </button>
-        </TooltipTrigger>
-        {!isOpen && (
-          <TooltipContent side="top" className="font-semibold">
-            Navigation Menu
-          </TooltipContent>
-        )}
-      </Tooltip>
-
-      {/* CSS animations */}
-      <style>{`
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-        @keyframes ping {
-          75%, 100% {
-            transform: scale(1.5);
-            opacity: 0;
+        <style>{`
+          @keyframes holo-spin {
+            to { transform: rotate(360deg); }
           }
-        }
-      `}</style>
-    </div>
+          @keyframes holo-ping {
+            75%, 100% {
+              transform: scale(1.5);
+              opacity: 0;
+            }
+          }
+        `}</style>
+      </div>
     </>
   );
 };
