@@ -426,6 +426,8 @@ function applyThemeVars(vars: Partial<ThemeVars>) {
     foreground: "--foreground",
     card: "--card",
     cardForeground: "--card-foreground",
+    popover: "--popover",
+    popoverForeground: "--popover-foreground",
     primary: "--primary",
     primaryForeground: "--primary-foreground",
     secondary: "--secondary",
