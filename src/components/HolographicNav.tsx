@@ -203,11 +203,11 @@ const HolographicNav = () => {
     const centeredness = Math.min(centerX, centerY);
 
     // When centered: full 360° circle. At edge: 150° arc upward
-    const radius = 200; // fixed radius large enough for 6 items
+    const radius = 250; // large enough so 6 items (100px wide) never overlap
     const isCircle = centeredness > 0.5;
     const spreadAngle = isCircle
-      ? 2 * Math.PI // full circle
-      : (150 * Math.PI) / 180; // semicircle
+      ? 2 * Math.PI
+      : (180 * Math.PI) / 180; // full 180° semicircle for max spread
 
     // Determine base direction (away from nearest edge)
     const expandUp = cy > vh / 2;
