@@ -443,7 +443,7 @@ function applyThemeVars(vars: Partial<ThemeVars>) {
 
   Object.entries(vars).forEach(([key, value]) => {
     if (value && map[key as keyof ThemeVars]) {
-      root.style.setProperty(map[key as keyof ThemeVars], value);
+      root.style.setProperty(map[key as keyof ThemeVars], value, "important");
     }
   });
 }
