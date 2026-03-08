@@ -49,77 +49,84 @@ function NavCard({
   };
 
   return (
-    <Link
-      to={item.href}
-      onClick={onClose}
-      className="absolute group"
-      style={{
-        transform: isOpen
-          ? `translate(${x}px, ${y}px) scale(1)`
-          : `translate(0px, 0px) scale(0)`,
-        opacity: isOpen ? 1 : 0,
-        transition: `all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) ${delay}ms`,
-        left: "0px",
-        top: "0px",
-        marginLeft: "-50px",
-        marginTop: "-35px",
-      }}
-    >
-      <div
-        ref={cardRef}
-        className="relative flex flex-col items-center gap-2.5 px-5 py-4 rounded-2xl border cursor-pointer"
-        style={{
-          background: `linear-gradient(145deg, ${item.color}40, ${item.color}18 40%, hsl(0 0% 6% / 0.92))`,
-          borderColor: isActive ? item.color : `${item.color}50`,
-          boxShadow: isActive
-            ? `0 8px 32px ${item.color}40, 0 0 48px ${item.color}15, inset 0 1px 0 ${item.color}40`
-            : `0 8px 24px hsl(0 0% 0% / 0.4), 0 0 20px ${item.color}15, inset 0 1px 0 ${item.color}25`,
-          width: "110px",
-          transition: "transform 0.15s ease-out, box-shadow 0.3s ease, border-color 0.3s ease",
-          backdropFilter: "blur(16px)",
-          transformStyle: "preserve-3d",
-        }}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-      >
-        {/* Holographic scan lines */}
-        <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none opacity-30">
-          <div
-            className="absolute inset-0"
-            style={{
-              background: `repeating-linear-gradient(0deg, transparent, transparent 2px, ${item.color}10 2px, ${item.color}10 3px)`,
-            }}
-          />
-        </div>
-
-        {/* Glow orb behind icon */}
-        <div
-          className="absolute top-2 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full blur-xl pointer-events-none"
-          style={{ background: item.color, opacity: 0.25 }}
-        />
-
-        <Icon
-          className="h-7 w-7 relative z-10"
-          style={{ color: item.color, filter: `drop-shadow(0 0 10px ${item.color})` }}
-        />
-        <span
-          className="text-sm font-extrabold whitespace-nowrap relative z-10"
-          style={{ color: item.color, textShadow: `0 0 14px ${item.color}80, 0 1px 2px hsl(0 0% 0% / 0.6)` }}
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Link
+          to={item.href}
+          onClick={onClose}
+          className="absolute group"
+          style={{
+            transform: isOpen
+              ? `translate(${x}px, ${y}px) scale(1)`
+              : `translate(0px, 0px) scale(0)`,
+            opacity: isOpen ? 1 : 0,
+            transition: `all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) ${delay}ms`,
+            left: "0px",
+            top: "0px",
+            marginLeft: "-50px",
+            marginTop: "-35px",
+          }}
         >
-          {item.label}
-        </span>
-
-        {isActive && (
           <div
-            className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 h-2 w-2 rounded-full"
+            ref={cardRef}
+            className="relative flex flex-col items-center gap-2.5 px-5 py-4 rounded-2xl border cursor-pointer"
             style={{
-              backgroundColor: item.color,
-              boxShadow: `0 0 10px ${item.color}, 0 0 20px ${item.color}60`,
+              background: `linear-gradient(145deg, ${item.color}40, ${item.color}18 40%, hsl(0 0% 6% / 0.92))`,
+              borderColor: isActive ? item.color : `${item.color}50`,
+              boxShadow: isActive
+                ? `0 8px 32px ${item.color}40, 0 0 48px ${item.color}15, inset 0 1px 0 ${item.color}40`
+                : `0 8px 24px hsl(0 0% 0% / 0.4), 0 0 20px ${item.color}15, inset 0 1px 0 ${item.color}25`,
+              width: "110px",
+              transition: "transform 0.15s ease-out, box-shadow 0.3s ease, border-color 0.3s ease",
+              backdropFilter: "blur(16px)",
+              transformStyle: "preserve-3d",
             }}
-          />
-        )}
-      </div>
-    </Link>
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+          >
+            {/* Holographic scan lines */}
+            <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none opacity-30">
+              <div
+                className="absolute inset-0"
+                style={{
+                  background: `repeating-linear-gradient(0deg, transparent, transparent 2px, ${item.color}10 2px, ${item.color}10 3px)`,
+                }}
+              />
+            </div>
+
+            {/* Glow orb behind icon */}
+            <div
+              className="absolute top-2 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full blur-xl pointer-events-none"
+              style={{ background: item.color, opacity: 0.25 }}
+            />
+
+            <Icon
+              className="h-7 w-7 relative z-10"
+              style={{ color: item.color, filter: `drop-shadow(0 0 10px ${item.color})` }}
+            />
+            <span
+              className="text-sm font-extrabold whitespace-nowrap relative z-10"
+              style={{ color: item.color, textShadow: `0 0 14px ${item.color}80, 0 1px 2px hsl(0 0% 0% / 0.6)` }}
+            >
+              {item.label}
+            </span>
+
+            {isActive && (
+              <div
+                className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 h-2 w-2 rounded-full"
+                style={{
+                  backgroundColor: item.color,
+                  boxShadow: `0 0 10px ${item.color}, 0 0 20px ${item.color}60`,
+                }}
+              />
+            )}
+          </div>
+        </Link>
+      </TooltipTrigger>
+      <TooltipContent side="bottom" className="font-semibold text-xs">
+        {item.desc}
+      </TooltipContent>
+    </Tooltip>
   );
 }
 
