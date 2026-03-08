@@ -137,13 +137,8 @@ const HolographicNav = () => {
                 delay={i * 60}
                 onClose={() => setIsOpen(false)}
               />
-                      }}
-                    />
-                  )}
-                </div>
-              </Link>
-            );
           })}
+        </div>
         </div>
 
         {/* Central button */}
