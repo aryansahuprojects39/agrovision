@@ -74,6 +74,9 @@ const HeroSection = () => {
         />
       </div>
 
+      {/* Seasonal floating particles - hero only */}
+      <FloatingSeasonalParticles />
+
 
       <div
         className="relative z-10 container mx-auto px-4 lg:px-8 py-20 pt-28 will-change-transform"
