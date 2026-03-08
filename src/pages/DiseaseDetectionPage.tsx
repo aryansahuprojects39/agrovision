@@ -261,8 +261,8 @@ const DiseaseDetectionPage = () => {
                         data={{
                           plant_name: result.plant_name || "Unknown",
                           disease: result.disease,
-                          severity_level: result.severity_level || (result.disease === "Healthy" ? "healthy" : "moderate"),
-                          infected_area_percent: result.infected_area_percent || (result.disease === "Healthy" ? 0 : 30),
+                          severity_level: (result.severity_level || (result.disease === "Healthy" ? "healthy" : "moderate")).toLowerCase(),
+                          infected_area_percent: result.infected_area_percent ?? (result.disease === "Healthy" ? 0 : 30),
                           spread_pattern: result.spread_pattern || "spots",
                           affected_zones: result.affected_zones || [],
                           cropImageUrl: image || undefined,
