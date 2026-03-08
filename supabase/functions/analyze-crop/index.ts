@@ -29,14 +29,15 @@ serve(async (req) => {
             role: "system",
             content: `You are an expert agricultural pathologist AI. Analyze crop leaf images and diagnose diseases.
 You must respond using the suggest_diagnosis tool.
-If the image is not a plant/crop leaf, respond with disease "Not a crop image" and appropriate description.`,
+Always identify the plant/crop species name.
+If the image is not a plant/crop leaf, respond with disease "Not a crop image", plant_name "Unknown", and appropriate description.`,
           },
           {
             role: "user",
             content: [
               {
                 type: "text",
-                text: `Analyze this crop leaf image (filename: ${filename}). Identify any diseases, provide treatment recommendations and prevention tips.`,
+                text: `Analyze this crop leaf image (filename: ${filename}). Identify the plant species, any diseases, provide treatment recommendations and prevention tips.`,
               },
               {
                 type: "image_url",
@@ -50,10 +51,14 @@ If the image is not a plant/crop leaf, respond with disease "Not a crop image" a
             type: "function",
             function: {
               name: "suggest_diagnosis",
-              description: "Return the crop disease diagnosis result",
+              description: "Return the crop disease diagnosis result including plant name",
               parameters: {
                 type: "object",
                 properties: {
+                  plant_name: {
+                    type: "string",
+                    description: "Common name of the plant/crop species identified in the image",
+                  },
                   disease: {
                     type: "string",
                     description: "Name of the disease, or 'Healthy' if no disease detected",
@@ -77,7 +82,7 @@ If the image is not a plant/crop leaf, respond with disease "Not a crop image" a
                     description: "List of prevention tips",
                   },
                 },
-                required: ["disease", "confidence", "description", "treatment", "prevention"],
+                required: ["plant_name", "disease", "confidence", "description", "treatment", "prevention"],
                 additionalProperties: false,
               },
             },
