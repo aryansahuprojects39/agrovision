@@ -4,6 +4,7 @@ import { useActivityTracker } from "@/hooks/useActivityTracker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { CloudSun, Droplets, Wind, Thermometer, Search, Loader2, Sun, Cloud, CloudRain, Snowflake, Eye, Gauge } from "lucide-react";
 import { toast } from "sonner";
 
