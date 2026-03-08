@@ -2,24 +2,37 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Leaf } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useEffect, useRef, useState } from "react";
 import heroImage from "@/assets/hero-farm.jpg";
 
 const FloatingElements3D = lazy(() => import("@/components/FloatingElements3D"));
 
 const HeroSection = () => {
   const { user } = useAuth();
+  const sectionRef = useRef<HTMLElement>(null);
+  const [scrollY, setScrollY] = useState(0);
+
+  useEffect(() => {
+    const onScroll = () => setScrollY(window.scrollY);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const parallaxOffset = scrollY * 0.4;
+  const textParallax = scrollY * 0.15;
+  const opacity = Math.max(0, 1 - scrollY / 700);
 
   return (
-    <section className="relative min-h-[100svh] flex items-center overflow-hidden">
-      {/* Background image */}
-      <div className="absolute inset-0">
+    <section ref={sectionRef} className="relative min-h-[100svh] flex items-center overflow-hidden">
+      {/* Parallax background image */}
+      <div className="absolute inset-0 overflow-hidden">
         <img
           src={heroImage}
           alt="Smart farming landscape"
-          className="w-full h-full object-cover"
+          className="w-full h-[120%] object-cover will-change-transform"
+          style={{ transform: `translateY(-${parallaxOffset}px) scale(1.05)` }}
         />
-        <div className="absolute inset-0 bg-black/60 dark:bg-black/70" />
+        <div className="absolute inset-0 bg-black/55 dark:bg-black/65" />
       </div>
 
       {/* 3D Floating Elements */}
@@ -27,7 +40,10 @@ const HeroSection = () => {
         <FloatingElements3D />
       </Suspense>
 
-      <div className="relative z-10 container mx-auto px-4 lg:px-8 py-20 pt-28">
+      <div
+        className="relative z-10 container mx-auto px-4 lg:px-8 py-20 pt-28 will-change-transform"
+        style={{ transform: `translateY(${textParallax}px)`, opacity }}
+      >
         <div className="max-w-2xl space-y-6">
           <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-sm text-primary-foreground backdrop-blur-sm animate-fade-in">
             <Leaf className="h-4 w-4" />
@@ -75,7 +91,7 @@ const HeroSection = () => {
       </div>
 
       {/* Bottom gradient fade */}
-      <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-background to-transparent z-10" />
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent z-10" />
     </section>
   );
 };
