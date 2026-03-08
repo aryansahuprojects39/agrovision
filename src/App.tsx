@@ -24,8 +24,6 @@ const queryClient = new QueryClient();
 
 const AnimatedRoutes = () => {
   const location = useLocation();
-  // Apply dynamic environment theme (season + climate + day/night)
-  useEnvironmentTheme();
 
   return (
     <>
@@ -57,11 +55,11 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
-          <AnimatedRoutes />
+          <EnvironmentProvider>
+            <AnimatedRoutes />
+          </EnvironmentProvider>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
 );
-
-export default App;
