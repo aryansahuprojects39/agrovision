@@ -202,9 +202,11 @@ const HolographicNav = () => {
     const cy = vh - 24 - 28 + position.y;
 
     const count = NAV_ITEMS.length;
-    const margin = 100; // keep items well below navbar
-    const itemHalfW = 55;
-    const itemHalfH = 42;
+    const marginTop = 100; // below navbar
+    const marginSide = 30;
+    const marginBottom = 50;
+    const itemHalfW = 60;
+    const itemHalfH = 48;
 
     // How centered is the button? (0 = edge, 1 = perfect center)
     const edgeMargin = 120;
