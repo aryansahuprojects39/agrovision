@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { CloudSun, Droplets, Wind, Thermometer, Search, Loader2, Sun, Cloud, CloudRain, Snowflake, Eye, Gauge } from "lucide-react";
 import { toast } from "sonner";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 interface HourForecast {
   time: string;
