@@ -41,7 +41,9 @@ const HeroSection = () => {
   const textParallax = scrollY * 0.15;
   const opacity = Math.max(0, 1 - scrollY / 700);
 
-  const heroImage = SEASON_IMAGES[season] || heroFarm;
+  const isNight = timeOfDay === "night" || timeOfDay === "evening";
+  const seasonData = SEASON_IMAGES[season];
+  const heroImage = seasonData ? (isNight ? seasonData.night : seasonData.day) : heroFarm;
 
   // Overlay opacity based on time of day & climate
   const overlayOpacity = useMemo(() => {
