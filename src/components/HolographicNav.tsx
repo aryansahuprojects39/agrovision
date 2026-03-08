@@ -103,7 +103,7 @@ function NavCard({
 
             <Icon
               className="h-7 w-7 relative z-10"
-              style={{ color: item.color, filter: `drop-shadow(0 0 6px ${item.color})` }}
+              style={{ color: item.color, filter: `drop-shadow(0 0 6px ${item.color})`, WebkitTextStroke: "1.5px #000", paintOrder: "stroke fill", stroke: "#000", strokeWidth: "1.5px" }}
             />
             <span
               className="text-sm font-extrabold whitespace-nowrap relative z-10"
