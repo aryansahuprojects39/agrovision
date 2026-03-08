@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Microscope, LayoutDashboard, ShoppingCart, CloudSun, Users, X } from "lucide-react";
+import { Microscope, LayoutDashboard, ShoppingCart, CloudSun, Users, Landmark, X } from "lucide-react";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 
 const NAV_ITEMS = [
@@ -9,6 +9,7 @@ const NAV_ITEMS = [
   { label: "Marketplace", href: "/marketplace", icon: ShoppingCart, color: "#f59e0b" },
   { label: "Weather", href: "/weather", icon: CloudSun, color: "#06b6d4" },
   { label: "Community", href: "/community", icon: Users, color: "#a855f7" },
+  { label: "Gov Schemes", href: "/government-schemes", icon: Landmark, color: "#ef4444" },
 ];
 
 const HIDDEN_ROUTES = ["/auth", "/admin", "/forgot-password", "/reset-password"];
