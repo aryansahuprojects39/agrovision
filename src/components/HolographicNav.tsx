@@ -50,7 +50,7 @@ const HolographicNav = () => {
   const totalItems = NAV_ITEMS.length;
   const arcSpread = 180;
   const startAngle = -90 - arcSpread / 2;
-  const radius = 140;
+  const radius = 200;
 
   if (isHidden) return null;
 
