@@ -108,7 +108,7 @@ const DashboardPage = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       <div className="pt-20 pb-12 container mx-auto px-4 lg:px-8">
-        <h1 className="text-3xl font-bold text-foreground mb-6">Farmer Dashboard</h1>
+        <h1 className="text-3xl font-bold text-foreground mb-6">My Dashboard</h1>
 
         <Tabs defaultValue="profile" className="space-y-6">
           <TabsList>
