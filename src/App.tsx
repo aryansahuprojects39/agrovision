@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { useEnvironmentTheme } from "@/hooks/useEnvironmentTheme";
 import PageTransition from "@/components/PageTransition";
 import HolographicNav from "@/components/HolographicNav";
 import Index from "./pages/Index";
@@ -23,6 +24,8 @@ const queryClient = new QueryClient();
 
 const AnimatedRoutes = () => {
   const location = useLocation();
+  // Apply dynamic environment theme (season + climate + day/night)
+  useEnvironmentTheme();
 
   return (
     <>
