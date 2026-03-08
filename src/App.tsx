@@ -25,23 +25,25 @@ const AnimatedRoutes = () => {
   const location = useLocation();
 
   return (
-    <PageTransition>
-      <Routes location={location}>
-        <Route path="/" element={<Index />} />
-        <Route path="/auth" element={<AuthPage />} />
-        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="/reset-password" element={<ResetPasswordPage />} />
-        <Route path="/marketplace" element={<MarketplacePage />} />
-        <Route path="/disease-detection" element={<DiseaseDetectionPage />} />
-        <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/weather" element={<WeatherPage />} />
-        <Route path="/government-schemes" element={<GovernmentSchemesPage />} />
-        <Route path="/community" element={<CommunityForumPage />} />
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+    <>
+      <PageTransition>
+        <Routes location={location}>
+          <Route path="/" element={<Index />} />
+          <Route path="/auth" element={<AuthPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route path="/marketplace" element={<MarketplacePage />} />
+          <Route path="/disease-detection" element={<DiseaseDetectionPage />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/weather" element={<WeatherPage />} />
+          <Route path="/government-schemes" element={<GovernmentSchemesPage />} />
+          <Route path="/community" element={<CommunityForumPage />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </PageTransition>
       <HolographicNav />
-    </PageTransition>
+    </>
   );
 };
 
