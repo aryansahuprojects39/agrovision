@@ -4,11 +4,11 @@ import { Microscope, LayoutDashboard, ShoppingCart, CloudSun, Users, Landmark, X
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 
 const NAV_ITEMS = [
-  { label: "AI Crop Doctor", href: "/disease-detection", icon: Microscope, color: "#22c55e" },
-  { label: "Farm Dashboard", href: "/dashboard", icon: LayoutDashboard, color: "#3b82f6" },
   { label: "Marketplace", href: "/marketplace", icon: ShoppingCart, color: "#f59e0b" },
   { label: "Weather", href: "/weather", icon: CloudSun, color: "#06b6d4" },
+  { label: "Farm Dashboard", href: "/dashboard", icon: LayoutDashboard, color: "#3b82f6" },
   { label: "Community", href: "/community", icon: Users, color: "#a855f7" },
+  { label: "AI Crop Doctor", href: "/disease-detection", icon: Microscope, color: "#22c55e" },
   { label: "Gov Schemes", href: "/government-schemes", icon: Landmark, color: "#ef4444" },
 ];
 
