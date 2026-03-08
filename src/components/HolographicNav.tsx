@@ -202,38 +202,68 @@ const HolographicNav = () => {
     const centerY = Math.max(0, Math.min(1, 1 - Math.abs(cy - vh / 2) / (vh / 2 - edgeMargin)));
     const centeredness = Math.min(centerX, centerY);
 
-    // When centered: full 360° circle. At edge: 150° arc upward
     const radius = 250;
-    const isCircle = centeredness > 0.5;
-    const spreadAngle = isCircle ? 2 * Math.PI : Math.PI; // 180° arc
+    const innerRadius = 150;
 
-    // Determine which edge is nearest and point arc away from it
+    // Detect position zones
     const distTop = cy;
     const distBottom = vh - cy;
     const distLeft = cx;
     const distRight = vw - cx;
-    const minDist = Math.min(distTop, distBottom, distLeft, distRight);
+    const cornerThreshold = 200;
+    const isCorner =
+      Math.min(distTop, distBottom) < cornerThreshold &&
+      Math.min(distLeft, distRight) < cornerThreshold;
 
+    if (isCorner) {
+      // Quadrant: 90° arc, two rings (outer 3 + inner 3)
+      const nearTop = distTop < distBottom;
+      const nearLeft = distLeft < distRight;
+      // Base angle points diagonally away from corner
+      const baseAngle = nearTop
+        ? nearLeft ? -Math.PI / 4 : -3 * Math.PI / 4  // bottom-right / bottom-left
+        : nearLeft ? Math.PI / 4 : 3 * Math.PI / 4;    // top-right / top-left
+
+      const quadSpread = Math.PI / 2; // 90°
+
+      return NAV_ITEMS.map((_, i) => {
+        const isOuter = i < 3;
+        const r = isOuter ? radius : innerRadius;
+        const idx = isOuter ? i : i - 3;
+        const angle = baseAngle - quadSpread / 2 + (idx / 2) * quadSpread;
+        let x = Math.cos(angle) * r;
+        let y = -Math.sin(angle) * r;
+
+        // Clamp
+        if (cx + x - itemHalfW < margin) x = margin - cx + itemHalfW;
+        if (cx + x + itemHalfW > vw - margin) x = vw - margin - cx - itemHalfW;
+        if (cy + y - itemHalfH < margin) y = margin - cy + itemHalfH;
+        if (cy + y + itemHalfH > vh - margin) y = vh - margin - cy - itemHalfH;
+
+        return { x, y };
+      });
+    }
+
+    const isCircle = centeredness > 0.5;
+    const spreadAngle = isCircle ? 2 * Math.PI : Math.PI;
+
+    const minDist = Math.min(distTop, distBottom, distLeft, distRight);
     let baseAngle: number;
     let yOffset = 0;
     let xOffset = 0;
 
     if (isCircle) {
-      baseAngle = Math.PI / 2; // doesn't matter for full circle
+      baseAngle = Math.PI / 2;
     } else if (minDist === distBottom) {
-      // Near bottom → fan upward
       baseAngle = Math.PI / 2;
       yOffset = -50;
     } else if (minDist === distTop) {
-      // Near top → fan downward
       baseAngle = -Math.PI / 2;
       yOffset = 50;
     } else if (minDist === distLeft) {
-      // Near left → fan rightward (vertical semicircle)
       baseAngle = 0;
       xOffset = 50;
     } else {
-      // Near right → fan leftward (vertical semicircle)
       baseAngle = Math.PI;
       xOffset = -50;
     }
@@ -245,7 +275,6 @@ const HolographicNav = () => {
       let x = Math.cos(angle) * radius + xOffset;
       let y = -Math.sin(angle) * radius + yOffset;
 
-      // Clamp to viewport
       if (cx + x - itemHalfW < margin) x = margin - cx + itemHalfW;
       if (cx + x + itemHalfW > vw - margin) x = vw - margin - cx - itemHalfW;
       if (cy + y - itemHalfH < margin) y = margin - cy + itemHalfH;
