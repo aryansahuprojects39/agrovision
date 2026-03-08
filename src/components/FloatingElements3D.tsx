@@ -351,101 +351,162 @@ function getClimateFromWeatherCode(code: number, windSpeed: number): Climate {
   return "clear";
 }
 
-// Raindrop that falls down
+// Raindrop — large, visible, with teardrop shape
 function Raindrop({ pointer }: { pointer: React.MutableRefObject<{ x: number; y: number }> }) {
-  const ref = useRef<THREE.Mesh>(null);
+  const ref = useRef<THREE.Group>(null);
   const startPos = useMemo(() => ({
     x: (Math.random() - 0.5) * 10,
-    y: 4 + Math.random() * 2,
-    z: -1 - Math.random() * 3,
+    y: 4 + Math.random() * 3,
+    z: -0.5 - Math.random() * 2,
   }), []);
-  const speed = useMemo(() => 2 + Math.random() * 3, []);
+  const speed = useMemo(() => 3 + Math.random() * 4, []);
+  const size = useMemo(() => 0.6 + Math.random() * 0.4, []);
 
   useFrame(() => {
     if (!ref.current) return;
     ref.current.position.y -= speed * 0.016;
-    ref.current.position.x += pointer.current.x * 0.005;
+    ref.current.position.x += pointer.current.x * 0.008;
     if (ref.current.position.y < -4) {
-      ref.current.position.y = 4 + Math.random() * 2;
+      ref.current.position.y = 5 + Math.random() * 2;
       ref.current.position.x = (Math.random() - 0.5) * 10;
     }
   });
 
   return (
-    <mesh ref={ref} position={[startPos.x, startPos.y, startPos.z]}>
-      <cylinderGeometry args={[0.008, 0.008, 0.2, 4]} />
-      <meshStandardMaterial color="#90caf9" transparent opacity={0.5} emissive="#64b5f6" emissiveIntensity={0.3} />
-    </mesh>
+    <group ref={ref} position={[startPos.x, startPos.y, startPos.z]} scale={size}>
+      <mesh>
+        <capsuleGeometry args={[0.02, 0.15, 4, 8]} />
+        <meshStandardMaterial color="#64b5f6" transparent opacity={0.7} emissive="#42a5f5" emissiveIntensity={0.5} />
+      </mesh>
+      <mesh position={[0, 0.12, 0]}>
+        <coneGeometry args={[0.025, 0.08, 4]} />
+        <meshStandardMaterial color="#90caf9" transparent opacity={0.5} />
+      </mesh>
+    </group>
   );
 }
 
-// Cloud puff
+// Cloud — large fluffy clusters
 function CloudPuff({ position, pointer }: { position: [number, number, number]; pointer: React.MutableRefObject<{ x: number; y: number }> }) {
   const ref = useRef<THREE.Group>(null);
-  const speed = useMemo(() => 0.1 + Math.random() * 0.15, []);
+  const speed = useMemo(() => 0.08 + Math.random() * 0.12, []);
+  const puffs = useMemo(() =>
+    Array.from({ length: 6 }, () => ({
+      x: (Math.random() - 0.5) * 0.8,
+      y: (Math.random() - 0.3) * 0.3,
+      z: (Math.random() - 0.5) * 0.3,
+      r: 0.2 + Math.random() * 0.25,
+    })),
+  []);
 
   useFrame((state) => {
     if (!ref.current) return;
-    ref.current.position.x += speed * 0.01 + pointer.current.x * 0.002;
-    if (ref.current.position.x > 6) ref.current.position.x = -6;
-    ref.current.position.y += Math.sin(state.clock.elapsedTime * 0.3) * 0.001;
+    ref.current.position.x += speed * 0.015 + pointer.current.x * 0.003;
+    if (ref.current.position.x > 7) ref.current.position.x = -7;
+    ref.current.position.y += Math.sin(state.clock.elapsedTime * 0.2 + position[0]) * 0.0015;
   });
 
   return (
     <group ref={ref} position={position}>
-      {[0, 0.3, -0.25, 0.15].map((offset, i) => (
-        <mesh key={i} position={[offset, Math.random() * 0.1, 0]}>
-          <sphereGeometry args={[0.25 + Math.random() * 0.15, 8, 8]} />
-          <meshStandardMaterial color="#cfd8dc" transparent opacity={0.25} roughness={1} />
+      {puffs.map((p, i) => (
+        <mesh key={i} position={[p.x, p.y, p.z]}>
+          <sphereGeometry args={[p.r, 12, 12]} />
+          <meshStandardMaterial color="#b0bec5" transparent opacity={0.4} roughness={1} />
         </mesh>
       ))}
     </group>
   );
 }
 
-// Wind streak line
+// Wind streak — longer, visible curved lines
 function WindStreak({ pointer }: { pointer: React.MutableRefObject<{ x: number; y: number }> }) {
   const ref = useRef<THREE.Mesh>(null);
   const startPos = useMemo(() => ({
-    x: -6 + Math.random() * 2,
+    x: -7 + Math.random() * 3,
     y: (Math.random() - 0.5) * 5,
-    z: -1 - Math.random() * 3,
+    z: -0.5 - Math.random() * 2,
   }), []);
-  const speed = useMemo(() => 3 + Math.random() * 4, []);
+  const speed = useMemo(() => 4 + Math.random() * 5, []);
+  const length = useMemo(() => 1.2 + Math.random() * 1.0, []);
 
   useFrame(() => {
     if (!ref.current) return;
     ref.current.position.x += speed * 0.016;
-    ref.current.position.y += pointer.current.y * 0.002;
-    if (ref.current.position.x > 6) {
-      ref.current.position.x = -6;
+    ref.current.position.y += pointer.current.y * 0.003;
+    if (ref.current.position.x > 7) {
+      ref.current.position.x = -7;
       ref.current.position.y = (Math.random() - 0.5) * 5;
     }
   });
 
   return (
-    <mesh ref={ref} position={[startPos.x, startPos.y, startPos.z]} rotation={[0, 0, -0.1]}>
-      <planeGeometry args={[0.8 + Math.random() * 0.5, 0.01]} />
-      <meshStandardMaterial color="#e0e0e0" transparent opacity={0.2} side={THREE.DoubleSide} />
+    <mesh ref={ref} position={[startPos.x, startPos.y, startPos.z]} rotation={[0, 0, -0.08]}>
+      <planeGeometry args={[length, 0.015]} />
+      <meshStandardMaterial color="#e0e0e0" transparent opacity={0.35} emissive="#ffffff" emissiveIntensity={0.15} side={THREE.DoubleSide} />
     </mesh>
   );
 }
 
-// Sun rays
+// Sun — glowing orb with pulsing rays
+function SunGlow() {
+  const ref = useRef<THREE.Group>(null);
+
+  useFrame((state) => {
+    if (!ref.current) return;
+    const pulse = 1 + Math.sin(state.clock.elapsedTime * 0.8) * 0.08;
+    ref.current.scale.setScalar(pulse);
+  });
+
+  return (
+    <group ref={ref} position={[4, 2.8, -4]}>
+      <mesh>
+        <sphereGeometry args={[0.4, 16, 16]} />
+        <meshStandardMaterial color="#fff176" emissive="#ffee58" emissiveIntensity={1.2} transparent opacity={0.8} />
+      </mesh>
+      <mesh>
+        <sphereGeometry args={[0.7, 16, 16]} />
+        <meshStandardMaterial color="#fff9c4" emissive="#fdd835" emissiveIntensity={0.6} transparent opacity={0.2} />
+      </mesh>
+    </group>
+  );
+}
+
 function SunRay({ angle }: { angle: number }) {
   const ref = useRef<THREE.Mesh>(null);
 
   useFrame((state) => {
     if (!ref.current) return;
     ref.current.rotation.z = angle + Math.sin(state.clock.elapsedTime * 0.5) * 0.05;
-    const pulse = 0.8 + Math.sin(state.clock.elapsedTime * 1.5 + angle) * 0.2;
+    const pulse = 0.7 + Math.sin(state.clock.elapsedTime * 1.5 + angle) * 0.3;
     ref.current.scale.set(1, pulse, 1);
   });
 
   return (
-    <mesh ref={ref} position={[4, 2.5, -3]} rotation={[0, 0, angle]}>
-      <planeGeometry args={[2, 0.03]} />
-      <meshStandardMaterial color="#fff9c4" transparent opacity={0.12} emissive="#ffee58" emissiveIntensity={0.3} side={THREE.DoubleSide} />
+    <mesh ref={ref} position={[4, 2.8, -4.1]} rotation={[0, 0, angle]}>
+      <planeGeometry args={[2.5, 0.04]} />
+      <meshStandardMaterial color="#fff9c4" transparent opacity={0.18} emissive="#ffee58" emissiveIntensity={0.4} side={THREE.DoubleSide} />
+    </mesh>
+  );
+}
+
+// Fog layer
+function FogLayer({ pointer }: { pointer: React.MutableRefObject<{ x: number; y: number }> }) {
+  const ref = useRef<THREE.Mesh>(null);
+  const yPos = useMemo(() => (Math.random() - 0.5) * 4, []);
+  const speed = useMemo(() => 0.05 + Math.random() * 0.08, []);
+
+  useFrame((state) => {
+    if (!ref.current) return;
+    ref.current.position.x += speed * 0.01 + pointer.current.x * 0.001;
+    if (ref.current.position.x > 8) ref.current.position.x = -8;
+    const mat = ref.current.material as THREE.MeshStandardMaterial;
+    mat.opacity = 0.08 + Math.sin(state.clock.elapsedTime * 0.3 + yPos) * 0.04;
+  });
+
+  return (
+    <mesh ref={ref} position={[-4, yPos, -1]}>
+      <planeGeometry args={[12, 1.5]} />
+      <meshStandardMaterial color="#cfd8dc" transparent opacity={0.1} side={THREE.DoubleSide} depthWrite={false} />
     </mesh>
   );
 }
