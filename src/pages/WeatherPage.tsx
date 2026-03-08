@@ -7,6 +7,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CloudSun, Droplets, Wind, Thermometer, Search, Loader2, Sun, Cloud, CloudRain, Snowflake, Eye, Gauge } from "lucide-react";
 import { toast } from "sonner";
 
+interface HourForecast {
+  time: string;
+  temp: number;
+  weatherCode: number;
+  humidity: number;
+  windSpeed: number;
+}
+
 interface WeatherData {
   location: string;
   temperature: number;
@@ -18,6 +26,7 @@ interface WeatherData {
   visibility: number;
   pressure: number;
   daily: DayForecast[];
+  hourly: HourForecast[];
 }
 
 interface DayForecast {
