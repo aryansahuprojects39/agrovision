@@ -183,25 +183,32 @@ const HolographicNav = () => {
   }, []);
 
   const totalItems = NAV_ITEMS.length;
-  const radius = 190;
 
-  // Arc layout that adapts direction based on button position
+  // Arc layout that adapts direction and clamps to viewport
   const getItemPositions = () => {
     const vw = typeof window !== "undefined" ? window.innerWidth : 1280;
     const vh = typeof window !== "undefined" ? window.innerHeight : 720;
-    const cx = vw / 2 + position.x;
-    const cy = vh - 24 - 28 + position.y;
+    const cx = vw / 2 + position.x; // button X in viewport
+    const cy = vh - 24 - 28 + position.y; // button Y in viewport
 
-    // Determine center angle: point arc toward most open space
-    // atan2 from button to viewport center gives the "away from edge" direction
+    // Point arc toward viewport center
     const toCenterX = vw / 2 - cx;
     const toCenterY = vh / 2 - cy;
     let centerAngle = (Math.atan2(toCenterY, toCenterX) * 180) / Math.PI;
-
-    // Default upward when centered
     if (Math.abs(toCenterX) < 100 && Math.abs(toCenterY) < 100) {
       centerAngle = -90;
     }
+
+    // Scale radius down when near edges so items fit
+    const margin = 60; // min distance from viewport edge
+    const itemHalfW = 50;
+    const itemHalfH = 40;
+    const maxReachRight = vw - cx - margin - itemHalfW;
+    const maxReachLeft = cx - margin - itemHalfW;
+    const maxReachUp = cy - margin - itemHalfH;
+    const maxReachDown = vh - cy - margin - itemHalfH;
+    const maxReach = Math.max(80, Math.min(maxReachRight, maxReachLeft, maxReachUp, maxReachDown, 190));
+    const radius = Math.min(190, maxReach);
 
     const arcSpread = 160;
     const startAngle = centerAngle - arcSpread / 2;
@@ -210,10 +217,21 @@ const HolographicNav = () => {
     for (let i = 0; i < totalItems; i++) {
       const angle = startAngle + (arcSpread / (totalItems - 1)) * i;
       const rad = (angle * Math.PI) / 180;
-      positions.push({
-        x: Math.cos(rad) * radius,
-        y: Math.sin(rad) * radius,
-      });
+      let ix = Math.cos(rad) * radius;
+      let iy = Math.sin(rad) * radius;
+
+      // Clamp each item to stay within viewport
+      const itemLeft = cx + ix - itemHalfW;
+      const itemRight = cx + ix + itemHalfW;
+      const itemTop = cy + iy - itemHalfH;
+      const itemBottom = cy + iy + itemHalfH;
+
+      if (itemLeft < margin) ix += margin - itemLeft;
+      if (itemRight > vw - margin) ix -= itemRight - (vw - margin);
+      if (itemTop < margin) iy += margin - itemTop;
+      if (itemBottom > vh - margin) iy -= itemBottom - (vh - margin);
+
+      positions.push({ x: ix, y: iy });
     }
     return positions;
   };
