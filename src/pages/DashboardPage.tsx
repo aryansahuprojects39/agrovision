@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import Navbar from "@/components/Navbar";
@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Trash2, Edit2, Save, MapPin, Leaf, ShoppingCart, User } from "lucide-react";
+import { Loader2, Trash2, Edit2, Save, MapPin, Leaf, ShoppingCart, User, Home } from "lucide-react";
 import { toast } from "sonner";
 
 interface Profile {
@@ -117,7 +117,14 @@ const DashboardPage = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       <div className="pt-20 pb-12 container mx-auto px-4 lg:px-8">
-        <h1 className="text-3xl font-bold text-foreground mb-6">My Dashboard</h1>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+          <h1 className="text-3xl font-bold text-foreground">My Dashboard</h1>
+          <Button variant="outline" size="sm" asChild>
+            <Link to="/">
+              <Home className="mr-2 h-4 w-4" /> Back to Home
+            </Link>
+          </Button>
+        </div>
 
         <Tabs defaultValue="profile" className="space-y-6">
           <TabsList>

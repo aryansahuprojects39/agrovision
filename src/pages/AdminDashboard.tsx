@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/hooks/use-theme";
+import ThemeToggle from "@/components/ThemeToggle";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import AdminOverview from "@/components/admin/AdminOverview";
 import AdminAnalytics from "@/components/admin/AdminAnalytics";
@@ -11,7 +12,7 @@ import AdminNotifications from "@/components/admin/AdminNotifications";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Users, ShoppingCart, Leaf, Trash2, Shield, UserCog, BarChart3, Menu, X, Sun, Moon } from "lucide-react";
+import { Loader2, Users, ShoppingCart, Leaf, Trash2, Shield, UserCog, BarChart3, Menu, X, Home } from "lucide-react";
 import { toast } from "sonner";
 
 const AdminDashboard = () => {
@@ -105,10 +106,11 @@ const AdminDashboard = () => {
             <span className="font-bold text-foreground text-sm">Admin Console</span>
           </div>
           <div className="flex items-center gap-1">
-            <Button variant="ghost" size="sm" onClick={toggleTheme}>
-              {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-            </Button>
+            <ThemeToggle />
             <AdminNotifications profiles={profiles} detections={detections} />
+            <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
+              <Home className="h-4 w-4" />
+            </Button>
             <Button variant="ghost" size="sm" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
               {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button>
