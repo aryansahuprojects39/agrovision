@@ -152,8 +152,7 @@ function createCropGeometry(cropType: string): THREE.ExtrudeGeometry {
   });
 
   // Generate UV mapping
-  const pos = geo.attributes.position;
-  const uvs = new Float32Array(pos.count * 2);
+  const uvs = new Float32Array(geo.attributes.position.count * 2);
   const box = new THREE.Box3();
   const posAttr = geo.attributes.position as THREE.BufferAttribute;
   box.setFromBufferAttribute(posAttr);
