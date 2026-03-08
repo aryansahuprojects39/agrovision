@@ -15,13 +15,13 @@ const features = [
     icon: Droplets,
     title: "Smart Irrigation",
     description: "Monitor soil moisture in real-time and receive intelligent irrigation scheduling alerts.",
-    link: "/dashboard",
+    link: "/weather",
   },
   {
     icon: FlaskConical,
     title: "Soil Health Monitoring",
     description: "Analyze soil nutrients, get fertilizer suggestions, and track soil improvement over time.",
-    link: "/dashboard",
+    link: "/disease-detection",
   },
   {
     icon: ShoppingCart,

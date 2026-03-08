@@ -1,4 +1,4 @@
-import { useRef, useMemo, useState } from "react";
+import { useRef, useMemo, useState, useEffect } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls, Float, Html } from "@react-three/drei";
 import * as THREE from "three";
@@ -15,6 +15,7 @@ interface Disease3DProps {
   infected_area_percent: number;
   spread_pattern: string;
   affected_zones: AffectedZone[];
+  cropImageUrl?: string;
 }
 
 const severityColors: Record<string, string> = {
@@ -33,15 +34,22 @@ const severityEmissive: Record<string, string> = {
   critical: "#4a0028",
 };
 
-function LeafShape({ severity, infectedPercent }: { severity: string; infectedPercent: number }) {
+function LeafShape({ severity, cropImageUrl }: { severity: string; cropImageUrl?: string }) {
   const ref = useRef<THREE.Mesh>(null);
   const healthyColor = "#43a047";
   const sickColor = severityColors[severity] || "#f44336";
 
-  // Create leaf-like shape using a custom geometry
+  const texture = useMemo(() => {
+    if (!cropImageUrl) return null;
+    const loader = new THREE.TextureLoader();
+    const tex = loader.load(cropImageUrl);
+    tex.wrapS = THREE.ClampToEdgeWrapping;
+    tex.wrapT = THREE.ClampToEdgeWrapping;
+    return tex;
+  }, [cropImageUrl]);
+
   const geometry = useMemo(() => {
     const shape = new THREE.Shape();
-    // Leaf shape
     shape.moveTo(0, -1.8);
     shape.bezierCurveTo(0.8, -1, 1.2, 0, 0.9, 0.8);
     shape.bezierCurveTo(0.6, 1.4, 0.2, 1.8, 0, 2);
@@ -55,32 +63,53 @@ function LeafShape({ severity, infectedPercent }: { severity: string; infectedPe
       bevelSize: 0.02,
       bevelSegments: 3,
     });
+
+    // Generate UV mapping for the leaf shape
+    const pos = geo.attributes.position;
+    const uvs = new Float32Array(pos.count * 2);
+    for (let i = 0; i < pos.count; i++) {
+      const x = pos.getX(i);
+      const y = pos.getY(i);
+      uvs[i * 2] = (x + 1.2) / 2.4;
+      uvs[i * 2 + 1] = (y + 1.8) / 3.8;
+    }
+    geo.setAttribute("uv", new THREE.BufferAttribute(uvs, 2));
+
     return geo;
   }, []);
 
   useFrame((state) => {
     if (!ref.current) return;
-    // Gentle breathing animation
     const scale = 1 + Math.sin(state.clock.elapsedTime * 0.5) * 0.02;
     ref.current.scale.set(scale, scale, scale);
   });
 
   return (
     <mesh ref={ref} geometry={geometry} rotation={[0, 0, 0]} castShadow receiveShadow>
-      <meshStandardMaterial
-        color={severity === "healthy" ? healthyColor : sickColor}
-        roughness={0.6}
-        metalness={0.1}
-        side={THREE.DoubleSide}
-      />
+      {texture ? (
+        <meshStandardMaterial
+          map={texture}
+          roughness={0.6}
+          metalness={0.1}
+          side={THREE.DoubleSide}
+          color={severity === "healthy" ? "#ffffff" : sickColor}
+        />
+      ) : (
+        <meshStandardMaterial
+          color={severity === "healthy" ? healthyColor : sickColor}
+          roughness={0.6}
+          metalness={0.1}
+          side={THREE.DoubleSide}
+        />
+      )}
     </mesh>
   );
 }
 
 function LeafVeins() {
-  const points = useMemo(() => {
+  const lines = useMemo(() => {
+    const result: THREE.Line[] = [];
     const curves: THREE.Vector3[][] = [];
-    // Central vein
     const central: THREE.Vector3[] = [];
     for (let i = 0; i <= 20; i++) {
       const t = i / 20;
@@ -88,7 +117,6 @@ function LeafVeins() {
     }
     curves.push(central);
 
-    // Side veins
     for (let j = 0; j < 5; j++) {
       const yStart = -1 + j * 0.7;
       const sideR: THREE.Vector3[] = [];
@@ -103,18 +131,20 @@ function LeafVeins() {
       }
       curves.push(sideR, sideL);
     }
-    return curves;
+
+    for (const curve of curves) {
+      const geo = new THREE.BufferGeometry().setFromPoints(curve);
+      const mat = new THREE.LineBasicMaterial({ color: "#2e7d32", opacity: 0.4, transparent: true });
+      result.push(new THREE.Line(geo, mat));
+    }
+    return result;
   }, []);
 
   return (
     <>
-      {points.map((curve, i) => {
-        const geo = new THREE.BufferGeometry().setFromPoints(curve);
-        const mat = new THREE.LineBasicMaterial({ color: "#2e7d32", opacity: 0.4, transparent: true });
-        return (
-          <primitive key={i} object={new THREE.Line(geo, mat)} />
-        );
-      })}
+      {lines.map((line, i) => (
+        <primitive key={i} object={line} />
+      ))}
     </>
   );
 }
@@ -124,7 +154,6 @@ function InfectionSpot({ zone, severity, index }: { zone: AffectedZone; severity
   const color = severityColors[severity] || "#f44336";
   const emissive = severityEmissive[severity] || "#b71c1c";
 
-  // Map zone coordinates to leaf surface
   const position: [number, number, number] = [
     (zone.x - 0.5) * 1.6,
     -1.8 + zone.y * 3.8,
@@ -136,10 +165,8 @@ function InfectionSpot({ zone, severity, index }: { zone: AffectedZone; severity
   useFrame((state) => {
     if (!ref.current) return;
     const t = state.clock.elapsedTime + index;
-    // Pulsating effect
     const pulse = 1 + Math.sin(t * 2) * 0.15;
     ref.current.scale.set(pulse, pulse, pulse);
-    // Slight glow oscillation
     const mat = ref.current.material as THREE.MeshStandardMaterial;
     mat.emissiveIntensity = 0.3 + Math.sin(t * 3) * 0.2;
   });
@@ -157,7 +184,6 @@ function InfectionSpot({ zone, severity, index }: { zone: AffectedZone; severity
           side={THREE.DoubleSide}
         />
       </mesh>
-      {/* Outer ring for spread indication */}
       <mesh position={position}>
         <ringGeometry args={[spotRadius, spotRadius + 0.05, 32]} />
         <meshStandardMaterial
@@ -168,55 +194,6 @@ function InfectionSpot({ zone, severity, index }: { zone: AffectedZone; severity
         />
       </mesh>
     </Float>
-  );
-}
-
-function SpreadParticles({ pattern, severity }: { pattern: string; severity: string }) {
-  const particles = useMemo(() => {
-    const result: { pos: [number, number, number]; speed: number }[] = [];
-    const count = severity === "critical" ? 40 : severity === "severe" ? 30 : 20;
-
-    for (let i = 0; i < count; i++) {
-      let x = 0, y = 0;
-      switch (pattern) {
-        case "edges":
-          const angle = Math.random() * Math.PI * 2;
-          x = Math.cos(angle) * (0.7 + Math.random() * 0.3);
-          y = Math.sin(angle) * (1.4 + Math.random() * 0.3);
-          break;
-        case "veins":
-          x = (Math.random() - 0.5) * 0.3;
-          y = -1.8 + Math.random() * 3.8;
-          break;
-        case "center":
-          x = (Math.random() - 0.5) * 0.6;
-          y = (Math.random() - 0.5) * 1.2;
-          break;
-        case "uniform":
-          x = (Math.random() - 0.5) * 1.6;
-          y = -1.8 + Math.random() * 3.8;
-          break;
-        default: // spots
-          x = (Math.random() - 0.5) * 1.4;
-          y = -1.2 + Math.random() * 3;
-          break;
-      }
-      result.push({
-        pos: [x, y, 0.12 + Math.random() * 0.2],
-        speed: 0.5 + Math.random() * 1.5,
-      });
-    }
-    return result;
-  }, [pattern, severity]);
-
-  const color = severityColors[severity] || "#f44336";
-
-  return (
-    <>
-      {particles.map((p, i) => (
-        <SpreadParticle key={i} position={p.pos} speed={p.speed} color={color} index={i} />
-      ))}
-    </>
   );
 }
 
@@ -252,50 +229,191 @@ function SpreadParticle({ position, speed, color, index }: {
   );
 }
 
-function StemGeometry() {
-  const ref = useRef<THREE.Mesh>(null);
+function SpreadParticles({ pattern, severity }: { pattern: string; severity: string }) {
+  const particles = useMemo(() => {
+    const result: { pos: [number, number, number]; speed: number }[] = [];
+    const count = severity === "critical" ? 40 : severity === "severe" ? 30 : 20;
+
+    for (let i = 0; i < count; i++) {
+      let x = 0, y = 0;
+      switch (pattern) {
+        case "edges": {
+          const angle = Math.random() * Math.PI * 2;
+          x = Math.cos(angle) * (0.7 + Math.random() * 0.3);
+          y = Math.sin(angle) * (1.4 + Math.random() * 0.3);
+          break;
+        }
+        case "veins":
+          x = (Math.random() - 0.5) * 0.3;
+          y = -1.8 + Math.random() * 3.8;
+          break;
+        case "center":
+          x = (Math.random() - 0.5) * 0.6;
+          y = (Math.random() - 0.5) * 1.2;
+          break;
+        case "uniform":
+          x = (Math.random() - 0.5) * 1.6;
+          y = -1.8 + Math.random() * 3.8;
+          break;
+        default:
+          x = (Math.random() - 0.5) * 1.4;
+          y = -1.2 + Math.random() * 3;
+          break;
+      }
+      result.push({
+        pos: [x, y, 0.12 + Math.random() * 0.2],
+        speed: 0.5 + Math.random() * 1.5,
+      });
+    }
+    return result;
+  }, [pattern, severity]);
+
+  const color = severityColors[severity] || "#f44336";
 
   return (
-    <mesh ref={ref} position={[0, -2.2, 0]}>
+    <>
+      {particles.map((p, i) => (
+        <SpreadParticle key={i} position={p.pos} speed={p.speed} color={color} index={i} />
+      ))}
+    </>
+  );
+}
+
+function StemGeometry() {
+  return (
+    <mesh position={[0, -2.2, 0]}>
       <cylinderGeometry args={[0.03, 0.05, 1, 8]} />
       <meshStandardMaterial color="#33691e" roughness={0.8} />
     </mesh>
   );
 }
 
+function HealthyGlow() {
+  const ref = useRef<THREE.Mesh>(null);
+
+  useFrame((state) => {
+    if (!ref.current) return;
+    const t = state.clock.elapsedTime;
+    const s = 1 + Math.sin(t * 0.8) * 0.05;
+    ref.current.scale.set(s, s, s);
+    const mat = ref.current.material as THREE.MeshStandardMaterial;
+    mat.opacity = 0.15 + Math.sin(t * 1.2) * 0.05;
+  });
+
+  return (
+    <mesh ref={ref} position={[0, 0.1, -0.05]}>
+      <circleGeometry args={[2, 32]} />
+      <meshStandardMaterial
+        color="#43a047"
+        emissive="#66bb6a"
+        emissiveIntensity={0.5}
+        transparent
+        opacity={0.15}
+        side={THREE.DoubleSide}
+      />
+    </mesh>
+  );
+}
+
+function HealthyParticles() {
+  const particles = useMemo(() => {
+    return Array.from({ length: 15 }, () => ({
+      pos: [
+        (Math.random() - 0.5) * 2.5,
+        -1.5 + Math.random() * 4,
+        0.15 + Math.random() * 0.3,
+      ] as [number, number, number],
+      speed: 0.3 + Math.random() * 0.8,
+    }));
+  }, []);
+
+  return (
+    <>
+      {particles.map((p, i) => (
+        <HealthySparkle key={i} position={p.pos} speed={p.speed} index={i} />
+      ))}
+    </>
+  );
+}
+
+function HealthySparkle({ position, speed, index }: {
+  position: [number, number, number];
+  speed: number;
+  index: number;
+}) {
+  const ref = useRef<THREE.Mesh>(null);
+
+  useFrame((state) => {
+    if (!ref.current) return;
+    const t = state.clock.elapsedTime * speed + index;
+    ref.current.position.y = position[1] + Math.sin(t) * 0.15;
+    ref.current.position.x = position[0] + Math.cos(t * 0.5) * 0.1;
+    const s = 0.6 + Math.sin(t * 2.5) * 0.4;
+    ref.current.scale.setScalar(s);
+  });
+
+  return (
+    <mesh ref={ref} position={position}>
+      <sphereGeometry args={[0.02, 6, 6]} />
+      <meshStandardMaterial
+        color="#a5d6a7"
+        emissive="#66bb6a"
+        emissiveIntensity={0.8}
+        transparent
+        opacity={0.6}
+      />
+    </mesh>
+  );
+}
+
 function SeverityIndicator({ severity, infectedPercent }: { severity: string; infectedPercent: number }) {
+  const isHealthy = severity === "healthy";
+
   return (
     <Html position={[1.8, 1.5, 0]} center>
       <div className="bg-card/95 backdrop-blur-sm border border-border rounded-lg p-3 shadow-lg min-w-[140px] pointer-events-none">
-        <div className="text-xs font-semibold text-foreground mb-1">Severity</div>
+        <div className="text-xs font-semibold text-foreground mb-1">
+          {isHealthy ? "Status" : "Severity"}
+        </div>
         <div className="flex items-center gap-2 mb-2">
           <div
             className="h-3 w-3 rounded-full"
             style={{ backgroundColor: severityColors[severity] }}
           />
           <span className="text-sm font-bold capitalize" style={{ color: severityColors[severity] }}>
-            {severity}
+            {isHealthy ? "✅ Healthy" : severity}
           </span>
         </div>
-        <div className="text-xs text-muted-foreground mb-1">Infected Area</div>
-        <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
-          <div
-            className="h-full rounded-full transition-all duration-1000"
-            style={{
-              width: `${infectedPercent}%`,
-              backgroundColor: severityColors[severity],
-            }}
-          />
-        </div>
-        <div className="text-xs font-semibold mt-1" style={{ color: severityColors[severity] }}>
-          {infectedPercent}%
-        </div>
+        {!isHealthy && (
+          <>
+            <div className="text-xs text-muted-foreground mb-1">Infected Area</div>
+            <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+              <div
+                className="h-full rounded-full transition-all duration-1000"
+                style={{
+                  width: `${infectedPercent}%`,
+                  backgroundColor: severityColors[severity],
+                }}
+              />
+            </div>
+            <div className="text-xs font-semibold mt-1" style={{ color: severityColors[severity] }}>
+              {infectedPercent}%
+            </div>
+          </>
+        )}
+        {isHealthy && (
+          <div className="text-xs text-muted-foreground mt-1">
+            No disease detected 🌱
+          </div>
+        )}
       </div>
     </Html>
   );
 }
 
 function Scene({ data }: { data: Disease3DProps }) {
+  const isHealthy = data.severity_level === "healthy";
+
   return (
     <>
       <ambientLight intensity={0.6} />
@@ -304,7 +422,7 @@ function Scene({ data }: { data: Disease3DProps }) {
       <pointLight
         position={[2, -1, 2]}
         intensity={0.4}
-        color={severityColors[data.severity_level]}
+        color={isHealthy ? "#66bb6a" : severityColors[data.severity_level]}
       />
 
       <OrbitControls
@@ -318,11 +436,16 @@ function Scene({ data }: { data: Disease3DProps }) {
       />
 
       <group>
-        <LeafShape severity={data.severity_level} infectedPercent={data.infected_area_percent} />
+        <LeafShape severity={data.severity_level} cropImageUrl={data.cropImageUrl} />
         <LeafVeins />
         <StemGeometry />
 
-        {data.severity_level !== "healthy" && (
+        {isHealthy ? (
+          <>
+            <HealthyGlow />
+            <HealthyParticles />
+          </>
+        ) : (
           <>
             {data.affected_zones.map((zone, i) => (
               <InfectionSpot key={i} zone={zone} severity={data.severity_level} index={i} />
@@ -339,6 +462,7 @@ function Scene({ data }: { data: Disease3DProps }) {
 
 const Disease3DVisualization = ({ data }: { data: Disease3DProps }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const isHealthy = data.severity_level === "healthy";
 
   return (
     <div className="space-y-4">
@@ -348,10 +472,12 @@ const Disease3DVisualization = ({ data }: { data: Disease3DProps }) => {
           <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: "#43a047" }} />
           <span>Healthy</span>
         </div>
-        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-          <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: severityColors[data.severity_level] }} />
-          <span className="capitalize">{data.severity_level}</span>
-        </div>
+        {!isHealthy && (
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: severityColors[data.severity_level] }} />
+            <span className="capitalize">{data.severity_level}</span>
+          </div>
+        )}
         <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
           <span>🔄 Drag to rotate</span>
         </div>
@@ -385,25 +511,36 @@ const Disease3DVisualization = ({ data }: { data: Disease3DProps }) => {
       </button>
 
       {/* Stats Row */}
-      <div className="grid grid-cols-3 gap-3">
-        <div className="text-center p-3 rounded-lg bg-accent/50">
-          <div className="text-2xl font-bold" style={{ color: severityColors[data.severity_level] }}>
-            {data.infected_area_percent}%
+      <div className={`grid ${isHealthy ? "grid-cols-1" : "grid-cols-3"} gap-3`}>
+        {isHealthy ? (
+          <div className="text-center p-4 rounded-lg bg-accent/50">
+            <div className="text-2xl font-bold" style={{ color: severityColors.healthy }}>
+              ✅ Healthy
+            </div>
+            <div className="text-sm text-muted-foreground mt-1">No disease detected — your crop looks great!</div>
           </div>
-          <div className="text-xs text-muted-foreground mt-1">Infected Area</div>
-        </div>
-        <div className="text-center p-3 rounded-lg bg-accent/50">
-          <div className="text-2xl font-bold capitalize" style={{ color: severityColors[data.severity_level] }}>
-            {data.severity_level}
-          </div>
-          <div className="text-xs text-muted-foreground mt-1">Severity</div>
-        </div>
-        <div className="text-center p-3 rounded-lg bg-accent/50">
-          <div className="text-2xl font-bold capitalize text-foreground">
-            {data.spread_pattern}
-          </div>
-          <div className="text-xs text-muted-foreground mt-1">Spread Pattern</div>
-        </div>
+        ) : (
+          <>
+            <div className="text-center p-3 rounded-lg bg-accent/50">
+              <div className="text-2xl font-bold" style={{ color: severityColors[data.severity_level] }}>
+                {data.infected_area_percent}%
+              </div>
+              <div className="text-xs text-muted-foreground mt-1">Infected Area</div>
+            </div>
+            <div className="text-center p-3 rounded-lg bg-accent/50">
+              <div className="text-2xl font-bold capitalize" style={{ color: severityColors[data.severity_level] }}>
+                {data.severity_level}
+              </div>
+              <div className="text-xs text-muted-foreground mt-1">Severity</div>
+            </div>
+            <div className="text-center p-3 rounded-lg bg-accent/50">
+              <div className="text-2xl font-bold capitalize text-foreground">
+                {data.spread_pattern}
+              </div>
+              <div className="text-xs text-muted-foreground mt-1">Spread Pattern</div>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
