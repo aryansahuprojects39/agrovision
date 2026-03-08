@@ -137,11 +137,32 @@ const HolographicNav = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const dragStartRef = useRef<{ x: number; y: number; posX: number; posY: number } | null>(null);
   const hasDraggedRef = useRef(false);
   const location = useLocation();
   const containerRef = useRef<HTMLDivElement>(null);
   const isHidden = HIDDEN_ROUTES.some((r) => location.pathname.startsWith(r));
+
+  // Check admin role
+  useEffect(() => {
+    const checkAdmin = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) { setIsAdmin(false); return; }
+      const { data } = await supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin").maybeSingle();
+      setIsAdmin(!!data);
+    };
+    checkAdmin();
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => checkAdmin());
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const NAV_ITEMS = useMemo(() => {
+    const dashboardItem = isAdmin ? ADMIN_DASHBOARD : FARM_DASHBOARD;
+    const items = [...BASE_NAV_ITEMS];
+    items.splice(2, 0, dashboardItem); // Insert dashboard at position 2
+    return items;
+  }, [isAdmin]);
 
   useEffect(() => { setIsOpen(false); }, [location.pathname]);
 
