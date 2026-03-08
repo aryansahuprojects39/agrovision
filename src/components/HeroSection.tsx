@@ -95,7 +95,7 @@ const HeroSection = () => {
 
           {!user ? (
             <div className="flex flex-col sm:flex-row gap-3 pt-2 animate-fade-in [animation-delay:600ms]">
-              <Button size="lg" className="text-base bg-secondary text-secondary-foreground hover:bg-secondary/90 rounded-full px-8" asChild>
+              <Button size="lg" className="text-base bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-8 font-semibold" asChild>
                 <Link to="/auth">
                   Explore Our Farms
                   <ArrowRight className="ml-2 h-4 w-4" />
