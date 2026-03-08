@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Microscope, LayoutDashboard, ShoppingCart, CloudSun, Users, X } from "lucide-react";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 
 const NAV_ITEMS = [
   { label: "AI Crop Doctor", href: "/disease-detection", icon: Microscope, color: "#22c55e" },
