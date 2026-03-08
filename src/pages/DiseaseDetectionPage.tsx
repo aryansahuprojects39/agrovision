@@ -16,6 +16,7 @@ interface DiagnosisResult {
 }
 
 const DiseaseDetectionPage = () => {
+  const { user } = useAuth();
   const [image, setImage] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
