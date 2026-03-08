@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
-import { BarChart3, Users, ShoppingCart, Leaf, UserCog, Shield, Home, Sun, Moon } from "lucide-react";
+import { BarChart3, Users, ShoppingCart, Leaf, UserCog, Shield, Home } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useTheme } from "@/hooks/use-theme";
+import ThemeToggle from "@/components/ThemeToggle";
 import AdminNotifications from "./AdminNotifications";
 
 interface AdminSidebarProps {
@@ -23,7 +23,6 @@ const navItems = [
 
 const AdminSidebar = ({ activeTab, onTabChange, userEmail, profiles = [], detections = [] }: AdminSidebarProps) => {
   const navigate = useNavigate();
-  const { theme, toggleTheme } = useTheme();
 
   return (
     <aside className="hidden lg:flex flex-col w-64 min-h-screen bg-card border-r border-border">
@@ -61,20 +60,17 @@ const AdminSidebar = ({ activeTab, onTabChange, userEmail, profiles = [], detect
       </nav>
 
       {/* Bottom */}
-      <div className="border-t border-border p-4 space-y-2">
-        <button
-          onClick={toggleTheme}
-          className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
-        >
-          {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-          {theme === "dark" ? "Light Mode" : "Dark Mode"}
-        </button>
+      <div className="border-t border-border p-4 space-y-3">
+        <div className="flex items-center justify-between px-3">
+          <span className="text-sm text-muted-foreground">Theme</span>
+          <ThemeToggle />
+        </div>
         <button
           onClick={() => navigate("/")}
           className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
         >
           <Home className="h-4 w-4" />
-          Back to Site
+          Back to Home
         </button>
         <div className="flex items-center gap-3 px-3 py-2">
           <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">

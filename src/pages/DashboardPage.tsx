@@ -117,9 +117,14 @@ const DashboardPage = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       <div className="pt-20 pb-12 container mx-auto px-4 lg:px-8">
-        <h1 className="text-3xl font-bold text-foreground mb-6">My Dashboard</h1>
-
-        <Tabs defaultValue="profile" className="space-y-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+          <h1 className="text-3xl font-bold text-foreground">My Dashboard</h1>
+          <Button variant="outline" size="sm" asChild>
+            <Link to="/">
+              <Home className="mr-2 h-4 w-4" /> Back to Home
+            </Link>
+          </Button>
+        </div>
           <TabsList>
             <TabsTrigger value="profile"><User className="mr-2 h-4 w-4" />Profile</TabsTrigger>
             <TabsTrigger value="products"><ShoppingCart className="mr-2 h-4 w-4" />My Products</TabsTrigger>
