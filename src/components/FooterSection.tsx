@@ -33,9 +33,9 @@ const FooterSection = () => {
             <div>
               <h4 className="font-semibold text-foreground mb-3">Resources</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-primary transition-colors">Documentation</a></li>
-                <li><a href="/community" className="hover:text-primary transition-colors">Community</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">Blog</a></li>
+                <li><a href="/blog" className="hover:text-primary transition-colors">Blog</a></li>
+                <li><a href="/documentaries" className="hover:text-primary transition-colors">Documentaries</a></li>
+                <li><a href="/contact" className="hover:text-primary transition-colors">Contact Us</a></li>
               </ul>
             </div>
           </ScrollReveal>

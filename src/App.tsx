@@ -43,6 +43,10 @@ const AnimatedRoutes = () => {
           <Route path="/weather" element={<WeatherPage />} />
           <Route path="/government-schemes" element={<GovernmentSchemesPage />} />
           <Route path="/community" element={<CommunityForumPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/blog" element={<BlogPage />} />
+          <Route path="/documentaries" element={<DocumentaryPage />} />
+          <Route path="/contact" element={<ContactPage />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
