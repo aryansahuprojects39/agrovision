@@ -44,6 +44,7 @@ const AnimatedRoutes = () => {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </PageTransition>
+      <FloatingSeasonalParticles />
       <HolographicNav />
     </>
   );
