@@ -28,7 +28,7 @@ function NavCard({
   delay,
   onClose,
 }: {
-  item: (typeof NAV_ITEMS)[0];
+  item: typeof FARM_DASHBOARD;
   isOpen: boolean;
   isActive: boolean;
   x: number;
