@@ -339,8 +339,8 @@ const WeatherPage = () => {
                           color: "hsl(var(--foreground))",
                         }}
                         formatter={(value: number, name: string) => [
-                          name === "temp" ? `${value}°C` : `${value}%`,
-                          name === "temp" ? "Temperature" : "Humidity",
+                          name === "temp" ? `${value}°C` : name === "humidity" ? `${value}%` : `${value} km/h`,
+                          name === "temp" ? "Temperature" : name === "humidity" ? "Humidity" : "Wind Speed",
                         ]}
                       />
                       <Area
