@@ -36,7 +36,7 @@ const severityEmissive: Record<string, string> = {
 };
 
 function getCropType(plantName: string): string {
-  const name = plantName.toLowerCase();
+  const name = (plantName || "").toLowerCase();
   if (name.includes("rice") || name.includes("paddy")) return "rice";
   if (name.includes("corn") || name.includes("maize")) return "corn";
   if (name.includes("wheat") || name.includes("barley") || name.includes("oat")) return "wheat";
