@@ -14,6 +14,7 @@ import DashboardPage from "./pages/DashboardPage";
 import WeatherPage from "./pages/WeatherPage";
 import GovernmentSchemesPage from "./pages/GovernmentSchemesPage";
 import AdminDashboard from "./pages/AdminDashboard";
+import CommunityForumPage from "./pages/CommunityForumPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
