@@ -55,6 +55,18 @@ const HolographicNav = () => {
   if (isHidden) return null;
 
   return (
+    <>
+      {/* Dark backdrop */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-[99] transition-opacity duration-500"
+          style={{
+            background: "radial-gradient(circle at 50% 100%, hsl(var(--primary) / 0.12) 0%, hsl(0 0% 0% / 0.6) 100%)",
+            backdropFilter: "blur(4px)",
+          }}
+          onClick={() => setIsOpen(false)}
+        />
+      )}
     <div ref={containerRef} className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100]">
       {/* Backdrop glow */}
       {isOpen && (
