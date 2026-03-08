@@ -10,8 +10,6 @@ import { Badge } from "@/components/ui/badge";
 import { Loader2, Users, ShoppingCart, BarChart3, Leaf, Trash2, Shield } from "lucide-react";
 import { toast } from "sonner";
 
-const ADMIN_EMAIL = "admin@agrovision.com";
-
 const AdminDashboard = () => {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
@@ -28,15 +26,23 @@ const AdminDashboard = () => {
       return;
     }
     if (!authLoading && user) {
-      if (user.email !== ADMIN_EMAIL) {
-        toast.error("Access denied. Admin only.");
-        navigate("/");
-        return;
-      }
-      setIsAdmin(true);
-      loadData();
+      checkAdminRole();
     }
   }, [user, authLoading, navigate]);
+
+  const checkAdminRole = async () => {
+    const { data, error } = await supabase.rpc("has_role", {
+      _user_id: user!.id,
+      _role: "admin",
+    });
+    if (error || !data) {
+      toast.error("Access denied. Admin only.");
+      navigate("/");
+      return;
+    }
+    setIsAdmin(true);
+    loadData();
+  };
 
   const loadData = async () => {
     const [profilesRes, productsRes, detectionsRes] = await Promise.all([
