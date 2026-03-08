@@ -8,6 +8,9 @@ import Index from "./pages/Index";
 import AuthPage from "./pages/AuthPage";
 import MarketplacePage from "./pages/MarketplacePage";
 import DiseaseDetectionPage from "./pages/DiseaseDetectionPage";
+import DashboardPage from "./pages/DashboardPage";
+import WeatherPage from "./pages/WeatherPage";
+import GovernmentSchemesPage from "./pages/GovernmentSchemesPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
