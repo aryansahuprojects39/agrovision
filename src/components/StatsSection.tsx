@@ -18,6 +18,9 @@ function AnimatedCounter({ value, suffix, prefix }: { value: number; suffix: str
       ([entry]) => {
         if (entry.isIntersecting && !started) {
           setStarted(true);
+        } else if (!entry.isIntersecting && started) {
+          setStarted(false);
+          setCount(0);
         }
       },
       { threshold: 0.5 }
