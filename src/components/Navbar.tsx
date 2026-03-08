@@ -12,6 +12,7 @@ const navLinks = [
   { label: "Disease Detection", href: "/disease-detection" },
   { label: "Weather", href: "/weather" },
   { label: "Schemes", href: "/government-schemes" },
+  { label: "Community", href: "/community" },
 ];
 
 const Navbar = () => {
