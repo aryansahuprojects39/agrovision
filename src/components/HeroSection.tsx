@@ -10,16 +10,19 @@ import heroSummer from "@/assets/hero-summer.jpg";
 import heroMonsoon from "@/assets/hero-monsoon.jpg";
 import heroAutumn from "@/assets/hero-autumn.jpg";
 import heroWinter from "@/assets/hero-winter.jpg";
+import heroSpringNight from "@/assets/hero-spring-night.jpg";
+import heroSummerNight from "@/assets/hero-summer-night.jpg";
+import heroMonsoonNight from "@/assets/hero-monsoon-night.jpg";
+import heroAutumnNight from "@/assets/hero-autumn-night.jpg";
+import heroWinterNight from "@/assets/hero-winter-night.jpg";
 import heroFarm from "@/assets/hero-farm.jpg";
 
-
-
-const SEASON_IMAGES: Record<string, string> = {
-  spring: heroSpring,
-  summer: heroSummer,
-  monsoon: heroMonsoon,
-  autumn: heroAutumn,
-  winter: heroWinter,
+const SEASON_IMAGES: Record<string, { day: string; night: string }> = {
+  spring: { day: heroSpring, night: heroSpringNight },
+  summer: { day: heroSummer, night: heroSummerNight },
+  monsoon: { day: heroMonsoon, night: heroMonsoonNight },
+  autumn: { day: heroAutumn, night: heroAutumnNight },
+  winter: { day: heroWinter, night: heroWinterNight },
 };
 
 const HeroSection = () => {
