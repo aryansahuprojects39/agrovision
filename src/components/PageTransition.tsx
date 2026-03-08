@@ -161,6 +161,7 @@ const PageTransition = ({ children }: PageTransitionProps) => {
     }
 
     animatingRef.current = true;
+    const transition = getTransition(location.pathname);
     activeTransitionRef.current = transition;
     animateProgress(true);
 
