@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import AuthPage from "./pages/AuthPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 import MarketplacePage from "./pages/MarketplacePage";
 import DiseaseDetectionPage from "./pages/DiseaseDetectionPage";
 import DashboardPage from "./pages/DashboardPage";
