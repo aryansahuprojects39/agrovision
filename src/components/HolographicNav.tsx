@@ -1,18 +1,22 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Microscope, LayoutDashboard, ShoppingCart, CloudSun, Users, Landmark, X } from "lucide-react";
+import { Microscope, LayoutDashboard, ShoppingCart, CloudSun, Users, Landmark, X, Shield } from "lucide-react";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+import { supabase } from "@/integrations/supabase/client";
 
-const NAV_ITEMS = [
+const BASE_NAV_ITEMS = [
   { label: "Marketplace", href: "/marketplace", icon: ShoppingCart, color: "#f59e0b", desc: "Buy & sell farm products" },
   { label: "Weather", href: "/weather", icon: CloudSun, color: "#06b6d4", desc: "Real-time weather forecasts" },
-  { label: "Farm Dashboard", href: "/dashboard", icon: LayoutDashboard, color: "#3b82f6", desc: "Monitor your farm stats" },
+  // Dashboard item is dynamic — inserted at runtime
   { label: "Community", href: "/community", icon: Users, color: "#a855f7", desc: "Connect with other farmers" },
   { label: "AI Crop Doctor", href: "/disease-detection", icon: Microscope, color: "#22c55e", desc: "Detect crop diseases with AI" },
   { label: "Gov Schemes", href: "/government-schemes", icon: Landmark, color: "#ef4444", desc: "Explore government benefits" },
 ];
 
-const HIDDEN_ROUTES = ["/auth", "/admin", "/forgot-password", "/reset-password"];
+const FARM_DASHBOARD = { label: "Farm Dashboard", href: "/dashboard", icon: LayoutDashboard, color: "#3b82f6", desc: "Monitor your farm stats" };
+const ADMIN_DASHBOARD = { label: "Admin Panel", href: "/admin", icon: Shield, color: "#3b82f6", desc: "Manage platform & users" };
+
+const HIDDEN_ROUTES = ["/auth", "/forgot-password", "/reset-password"];
 
 // 3D tilt card for nav items
 function NavCard({
