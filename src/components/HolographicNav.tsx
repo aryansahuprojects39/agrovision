@@ -176,10 +176,14 @@ const HolographicNav = () => {
     const newY = dragStartRef.current.posY + dy;
     const halfW = 28;
     const maxX = window.innerWidth / 2 - halfW;
-    const maxY = window.innerHeight / 2 - halfW - 24;
+    // Button is at bottom:24px. Max upward travel: stop 64px from top (below navbar)
+    const navbarHeight = 64;
+    const buttonBottom = 24;
+    const maxUp = window.innerHeight - buttonBottom - halfW - navbarHeight;
+    const maxDown = halfW;
     setPosition({
       x: Math.max(-maxX, Math.min(maxX, newX)),
-      y: Math.max(-maxY, Math.min(maxY, newY)),
+      y: Math.max(-maxUp, Math.min(maxDown, newY)),
     });
   }, []);
 
