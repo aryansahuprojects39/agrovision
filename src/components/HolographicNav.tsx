@@ -192,20 +192,24 @@ const HolographicNav = () => {
     const cy = vh - 24 - 28 + position.y;
 
     const expandUp = cy > vh / 2;
-    const radius = 200;
+    const radius = 240;
     const count = NAV_ITEMS.length;
-    // Spread items across 180° arc
-    const startAngle = Math.PI; // left
-    const endAngle = 0; // right
+    // Spread items across 150° arc (not full 180°) so side items lift higher
+    const spreadAngle = (150 * Math.PI) / 180;
+    const startAngle = Math.PI / 2 + spreadAngle / 2; // top-left
+    const endAngle = Math.PI / 2 - spreadAngle / 2;   // top-right
 
     const margin = 60;
     const itemHalfW = 55;
     const itemHalfH = 42;
+    // Lift the whole arc so the lowest items clear the button
+    const yOffset = -60;
 
     return NAV_ITEMS.map((_, i) => {
       const angle = startAngle - (i / (count - 1)) * (startAngle - endAngle);
       let x = Math.cos(angle) * radius;
-      let y = expandUp ? -Math.sin(angle) * radius : Math.sin(angle) * radius;
+      const rawY = -Math.sin(angle) * radius + yOffset;
+      let y = expandUp ? rawY : -rawY;
 
       // Clamp to viewport
       if (cx + x - itemHalfW < margin) x = margin - cx + itemHalfW;
