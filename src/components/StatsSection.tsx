@@ -1,3 +1,5 @@
+import ScrollReveal from "@/components/ScrollReveal";
+
 const stats = [
   { value: "50K+", label: "Farmers Onboarded" },
   { value: "95%", label: "Disease Detection Accuracy" },
@@ -10,11 +12,13 @@ const StatsSection = () => {
     <section className="py-16 bg-primary">
       <div className="container mx-auto px-4 lg:px-8">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-          {stats.map((stat) => (
-            <div key={stat.label} className="text-center space-y-1">
-              <p className="text-3xl sm:text-4xl font-bold text-primary-foreground">{stat.value}</p>
-              <p className="text-sm text-primary-foreground/70">{stat.label}</p>
-            </div>
+          {stats.map((stat, i) => (
+            <ScrollReveal key={stat.label} delay={i * 150} direction="scale">
+              <div className="text-center space-y-1">
+                <p className="text-3xl sm:text-4xl font-bold text-primary-foreground">{stat.value}</p>
+                <p className="text-sm text-primary-foreground/70">{stat.label}</p>
+              </div>
+            </ScrollReveal>
           ))}
         </div>
       </div>
