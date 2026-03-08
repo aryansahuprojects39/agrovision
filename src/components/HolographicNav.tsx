@@ -183,9 +183,36 @@ const HolographicNav = () => {
   }, []);
 
   const totalItems = NAV_ITEMS.length;
-  const arcSpread = 180;
-  const startAngle = -90 - arcSpread / 2;
   const radius = 200;
+
+  // Compute adaptive arc based on button position in viewport
+  const getArcParams = () => {
+    const vw = typeof window !== "undefined" ? window.innerWidth : 1280;
+    const vh = typeof window !== "undefined" ? window.innerHeight : 720;
+    // Button center in viewport coords
+    const cx = vw / 2 + position.x;
+    const cy = vh - 24 - 28 + position.y; // bottom:24 + half button height
+
+    // Normalized position (0 to 1)
+    const nx = cx / vw; // 0=left, 1=right
+    const ny = cy / vh; // 0=top, 1=bottom
+
+    // Base center angle: -90 = upward. Shift based on position.
+    // Near left edge → fan right (center ~-45), near right → fan left (center ~-135)
+    // Near bottom → fan up (-90), near top → fan down (90)
+    const horizontalBias = (0.5 - nx) * 90; // -45 to +45
+    const verticalBias = ny > 0.5 ? -90 : 90; // up if bottom half, down if top half
+    const centerAngle = verticalBias + horizontalBias;
+
+    // Reduce spread when near edges to prevent items going off-screen
+    const edgeProximity = Math.min(nx, 1 - nx, ny, 1 - ny);
+    const arcSpread = 140 + edgeProximity * 60; // 140-200 degrees
+
+    return { centerAngle, arcSpread };
+  };
+
+  const { centerAngle, arcSpread } = getArcParams();
+  const startAngle = centerAngle - arcSpread / 2;
 
   if (isHidden) return null;
 
@@ -212,7 +239,7 @@ const HolographicNav = () => {
         }}
       >
         {/* Menu items */}
-        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4" style={{ width: 0, height: 0 }}>
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" style={{ width: 0, height: 0 }}>
           {NAV_ITEMS.map((item, i) => {
             const angle = startAngle + (arcSpread / (totalItems - 1)) * i;
             const rad = (angle * Math.PI) / 180;
