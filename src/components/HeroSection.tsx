@@ -3,7 +3,7 @@ import { ArrowRight, Leaf } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEnvironment } from "@/contexts/EnvironmentContext";
-import { Suspense, lazy, useEffect, useRef, useState, useMemo } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 
 import heroSpring from "@/assets/hero-spring.jpg";
 import heroSummer from "@/assets/hero-summer.jpg";
@@ -12,7 +12,7 @@ import heroAutumn from "@/assets/hero-autumn.jpg";
 import heroWinter from "@/assets/hero-winter.jpg";
 import heroFarm from "@/assets/hero-farm.jpg";
 
-const FloatingElements3D = lazy(() => import("@/components/FloatingElements3D"));
+
 
 const SEASON_IMAGES: Record<string, string> = {
   spring: heroSpring,
@@ -68,10 +68,6 @@ const HeroSection = () => {
         />
       </div>
 
-      {/* 3D Floating Elements */}
-      <Suspense fallback={null}>
-        <FloatingElements3D />
-      </Suspense>
 
       <div
         className="relative z-10 container mx-auto px-4 lg:px-8 py-20 pt-28 will-change-transform"
