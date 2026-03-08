@@ -11,6 +11,7 @@ import DiseaseDetectionPage from "./pages/DiseaseDetectionPage";
 import DashboardPage from "./pages/DashboardPage";
 import WeatherPage from "./pages/WeatherPage";
 import GovernmentSchemesPage from "./pages/GovernmentSchemesPage";
+import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/weather" element={<WeatherPage />} />
             <Route path="/government-schemes" element={<GovernmentSchemesPage />} />
+            <Route path="/admin" element={<AdminDashboard />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
