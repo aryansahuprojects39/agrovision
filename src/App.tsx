@@ -7,6 +7,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { EnvironmentProvider } from "@/contexts/EnvironmentContext";
 import PageTransition from "@/components/PageTransition";
 import HolographicNav from "@/components/HolographicNav";
+import AIChatbot from "@/components/AIChatbot";
 import Index from "./pages/Index";
 import AuthPage from "./pages/AuthPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
@@ -53,6 +54,7 @@ const AnimatedRoutes = () => {
       </PageTransition>
       
       <HolographicNav />
+      <AIChatbot />
     </>
   );
 };
