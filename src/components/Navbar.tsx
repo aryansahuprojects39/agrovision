@@ -50,9 +50,14 @@ const Navbar = () => {
             {theme === "light" ? <Moon size={18} /> : <Sun size={18} />}
           </button>
           {user ? (
-            <Button size="sm" variant="outline" onClick={handleSignOut}>
-              <LogOut className="mr-2 h-4 w-4" /> Sign Out
-            </Button>
+            <>
+              <Button size="sm" variant="outline" asChild>
+                <Link to="/dashboard">Dashboard</Link>
+              </Button>
+              <Button size="sm" variant="ghost" onClick={handleSignOut}>
+                <LogOut className="mr-2 h-4 w-4" /> Sign Out
+              </Button>
+            </>
           ) : (
             <Button size="sm" asChild>
               <Link to="/auth">Get Started</Link>
