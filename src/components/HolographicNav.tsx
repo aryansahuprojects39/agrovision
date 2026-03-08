@@ -282,9 +282,6 @@ const HolographicNav = () => {
 
       return { x, y };
     });
-
-      return { x, y };
-    });
   };
 
   const itemPositions = getItemPositions();
