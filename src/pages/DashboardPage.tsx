@@ -125,6 +125,8 @@ const DashboardPage = () => {
             </Link>
           </Button>
         </div>
+
+        <Tabs defaultValue="profile" className="space-y-6">
           <TabsList>
             <TabsTrigger value="profile"><User className="mr-2 h-4 w-4" />Profile</TabsTrigger>
             <TabsTrigger value="products"><ShoppingCart className="mr-2 h-4 w-4" />My Products</TabsTrigger>
