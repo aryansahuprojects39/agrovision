@@ -300,6 +300,10 @@ const WeatherPage = () => {
                           <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
                           <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
                         </linearGradient>
+                        <linearGradient id="humidityGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.15} />
+                          <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                        </linearGradient>
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                       <XAxis
@@ -310,10 +314,20 @@ const WeatherPage = () => {
                         interval={2}
                       />
                       <YAxis
+                        yAxisId="temp"
                         tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
                         tickLine={false}
                         axisLine={false}
                         unit="°"
+                      />
+                      <YAxis
+                        yAxisId="humidity"
+                        orientation="right"
+                        tick={{ fontSize: 11, fill: "#3b82f6" }}
+                        tickLine={false}
+                        axisLine={false}
+                        unit="%"
+                        domain={[0, 100]}
                       />
                       <Tooltip
                         contentStyle={{
@@ -323,9 +337,13 @@ const WeatherPage = () => {
                           fontSize: 12,
                           color: "hsl(var(--foreground))",
                         }}
-                        formatter={(value: number) => [`${value}°C`, "Temperature"]}
+                        formatter={(value: number, name: string) => [
+                          name === "temp" ? `${value}°C` : `${value}%`,
+                          name === "temp" ? "Temperature" : "Humidity",
+                        ]}
                       />
                       <Area
+                        yAxisId="temp"
                         type="monotone"
                         dataKey="temp"
                         stroke="hsl(var(--primary))"
@@ -333,6 +351,17 @@ const WeatherPage = () => {
                         fill="url(#tempGradient)"
                         dot={false}
                         activeDot={{ r: 4, fill: "hsl(var(--primary))" }}
+                      />
+                      <Area
+                        yAxisId="humidity"
+                        type="monotone"
+                        dataKey="humidity"
+                        stroke="#3b82f6"
+                        strokeWidth={1.5}
+                        strokeDasharray="4 3"
+                        fill="url(#humidityGradient)"
+                        dot={false}
+                        activeDot={{ r: 3, fill: "#3b82f6" }}
                       />
                     </AreaChart>
                   </ResponsiveContainer>
