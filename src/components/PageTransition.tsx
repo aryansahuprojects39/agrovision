@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useLocation } from "react-router-dom";
 
 type TransitionType = "cube" | "slide" | "zoom" | "fade";
@@ -17,25 +17,48 @@ function getTransition(pathname: string): TransitionType {
   return ROUTE_TRANSITIONS[pathname] || "fade";
 }
 
-// Keyframe definitions for each transition type
-const enterKeyframes: Record<TransitionType, Keyframe[]> = {
+// True 3D cube: old face rotates away, new face rotates in from the side
+const exitKeyframes: Record<TransitionType, Keyframe[]> = {
   cube: [
-    { transform: "perspective(1200px) rotateY(90deg)", opacity: 0 },
-    { transform: "perspective(1200px) rotateY(0deg)", opacity: 1 },
+    { transform: "perspective(1500px) rotateY(0deg)", opacity: 1, offset: 0 },
+    { transform: "perspective(1500px) rotateY(-90deg)", opacity: 0, offset: 1 },
   ],
   slide: [
-    { transform: "translateX(100%) scale(0.95)", opacity: 0 },
-    { transform: "translateX(0%) scale(1)", opacity: 1 },
+    { transform: "translateX(0%) scale(1)", opacity: 1, offset: 0 },
+    { transform: "translateX(-40%) scale(0.92)", opacity: 0, offset: 1 },
   ],
   zoom: [
-    { transform: "scale(0.3) rotate3d(0,1,0.2,30deg)", opacity: 0 },
-    { transform: "scale(1) rotate3d(0,0,0,0deg)", opacity: 1 },
+    { transform: "scale(1)", opacity: 1, offset: 0 },
+    { transform: "scale(1.5)", opacity: 0, offset: 1 },
   ],
   fade: [
-    { transform: "translateY(24px)", opacity: 0 },
-    { transform: "translateY(0)", opacity: 1 },
+    { opacity: 1, transform: "translateY(0)", offset: 0 },
+    { opacity: 0, transform: "translateY(-16px)", offset: 1 },
   ],
 };
+
+const enterKeyframes: Record<TransitionType, Keyframe[]> = {
+  cube: [
+    { transform: "perspective(1500px) rotateY(90deg)", opacity: 0, offset: 0 },
+    { transform: "perspective(1500px) rotateY(0deg)", opacity: 1, offset: 1 },
+  ],
+  slide: [
+    { transform: "translateX(60%) scale(0.92)", opacity: 0, offset: 0 },
+    { transform: "translateX(0%) scale(1)", opacity: 1, offset: 1 },
+  ],
+  zoom: [
+    { transform: "scale(0.5)", opacity: 0, offset: 0 },
+    { transform: "scale(1)", opacity: 1, offset: 1 },
+  ],
+  fade: [
+    { opacity: 0, transform: "translateY(16px)", offset: 0 },
+    { opacity: 1, transform: "translateY(0)", offset: 1 },
+  ],
+};
+
+const DURATION_EXIT = 400;
+const DURATION_ENTER = 550;
+const EASING = "cubic-bezier(0.22, 1, 0.36, 1)";
 
 interface PageTransitionProps {
   children: ReactNode;
@@ -43,58 +66,92 @@ interface PageTransitionProps {
 
 const PageTransition = ({ children }: PageTransitionProps) => {
   const location = useLocation();
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [displayChildren, setDisplayChildren] = useState(children);
-  const [transitionKey, setTransitionKey] = useState(location.key);
-  const isFirstRender = useRef(true);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const [current, setCurrent] = useState<{ children: ReactNode; pathname: string }>({
+    children,
+    pathname: location.pathname,
+  });
+  const animatingRef = useRef(false);
+  const isFirst = useRef(true);
 
   useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      setTransitionKey(location.key);
-      setDisplayChildren(children);
+    // Skip animation on first mount
+    if (isFirst.current) {
+      isFirst.current = false;
+      setCurrent({ children, pathname: location.pathname });
       return;
     }
 
-    const el = containerRef.current;
+    // Same page — just update children
+    if (location.pathname === current.pathname) {
+      setCurrent({ children, pathname: location.pathname });
+      return;
+    }
+
+    // Don't stack animations
+    if (animatingRef.current) {
+      setCurrent({ children, pathname: location.pathname });
+      return;
+    }
+
+    const el = wrapperRef.current;
     if (!el) {
-      setDisplayChildren(children);
-      setTransitionKey(location.key);
+      setCurrent({ children, pathname: location.pathname });
       return;
     }
 
+    animatingRef.current = true;
     const transition = getTransition(location.pathname);
-    const keyframes = enterKeyframes[transition];
 
-    // Exit animation (reverse of enter)
-    const exitAnim = el.animate(
-      [...keyframes].reverse(),
-      { duration: 250, easing: "cubic-bezier(0.4, 0, 0.2, 1)", fill: "forwards" }
-    );
+    // Exit old content
+    const exit = el.animate(exitKeyframes[transition], {
+      duration: DURATION_EXIT,
+      easing: EASING,
+      fill: "forwards",
+    });
 
-    exitAnim.onfinish = () => {
-      setDisplayChildren(children);
-      setTransitionKey(location.key);
+    exit.onfinish = () => {
+      // Swap content
+      setCurrent({ children, pathname: location.pathname });
 
-      // Enter animation
-      el.animate(keyframes, {
-        duration: 400,
-        easing: "cubic-bezier(0.0, 0, 0.2, 1)",
-        fill: "forwards",
+      // Small frame delay to let React render
+      requestAnimationFrame(() => {
+        // Scroll to top for new page
+        window.scrollTo(0, 0);
+
+        // Enter new content
+        const enter = el.animate(enterKeyframes[transition], {
+          duration: DURATION_ENTER,
+          easing: EASING,
+          fill: "forwards",
+        });
+
+        enter.onfinish = () => {
+          // Clear the fill so element returns to normal flow
+          el.style.transform = "";
+          el.style.opacity = "";
+          animatingRef.current = false;
+        };
       });
     };
 
-    return () => exitAnim.cancel();
+    return () => {
+      exit.cancel();
+      animatingRef.current = false;
+    };
   }, [location.pathname, location.key]);
 
   return (
     <div
-      ref={containerRef}
-      key={transitionKey}
-      className="min-h-screen"
-      style={{ transformOrigin: "center center", willChange: "transform, opacity" }}
+      ref={wrapperRef}
+      className="min-h-screen overflow-hidden"
+      style={{
+        transformOrigin: "center center",
+        willChange: "transform, opacity",
+        backfaceVisibility: "hidden",
+      }}
     >
-      {displayChildren}
+      {current.children}
     </div>
   );
 };
