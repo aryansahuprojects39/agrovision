@@ -209,10 +209,10 @@ const HolographicNav = () => {
     const maxReachLeft = cx - margin - itemHalfW;
     const maxReachUp = cy - margin - itemHalfH;
     const maxReachDown = vh - cy - margin - itemHalfH;
-    const maxReach = Math.max(140, Math.min(maxReachRight, maxReachLeft, maxReachUp, maxReachDown, 260));
-    const radius = Math.min(260, maxReach);
+    const maxReach = Math.max(160, Math.min(maxReachRight, maxReachLeft, maxReachUp, maxReachDown, 320));
+    const radius = Math.min(320, maxReach);
 
-    const arcSpread = 150;
+    const arcSpread = 180;
     const startAngle = centerAngle - arcSpread / 2;
 
     const positions = [];
