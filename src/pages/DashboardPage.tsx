@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Trash2, Edit2, Save, MapPin, Leaf, ShoppingCart, User } from "lucide-react";
+import { Loader2, Trash2, Edit2, Save, MapPin, Leaf, ShoppingCart, User, Home } from "lucide-react";
 import { toast } from "sonner";
 
 interface Profile {
