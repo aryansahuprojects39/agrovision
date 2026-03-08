@@ -82,10 +82,11 @@ const WeatherPage = () => {
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!location.trim()) return;
+    const query = location.trim();
+    if (!query) return;
     setLoading(true);
     try {
-      const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(location)}&count=1`);
+      const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=1`);
       const data = await res.json();
       if (!data.results?.length) { toast.error("Location not found"); setLoading(false); return; }
       const { latitude, longitude, name, country } = data.results[0];
