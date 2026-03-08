@@ -173,12 +173,12 @@ const HolographicNav = () => {
     const newX = dragStartRef.current.posX + dx;
     const newY = dragStartRef.current.posY + dy;
     const halfW = 28;
-    const edgePadding = 40; // keep button away from all edges
+    const edgePadding = 10;
     const maxX = window.innerWidth / 2 - halfW - edgePadding;
     const navbarHeight = 100;
     const buttonBottom = 24;
     const maxUp = window.innerHeight - buttonBottom - halfW - navbarHeight;
-    const maxDown = -edgePadding; // prevent going below viewport
+    const maxDown = 0; // allow button to stay at its default bottom position
     setPosition({
       x: Math.max(-maxX, Math.min(maxX, newX)),
       y: Math.max(-maxUp, Math.min(maxDown, newY)),
