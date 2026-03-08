@@ -281,11 +281,11 @@ function LeafShape({ severity, cropImageUrl, plantName }: { severity: string; cr
           roughness={0.6}
           metalness={0.1}
           side={THREE.DoubleSide}
-          color={severity === "healthy" ? "#ffffff" : sickColor}
+          color="#ffffff"
         />
       ) : (
         <meshStandardMaterial
-          color={severity === "healthy" ? healthyColor : sickColor}
+          color={healthyColor}
           roughness={0.6}
           metalness={0.1}
           side={THREE.DoubleSide}
