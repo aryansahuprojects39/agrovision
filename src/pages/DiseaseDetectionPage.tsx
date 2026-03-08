@@ -259,6 +259,7 @@ const DiseaseDetectionPage = () => {
                     }>
                       <Disease3DVisualization
                         data={{
+                          plant_name: result.plant_name || "Unknown",
                           disease: result.disease,
                           severity_level: result.severity_level || (result.disease === "Healthy" ? "healthy" : "moderate"),
                           infected_area_percent: result.infected_area_percent || (result.disease === "Healthy" ? 0 : 30),
