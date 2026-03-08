@@ -3,11 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import Navbar from "@/components/Navbar";
+import AdminAnalytics from "@/components/admin/AdminAnalytics";
+import AdminRoleManager from "@/components/admin/AdminRoleManager";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Users, ShoppingCart, BarChart3, Leaf, Trash2, Shield } from "lucide-react";
+import { Loader2, Users, ShoppingCart, BarChart3, Leaf, Trash2, Shield, UserCog } from "lucide-react";
 import { toast } from "sonner";
 
 const AdminDashboard = () => {
@@ -18,6 +20,7 @@ const AdminDashboard = () => {
   const [profiles, setProfiles] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
   const [detections, setDetections] = useState<any[]>([]);
+  const [activities, setActivities] = useState<any[]>([]);
   const [stats, setStats] = useState({ users: 0, products: 0, detections: 0 });
 
   useEffect(() => {
@@ -45,17 +48,20 @@ const AdminDashboard = () => {
   };
 
   const loadData = async () => {
-    const [profilesRes, productsRes, detectionsRes] = await Promise.all([
+    const [profilesRes, productsRes, detectionsRes, activitiesRes] = await Promise.all([
       supabase.from("profiles").select("*").order("created_at", { ascending: false }),
       supabase.from("products").select("*").order("created_at", { ascending: false }),
       supabase.from("detection_history").select("*").order("created_at", { ascending: false }).limit(50),
+      supabase.from("user_activity").select("*").order("created_at", { ascending: false }).limit(500),
     ]);
     const p = profilesRes.data || [];
     const pr = productsRes.data || [];
     const d = detectionsRes.data || [];
+    const a = activitiesRes.data || [];
     setProfiles(p);
     setProducts(pr);
     setDetections(d);
+    setActivities(a);
     setStats({ users: p.length, products: pr.length, detections: d.length });
     setLoading(false);
   };
@@ -87,15 +93,14 @@ const AdminDashboard = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       <div className="pt-20 pb-12 container mx-auto px-4 lg:px-8">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
           <div className="flex items-center gap-3">
             <Shield className="h-8 w-8 text-primary" />
             <h1 className="text-3xl font-bold text-foreground">Admin Dashboard</h1>
           </div>
           <Card className="px-4 py-2 border-primary/20 bg-accent/30">
-            <p className="text-xs text-muted-foreground">Admin Access</p>
-            <p className="text-sm font-medium text-foreground">admin@agrovision.com</p>
-            <p className="text-xs text-muted-foreground">Password: Admin@1234</p>
+            <p className="text-xs text-muted-foreground">Logged in as Admin</p>
+            <p className="text-sm font-medium text-foreground">{user?.email}</p>
           </Card>
         </div>
 
@@ -130,12 +135,22 @@ const AdminDashboard = () => {
           </Card>
         </div>
 
-        <Tabs defaultValue="users" className="space-y-6">
-          <TabsList>
+        <Tabs defaultValue="analytics" className="space-y-6">
+          <TabsList className="flex-wrap">
+            <TabsTrigger value="analytics"><BarChart3 className="mr-2 h-4 w-4" />Analytics</TabsTrigger>
+            <TabsTrigger value="roles"><UserCog className="mr-2 h-4 w-4" />Roles</TabsTrigger>
             <TabsTrigger value="users"><Users className="mr-2 h-4 w-4" />Users</TabsTrigger>
             <TabsTrigger value="products"><ShoppingCart className="mr-2 h-4 w-4" />Products</TabsTrigger>
             <TabsTrigger value="detections"><Leaf className="mr-2 h-4 w-4" />Detections</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="analytics">
+            <AdminAnalytics profiles={profiles} products={products} detections={detections} activities={activities} />
+          </TabsContent>
+
+          <TabsContent value="roles">
+            <AdminRoleManager profiles={profiles} currentUserId={user!.id} />
+          </TabsContent>
 
           <TabsContent value="users">
             <Card>
