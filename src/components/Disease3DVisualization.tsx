@@ -110,10 +110,9 @@ function LeafVeins() {
     <>
       {points.map((curve, i) => {
         const geo = new THREE.BufferGeometry().setFromPoints(curve);
+        const mat = new THREE.LineBasicMaterial({ color: "#2e7d32", opacity: 0.4, transparent: true });
         return (
-          <line key={i} geometry={geo}>
-            <lineBasicMaterial color="#2e7d32" opacity={0.4} transparent linewidth={1} />
-          </line>
+          <primitive key={i} object={new THREE.Line(geo, mat)} />
         );
       })}
     </>
