@@ -281,6 +281,64 @@ const WeatherPage = () => {
               </CardContent>
             </Card>
 
+            {/* Temperature Chart */}
+            <Card>
+              <CardHeader><CardTitle className="text-base flex items-center gap-2"><Thermometer className="h-4 w-4" /> Temperature Trend</CardTitle></CardHeader>
+              <CardContent>
+                <div className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart
+                      data={weather.hourly.map((h) => ({
+                        time: new Date(h.time).toLocaleTimeString("en", { hour: "numeric", hour12: true }),
+                        temp: h.temp,
+                        humidity: h.humidity,
+                      }))}
+                      margin={{ top: 5, right: 10, left: -10, bottom: 0 }}
+                    >
+                      <defs>
+                        <linearGradient id="tempGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+                          <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                      <XAxis
+                        dataKey="time"
+                        tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
+                        tickLine={false}
+                        axisLine={false}
+                        interval={2}
+                      />
+                      <YAxis
+                        tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
+                        tickLine={false}
+                        axisLine={false}
+                        unit="°"
+                      />
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: "hsl(var(--card))",
+                          border: "1px solid hsl(var(--border))",
+                          borderRadius: 8,
+                          fontSize: 12,
+                          color: "hsl(var(--foreground))",
+                        }}
+                        formatter={(value: number) => [`${value}°C`, "Temperature"]}
+                      />
+                      <Area
+                        type="monotone"
+                        dataKey="temp"
+                        stroke="hsl(var(--primary))"
+                        strokeWidth={2}
+                        fill="url(#tempGradient)"
+                        dot={false}
+                        activeDot={{ r: 4, fill: "hsl(var(--primary))" }}
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
 
             <Card>
               <CardHeader><CardTitle className="text-base">7-Day Forecast</CardTitle></CardHeader>
