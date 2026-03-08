@@ -98,17 +98,19 @@ const FeaturesSection = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {features.map((feature, i) => (
             <ScrollReveal key={feature.title} delay={i * 100} direction={i % 2 === 0 ? "up" : "scale"}>
-              <TiltCard>
-                <Card className="group hover:shadow-xl transition-all duration-300 border-border/60 hover:border-primary/30 h-full">
-                  <CardContent className="p-6 space-y-4">
-                    <div className="h-12 w-12 rounded-lg bg-accent flex items-center justify-center group-hover:bg-primary/10 group-hover:scale-110 transition-all duration-300">
-                      <feature.icon className="h-6 w-6 text-primary" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-foreground">{feature.title}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
-                  </CardContent>
-                </Card>
-              </TiltCard>
+              <Link to={feature.link}>
+                <TiltCard>
+                  <Card className="group hover:shadow-xl transition-all duration-300 border-border/60 hover:border-primary/30 h-full cursor-pointer">
+                    <CardContent className="p-6 space-y-4">
+                      <div className="h-12 w-12 rounded-lg bg-accent flex items-center justify-center group-hover:bg-primary/10 group-hover:scale-110 transition-all duration-300">
+                        <feature.icon className="h-6 w-6 text-primary" />
+                      </div>
+                      <h3 className="text-lg font-semibold text-foreground">{feature.title}</h3>
+                      <p className="text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
+                    </CardContent>
+                  </Card>
+                </TiltCard>
+              </Link>
             </ScrollReveal>
           ))}
         </div>
