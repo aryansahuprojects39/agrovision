@@ -541,7 +541,7 @@ function Scene({ data }: { data: Disease3DProps }) {
       />
 
       <group>
-        <LeafShape severity={data.severity_level} cropImageUrl={data.cropImageUrl} />
+        <LeafShape severity={data.severity_level} cropImageUrl={data.cropImageUrl} plantName={data.plant_name} />
         <LeafVeins />
         <StemGeometry />
 
