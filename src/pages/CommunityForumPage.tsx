@@ -60,7 +60,11 @@ const CATEGORIES: { value: ForumCategory; label: string; color: string }[] = [
 const CommunityForumPage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  useActivityTracker("community_forum");
+  const { trackActivity } = useActivityTracker();
+
+  useEffect(() => {
+    if (user) trackActivity("community_forum");
+  }, [user]);
 
   const [posts, setPosts] = useState<ForumPost[]>([]);
   const [loading, setLoading] = useState(true);
