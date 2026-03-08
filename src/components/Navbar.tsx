@@ -29,7 +29,7 @@ const Navbar = () => {
       <div className="container mx-auto flex items-center justify-between h-16 px-4 lg:px-8">
         <Link to="/" className="flex items-center gap-2">
           <img src={logo} alt="AgroVision AI" className="h-9 w-9" />
-          <span className="text-lg font-bold text-hero-dark-foreground">AgroVision AI</span>
+          <span className="text-lg font-bold text-foreground">AgroVision AI</span>
         </Link>
 
         {/* Desktop */}
