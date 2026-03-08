@@ -700,7 +700,7 @@ const Disease3DVisualization = ({ data }: { data: Disease3DProps }) => {
       </button>
 
       {/* Stats Row */}
-      <div className={`grid ${isHealthy ? "grid-cols-1" : "grid-cols-3"} gap-3`}>
+      <div className={`grid ${isHealthy ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-3"} gap-3`}>
         {isHealthy ? (
           <div className="text-center p-4 rounded-lg bg-accent/50">
             <div className="text-2xl font-bold" style={{ color: severityColors.healthy }}>
