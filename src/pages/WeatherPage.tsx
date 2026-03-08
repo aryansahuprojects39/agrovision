@@ -36,7 +36,10 @@ const weatherCodeToInfo = (code: number): { label: string; Icon: typeof Sun } =>
 };
 
 const WeatherPage = () => {
+  const { trackActivity } = useActivityTracker();
   const [location, setLocation] = useState("");
+
+  useEffect(() => { trackActivity("weather_check"); }, []);
   const [loading, setLoading] = useState(false);
   const [weather, setWeather] = useState<WeatherData | null>(null);
 

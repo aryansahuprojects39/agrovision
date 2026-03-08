@@ -74,7 +74,10 @@ const schemes = [
 const allCategories = [...new Set(schemes.map((s) => s.category))];
 
 const GovernmentSchemesPage = () => {
+  const { trackActivity } = useActivityTracker();
   const [search, setSearch] = useState("");
+
+  useEffect(() => { trackActivity("schemes_view"); }, []);
   const [categoryFilter, setCategoryFilter] = useState("all");
 
   const filtered = schemes.filter((s) => {

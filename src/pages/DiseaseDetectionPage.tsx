@@ -19,7 +19,10 @@ interface DiagnosisResult {
 
 const DiseaseDetectionPage = () => {
   const { user } = useAuth();
+  const { trackActivity } = useActivityTracker();
   const [image, setImage] = useState<string | null>(null);
+
+  useEffect(() => { trackActivity("disease_detection"); }, []);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<DiagnosisResult | null>(null);

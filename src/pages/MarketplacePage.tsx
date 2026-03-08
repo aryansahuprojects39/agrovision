@@ -34,7 +34,10 @@ interface Product {
 
 const MarketplacePage = () => {
   const { user } = useAuth();
+  const { trackActivity } = useActivityTracker();
   const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => { trackActivity("marketplace_view"); }, []);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
