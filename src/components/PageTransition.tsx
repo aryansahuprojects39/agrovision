@@ -203,13 +203,11 @@ const PageTransition = ({ children }: PageTransitionProps) => {
       {/* Progress bar */}
       <div
         ref={progressRef}
-        className="fixed top-0 left-0 right-0 h-[3px] z-[9999] opacity-0"
+        className="fixed top-0 left-0 right-0 h-[5px] z-[9999] opacity-0"
         style={{
-          background: "linear-gradient(90deg, hsl(var(--primary)), hsl(var(--primary) / 0.6))",
           transform: "scaleX(0)",
           transformOrigin: "left",
-          borderRadius: "0 2px 2px 0",
-          boxShadow: "0 0 8px hsl(var(--primary) / 0.4)",
+          borderRadius: "0 3px 3px 0",
         }}
       />
       <div
