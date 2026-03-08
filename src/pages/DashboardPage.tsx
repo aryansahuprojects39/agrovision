@@ -52,7 +52,16 @@ const DashboardPage = () => {
   const [editing, setEditing] = useState(false);
 
   useEffect(() => {
-    if (!authLoading && !user) navigate("/auth");
+    if (!authLoading && !user) {
+      navigate("/auth");
+      return;
+    }
+    if (!authLoading && user) {
+      // Redirect admin users to admin dashboard
+      supabase.rpc("has_role", { _user_id: user.id, _role: "admin" }).then(({ data }) => {
+        if (data) navigate("/admin", { replace: true });
+      });
+    }
   }, [user, authLoading, navigate]);
 
   useEffect(() => {
