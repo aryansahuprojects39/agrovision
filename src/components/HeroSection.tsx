@@ -2,13 +2,29 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Leaf } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { Suspense, lazy, useEffect, useRef, useState } from "react";
-import heroImage from "@/assets/hero-farm.jpg";
+import { useEnvironment } from "@/contexts/EnvironmentContext";
+import { Suspense, lazy, useEffect, useRef, useState, useMemo } from "react";
+
+import heroSpring from "@/assets/hero-spring.jpg";
+import heroSummer from "@/assets/hero-summer.jpg";
+import heroMonsoon from "@/assets/hero-monsoon.jpg";
+import heroAutumn from "@/assets/hero-autumn.jpg";
+import heroWinter from "@/assets/hero-winter.jpg";
+import heroFarm from "@/assets/hero-farm.jpg";
 
 const FloatingElements3D = lazy(() => import("@/components/FloatingElements3D"));
 
+const SEASON_IMAGES: Record<string, string> = {
+  spring: heroSpring,
+  summer: heroSummer,
+  monsoon: heroMonsoon,
+  autumn: heroAutumn,
+  winter: heroWinter,
+};
+
 const HeroSection = () => {
   const { user } = useAuth();
+  const { season, climate, timeOfDay } = useEnvironment();
   const sectionRef = useRef<HTMLElement>(null);
   const [scrollY, setScrollY] = useState(0);
 
@@ -22,17 +38,34 @@ const HeroSection = () => {
   const textParallax = scrollY * 0.15;
   const opacity = Math.max(0, 1 - scrollY / 700);
 
+  const heroImage = SEASON_IMAGES[season] || heroFarm;
+
+  // Overlay opacity based on time of day & climate
+  const overlayOpacity = useMemo(() => {
+    let base = 0.5;
+    if (timeOfDay === "night") base = 0.75;
+    else if (timeOfDay === "evening" || timeOfDay === "dawn") base = 0.65;
+    if (climate === "stormy" || climate === "foggy") base = Math.min(base + 0.1, 0.85);
+    else if (climate === "rainy" || climate === "cloudy") base = Math.min(base + 0.05, 0.8);
+    return base;
+  }, [timeOfDay, climate]);
+
+  const seasonLabel = season.charAt(0).toUpperCase() + season.slice(1);
+
   return (
     <section ref={sectionRef} className="relative min-h-[100svh] flex items-center overflow-hidden">
       {/* Parallax background image */}
       <div className="absolute inset-0 overflow-hidden">
         <img
           src={heroImage}
-          alt="Smart farming landscape"
-          className="w-full h-[120%] object-cover will-change-transform"
+          alt={`${seasonLabel} farming landscape`}
+          className="w-full h-[120%] object-cover will-change-transform transition-opacity duration-1000"
           style={{ transform: `translateY(-${parallaxOffset}px) scale(1.05)` }}
         />
-        <div className="absolute inset-0 bg-hero-dark/60 dark:bg-hero-dark/75" />
+        <div
+          className="absolute inset-0 bg-hero-dark transition-opacity duration-1000"
+          style={{ opacity: overlayOpacity }}
+        />
       </div>
 
       {/* 3D Floating Elements */}
