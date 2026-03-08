@@ -71,14 +71,15 @@ function NavCard({
             ref={cardRef}
             className="relative flex flex-col items-center gap-2.5 px-5 py-4 rounded-2xl border cursor-pointer"
             style={{
-              background: `linear-gradient(145deg, ${item.color}40, ${item.color}18 40%, hsl(0 0% 6% / 0.92))`,
-              borderColor: isActive ? item.color : `${item.color}50`,
+              background: `linear-gradient(145deg, ${item.color}60, ${item.color}30 40%, hsl(0 0% 10% / 0.95))`,
+              borderColor: isActive ? item.color : `${item.color}80`,
+              borderWidth: "2px",
               boxShadow: isActive
-                ? `0 8px 32px ${item.color}40, 0 0 48px ${item.color}15, inset 0 1px 0 ${item.color}40`
-                : `0 8px 24px hsl(0 0% 0% / 0.4), 0 0 20px ${item.color}15, inset 0 1px 0 ${item.color}25`,
-              width: "110px",
+                ? `0 8px 36px ${item.color}50, 0 0 60px ${item.color}25, inset 0 1px 0 ${item.color}50`
+                : `0 8px 28px hsl(0 0% 0% / 0.5), 0 0 30px ${item.color}25, inset 0 1px 0 ${item.color}35`,
+              width: "115px",
               transition: "transform 0.15s ease-out, box-shadow 0.3s ease, border-color 0.3s ease",
-              backdropFilter: "blur(16px)",
+              backdropFilter: "blur(20px)",
               transformStyle: "preserve-3d",
             }}
             onMouseMove={handleMouseMove}
