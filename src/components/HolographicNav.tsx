@@ -175,7 +175,7 @@ const HolographicNav = () => {
     const halfW = 28;
     const maxX = window.innerWidth / 2 - halfW;
     // Button is at bottom:24px. Max upward travel: stop 64px from top (below navbar)
-    const navbarHeight = 80; // navbar + extra padding so items don't cross
+    const navbarHeight = 100; // large buffer so button + items stay below navbar
     const buttonBottom = 24;
     const maxUp = window.innerHeight - buttonBottom - halfW - navbarHeight;
     const maxDown = halfW;
