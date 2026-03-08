@@ -149,11 +149,19 @@ const HolographicNav = () => {
     const checkAdmin = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) { setIsAdmin(false); return; }
-      const { data } = await supabase.rpc("has_role", { _user_id: user.id, _role: "admin" });
-      setIsAdmin(!!data);
+      const { data, error } = await supabase.rpc("has_role", { _user_id: user.id, _role: "admin" as const });
+      if (error) {
+        console.error("Admin check failed:", error);
+        setIsAdmin(false);
+        return;
+      }
+      setIsAdmin(data === true);
     };
     checkAdmin();
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => checkAdmin());
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) checkAdmin();
+      else setIsAdmin(false);
+    });
     return () => subscription.unsubscribe();
   }, []);
 

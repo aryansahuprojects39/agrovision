@@ -20,8 +20,13 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
-    await signOut();
-    navigate("/");
+    try {
+      await signOut();
+      navigate("/");
+      window.location.reload();
+    } catch (err) {
+      console.error("Sign out failed:", err);
+    }
   };
 
   return (
