@@ -36,7 +36,7 @@ const Navbar = () => {
         <div className="hidden md:flex items-center gap-6">
           {navLinks.map((link) =>
             link.href.startsWith("/") && !link.href.includes("#") ? (
-              <Link key={link.href} to={link.href} className="text-sm font-medium text-hero-dark-foreground/70 hover:text-secondary transition-colors">
+              <Link key={link.href} to={link.href} className="text-sm font-medium text-foreground/70 hover:text-primary transition-colors">
                 {link.label}
               </Link>
             ) : (
