@@ -12,6 +12,24 @@ const ROUTE_TRANSITIONS: Record<string, TransitionType> = {
   "/government-schemes": "slide",
   "/community": "slide",
 };
+const TRANSITION_COLORS: Record<TransitionType, { gradient: string; glow: string }> = {
+  cube: {
+    gradient: "linear-gradient(90deg, #3b82f6, #60a5fa, #93c5fd)",
+    glow: "0 0 12px rgba(59, 130, 246, 0.6), 0 0 24px rgba(59, 130, 246, 0.3)",
+  },
+  slide: {
+    gradient: "linear-gradient(90deg, #22c55e, #4ade80, #86efac)",
+    glow: "0 0 12px rgba(34, 197, 94, 0.6), 0 0 24px rgba(34, 197, 94, 0.3)",
+  },
+  zoom: {
+    gradient: "linear-gradient(90deg, #a855f7, #c084fc, #d8b4fe)",
+    glow: "0 0 12px rgba(168, 85, 247, 0.6), 0 0 24px rgba(168, 85, 247, 0.3)",
+  },
+  fade: {
+    gradient: "linear-gradient(90deg, hsl(var(--primary)), hsl(var(--primary) / 0.6))",
+    glow: "0 0 12px hsl(var(--primary) / 0.5)",
+  },
+};
 
 function getTransition(pathname: string): TransitionType {
   return ROUTE_TRANSITIONS[pathname] || "fade";
