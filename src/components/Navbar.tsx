@@ -10,10 +10,12 @@ import SeasonPreview from "@/components/SeasonPreview";
 
 const navLinks = [
   { label: "Home", href: "/" },
-  { label: "About Us", href: "/#about" },
-  { label: "Features", href: "/#features" },
+  { label: "About Us", href: "/about" },
+  { label: "Blog", href: "/blog" },
+  { label: "Documentaries", href: "/documentaries" },
   { label: "Marketplace", href: "/marketplace" },
   { label: "Community", href: "/community" },
+  { label: "Contact", href: "/contact" },
 ];
 
 const Navbar = () => {
