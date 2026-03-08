@@ -51,7 +51,7 @@ const Navbar = () => {
               <Button size="sm" className="rounded-full bg-secondary text-secondary-foreground hover:bg-secondary/90" asChild>
                 <Link to="/dashboard">Dashboard</Link>
               </Button>
-              <Button size="sm" variant="ghost" className="text-hero-dark-foreground/70 hover:text-hero-dark-foreground" onClick={handleSignOut}>
+              <Button size="sm" variant="ghost" className="text-foreground/70 hover:text-foreground" onClick={handleSignOut}>
                 <LogOut className="mr-2 h-4 w-4" /> Sign Out
               </Button>
             </>
