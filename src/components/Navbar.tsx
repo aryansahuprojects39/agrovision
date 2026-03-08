@@ -65,6 +65,7 @@ const Navbar = () => {
               </a>
             )
           )}
+          <SeasonPreview />
           <ThemeToggle />
           {user ? (
             <>
