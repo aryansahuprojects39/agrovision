@@ -103,11 +103,11 @@ function NavCard({
 
             <Icon
               className="h-7 w-7 relative z-10"
-              style={{ color: item.color, filter: `drop-shadow(0 0 10px ${item.color})` }}
+              style={{ color: item.color, filter: `drop-shadow(0 0 12px ${item.color}) drop-shadow(0 0 24px ${item.color}) brightness(1.3)` }}
             />
             <span
               className="text-sm font-extrabold whitespace-nowrap relative z-10"
-              style={{ color: item.color, textShadow: `0 0 14px ${item.color}80, 0 1px 2px hsl(0 0% 0% / 0.6)` }}
+              style={{ color: item.color, textShadow: `0 0 8px ${item.color}, 0 0 20px ${item.color}, 0 0 40px ${item.color}90, 0 0 60px ${item.color}50`, filter: "brightness(1.3)" }}
             >
               {item.label}
             </span>
