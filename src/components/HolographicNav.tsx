@@ -186,12 +186,12 @@ const HolographicNav = () => {
 
   const totalItems = NAV_ITEMS.length;
 
-  // Arc layout that adapts direction and clamps to viewport
+  // Two-ring arc layout: 3 items on outer ring, 3 on inner ring, staggered
   const getItemPositions = () => {
     const vw = typeof window !== "undefined" ? window.innerWidth : 1280;
     const vh = typeof window !== "undefined" ? window.innerHeight : 720;
-    const cx = vw / 2 + position.x; // button X in viewport
-    const cy = vh - 24 - 28 + position.y; // button Y in viewport
+    const cx = vw / 2 + position.x;
+    const cy = vh - 24 - 28 + position.y;
 
     // Point arc toward viewport center
     const toCenterX = vw / 2 - cx;
@@ -201,40 +201,49 @@ const HolographicNav = () => {
       centerAngle = -90;
     }
 
-    // Scale radius down when near edges so items fit
-    const margin = 60; // min distance from viewport edge
-    const itemHalfW = 50;
-    const itemHalfH = 40;
-    const maxReachRight = vw - cx - margin - itemHalfW;
-    const maxReachLeft = cx - margin - itemHalfW;
-    const maxReachUp = cy - margin - itemHalfH;
-    const maxReachDown = vh - cy - margin - itemHalfH;
-    const maxReach = Math.max(160, Math.min(maxReachRight, maxReachLeft, maxReachUp, maxReachDown, 320));
-    const radius = Math.min(320, maxReach);
+    const margin = 60;
+    const itemHalfW = 55;
+    const itemHalfH = 42;
 
-    const arcSpread = 180;
-    const startAngle = centerAngle - arcSpread / 2;
+    // Two rings: outer (items 0,1,2) and inner (items 3,4,5)
+    const outerRadius = 280;
+    const innerRadius = 155;
+    const outerSpread = 120; // degrees for 3 items on outer ring
+    const innerSpread = 100; // degrees for 3 items on inner ring
 
-    const positions = [];
-    for (let i = 0; i < totalItems; i++) {
-      const angle = startAngle + (arcSpread / (totalItems - 1)) * i;
+    const positions: { x: number; y: number }[] = [];
+
+    // Outer ring: 3 items spread evenly
+    for (let i = 0; i < 3; i++) {
+      const angle = centerAngle - outerSpread / 2 + (outerSpread / 2) * i;
       const rad = (angle * Math.PI) / 180;
-      let ix = Math.cos(rad) * radius;
-      let iy = Math.sin(rad) * radius;
+      let ix = Math.cos(rad) * outerRadius;
+      let iy = Math.sin(rad) * outerRadius;
 
-      // Clamp each item to stay within viewport
-      const itemLeft = cx + ix - itemHalfW;
-      const itemRight = cx + ix + itemHalfW;
-      const itemTop = cy + iy - itemHalfH;
-      const itemBottom = cy + iy + itemHalfH;
-
-      if (itemLeft < margin) ix += margin - itemLeft;
-      if (itemRight > vw - margin) ix -= itemRight - (vw - margin);
-      if (itemTop < margin) iy += margin - itemTop;
-      if (itemBottom > vh - margin) iy -= itemBottom - (vh - margin);
+      // Clamp to viewport
+      if (cx + ix - itemHalfW < margin) ix = margin - cx + itemHalfW;
+      if (cx + ix + itemHalfW > vw - margin) ix = vw - margin - cx - itemHalfW;
+      if (cy + iy - itemHalfH < margin) iy = margin - cy + itemHalfH;
+      if (cy + iy + itemHalfH > vh - margin) iy = vh - margin - cy - itemHalfH;
 
       positions.push({ x: ix, y: iy });
     }
+
+    // Inner ring: 3 items, offset by half-step for staggering
+    for (let i = 0; i < 3; i++) {
+      const angle = centerAngle - innerSpread / 2 + (innerSpread / 2) * i;
+      const rad = (angle * Math.PI) / 180;
+      let ix = Math.cos(rad) * innerRadius;
+      let iy = Math.sin(rad) * innerRadius;
+
+      if (cx + ix - itemHalfW < margin) ix = margin - cx + itemHalfW;
+      if (cx + ix + itemHalfW > vw - margin) ix = vw - margin - cx - itemHalfW;
+      if (cy + iy - itemHalfH < margin) iy = margin - cy + itemHalfH;
+      if (cy + iy + itemHalfH > vh - margin) iy = vh - margin - cy - itemHalfH;
+
+      positions.push({ x: ix, y: iy });
+    }
+
     return positions;
   };
 
