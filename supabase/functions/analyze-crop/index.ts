@@ -30,14 +30,19 @@ serve(async (req) => {
             content: `You are an expert agricultural pathologist AI. Analyze crop leaf images and diagnose diseases.
 You must respond using the suggest_diagnosis tool.
 Always identify the plant/crop species name.
-If the image is not a plant/crop leaf, respond with disease "Not a crop image", plant_name "Unknown", and appropriate description.`,
+For the 3D visualization data:
+- infected_area_percent: percentage of leaf area affected (0-100)
+- spread_pattern: one of "spots", "edges", "veins", "uniform", "center"
+- severity_level: one of "healthy", "mild", "moderate", "severe", "critical"
+- affected_zones: array of objects with x (0-1), y (0-1), radius (0-0.5) representing infected spots on the leaf surface
+If the image is not a plant/crop leaf, respond with disease "Not a crop image", plant_name "Unknown", severity_level "healthy", and appropriate description.`,
           },
           {
             role: "user",
             content: [
               {
                 type: "text",
-                text: `Analyze this crop leaf image (filename: ${filename}). Identify the plant species, any diseases, provide treatment recommendations and prevention tips.`,
+                text: `Analyze this crop leaf image (filename: ${filename}). Identify the plant species, any diseases, provide treatment recommendations, prevention tips, and 3D visualization data for the infection pattern.`,
               },
               {
                 type: "image_url",
@@ -51,7 +56,7 @@ If the image is not a plant/crop leaf, respond with disease "Not a crop image", 
             type: "function",
             function: {
               name: "suggest_diagnosis",
-              description: "Return the crop disease diagnosis result including plant name",
+              description: "Return the crop disease diagnosis result with 3D visualization data",
               parameters: {
                 type: "object",
                 properties: {
@@ -81,8 +86,39 @@ If the image is not a plant/crop leaf, respond with disease "Not a crop image", 
                     items: { type: "string" },
                     description: "List of prevention tips",
                   },
+                  infected_area_percent: {
+                    type: "number",
+                    description: "Percentage of leaf area affected (0-100)",
+                  },
+                  spread_pattern: {
+                    type: "string",
+                    enum: ["spots", "edges", "veins", "uniform", "center"],
+                    description: "How the disease spreads on the leaf",
+                  },
+                  severity_level: {
+                    type: "string",
+                    enum: ["healthy", "mild", "moderate", "severe", "critical"],
+                    description: "Overall severity of the disease",
+                  },
+                  affected_zones: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        x: { type: "number", description: "X position on leaf (0-1)" },
+                        y: { type: "number", description: "Y position on leaf (0-1)" },
+                        radius: { type: "number", description: "Size of infected spot (0-0.5)" },
+                      },
+                      required: ["x", "y", "radius"],
+                    },
+                    description: "Array of infected zones on the leaf for 3D visualization",
+                  },
                 },
-                required: ["plant_name", "disease", "confidence", "description", "treatment", "prevention"],
+                required: [
+                  "plant_name", "disease", "confidence", "description",
+                  "treatment", "prevention", "infected_area_percent",
+                  "spread_pattern", "severity_level", "affected_zones"
+                ],
                 additionalProperties: false,
               },
             },
