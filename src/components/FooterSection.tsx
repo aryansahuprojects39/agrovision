@@ -22,9 +22,9 @@ const FooterSection = () => {
             <div>
               <h4 className="font-semibold text-foreground mb-3">Platform</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#features" className="hover:text-primary transition-colors">Features</a></li>
-                <li><a href="#how-it-works" className="hover:text-primary transition-colors">How It Works</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">Pricing</a></li>
+                <li><a href="/about" className="hover:text-primary transition-colors">About Us</a></li>
+                <li><a href="/marketplace" className="hover:text-primary transition-colors">Marketplace</a></li>
+                <li><a href="/community" className="hover:text-primary transition-colors">Community</a></li>
               </ul>
             </div>
           </ScrollReveal>
