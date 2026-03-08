@@ -12,7 +12,7 @@ import heroAutumn from "@/assets/hero-autumn.jpg";
 import heroWinter from "@/assets/hero-winter.jpg";
 import heroFarm from "@/assets/hero-farm.jpg";
 
-const FloatingElements3D = lazy(() => import("@/components/FloatingElements3D"));
+
 
 const SEASON_IMAGES: Record<string, string> = {
   spring: heroSpring,
