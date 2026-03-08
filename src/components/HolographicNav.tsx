@@ -149,7 +149,7 @@ const HolographicNav = () => {
     const checkAdmin = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) { setIsAdmin(false); return; }
-      const { data } = await supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin").maybeSingle();
+      const { data } = await supabase.rpc("has_role", { _user_id: user.id, _role: "admin" });
       setIsAdmin(!!data);
     };
     checkAdmin();
@@ -158,11 +158,9 @@ const HolographicNav = () => {
   }, []);
 
   const NAV_ITEMS = useMemo(() => {
+    const dashboardItem = isAdmin ? ADMIN_DASHBOARD : FARM_DASHBOARD;
     const items = [...BASE_NAV_ITEMS];
-    items.splice(2, 0, FARM_DASHBOARD); // Always show Farm Dashboard
-    if (isAdmin) {
-      items.splice(3, 0, ADMIN_DASHBOARD); // Add Admin Panel after Farm Dashboard
-    }
+    items.splice(2, 0, dashboardItem);
     return items;
   }, [isAdmin]);
 
