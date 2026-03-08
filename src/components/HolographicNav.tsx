@@ -183,41 +183,37 @@ const HolographicNav = () => {
   }, []);
 
   const totalItems = NAV_ITEMS.length;
+  const radius = 190;
 
-  // Grid layout that adapts direction based on available viewport space
+  // Arc layout that adapts direction based on button position
   const getItemPositions = () => {
     const vw = typeof window !== "undefined" ? window.innerWidth : 1280;
     const vh = typeof window !== "undefined" ? window.innerHeight : 720;
     const cx = vw / 2 + position.x;
     const cy = vh - 24 - 28 + position.y;
 
-    const spaceLeft = cx;
-    const spaceRight = vw - cx;
-    const spaceUp = cy;
-    const spaceDown = vh - cy;
+    // Determine center angle: point arc toward most open space
+    // atan2 from button to viewport center gives the "away from edge" direction
+    const toCenterX = vw / 2 - cx;
+    const toCenterY = vh / 2 - cy;
+    let centerAngle = (Math.atan2(toCenterY, toCenterX) * 180) / Math.PI;
 
-    // Expand toward the side with more space
-    const expandRight = spaceRight >= spaceLeft;
-    const expandUp = spaceUp >= spaceDown;
+    // Default upward when centered
+    if (Math.abs(toCenterX) < 100 && Math.abs(toCenterY) < 100) {
+      centerAngle = -90;
+    }
 
-    const colGap = 120;
-    const rowGap = 95;
-    const startOffset = 85; // distance from button to first row
+    const arcSpread = 160;
+    const startAngle = centerAngle - arcSpread / 2;
 
     const positions = [];
     for (let i = 0; i < totalItems; i++) {
-      const row = Math.floor(i / 2); // 0,0,1,1,2,2
-      const col = i % 2;             // 0,1,0,1,0,1
-
-      // Horizontal: center 2 columns, flip direction if near right edge
-      const colCenter = (col - 0.5) * colGap;
-      const x = expandRight ? colCenter : -colCenter;
-
-      // Vertical: stack rows away from nearest edge
-      const rowDist = startOffset + row * rowGap;
-      const y = expandUp ? -rowDist : rowDist;
-
-      positions.push({ x, y });
+      const angle = startAngle + (arcSpread / (totalItems - 1)) * i;
+      const rad = (angle * Math.PI) / 180;
+      positions.push({
+        x: Math.cos(rad) * radius,
+        y: Math.sin(rad) * radius,
+      });
     }
     return positions;
   };
