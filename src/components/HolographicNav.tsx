@@ -184,67 +184,53 @@ const HolographicNav = () => {
     if (!hasDraggedRef.current) setIsOpen((prev) => !prev);
   }, []);
 
-  const totalItems = NAV_ITEMS.length;
-
-  // Two-ring arc layout: 3 items on outer ring, 3 on inner ring, staggered
+  // 3-row × 2-col pyramid grid, direction-aware
   const getItemPositions = () => {
     const vw = typeof window !== "undefined" ? window.innerWidth : 1280;
     const vh = typeof window !== "undefined" ? window.innerHeight : 720;
     const cx = vw / 2 + position.x;
     const cy = vh - 24 - 28 + position.y;
 
-    // Point arc toward viewport center
-    const toCenterX = vw / 2 - cx;
-    const toCenterY = vh / 2 - cy;
-    let centerAngle = (Math.atan2(toCenterY, toCenterX) * 180) / Math.PI;
-    if (Math.abs(toCenterX) < 100 && Math.abs(toCenterY) < 100) {
-      centerAngle = -90;
-    }
+    const expandUp = cy > vh / 2;
+    const expandRight = cx < vw / 2;
 
-    const margin = 60;
+    // Fixed grid positions relative to button (matching the reference image)
+    // Row 0 (closest to button): AI Crop Doctor (left), Gov Schemes (right)
+    // Row 1 (middle): Farm Dashboard (left), Community (right)
+    // Row 2 (farthest): Marketplace (left-center), Weather (right-center)
+    const colGap = 160; // horizontal distance between left and right columns
+    const rowGap = 110; // vertical distance between rows
+    const innerOffset = 40; // how much the top row narrows inward
+
+    const rawPositions = [
+      // Row 2 (top/farthest): narrower spread
+      { x: -colGap / 2 + innerOffset, y: -3 * rowGap + rowGap },
+      { x: colGap / 2 - innerOffset, y: -3 * rowGap + rowGap },
+      // Row 1 (middle): full spread
+      { x: -colGap / 2 - 20, y: -2 * rowGap + rowGap },
+      { x: colGap / 2 + 20, y: -2 * rowGap + rowGap },
+      // Row 0 (bottom/closest): widest spread
+      { x: -colGap / 2 - 40, y: -rowGap + rowGap },
+      { x: colGap / 2 + 40, y: -rowGap + rowGap },
+    ];
+
+    const margin = 50;
     const itemHalfW = 55;
     const itemHalfH = 42;
 
-    // Two rings: outer (items 0,1,2) and inner (items 3,4,5)
-    const outerRadius = 280;
-    const innerRadius = 155;
-    const outerSpread = 120; // degrees for 3 items on outer ring
-    const innerSpread = 100; // degrees for 3 items on inner ring
-
-    const positions: { x: number; y: number }[] = [];
-
-    // Outer ring: 3 items spread evenly
-    for (let i = 0; i < 3; i++) {
-      const angle = centerAngle - outerSpread / 2 + (outerSpread / 2) * i;
-      const rad = (angle * Math.PI) / 180;
-      let ix = Math.cos(rad) * outerRadius;
-      let iy = Math.sin(rad) * outerRadius;
+    return rawPositions.map((p) => {
+      // Flip vertically if button is in top half
+      let x = expandRight ? p.x : -p.x;
+      let y = expandUp ? p.y - rowGap : -(p.y - rowGap);
 
       // Clamp to viewport
-      if (cx + ix - itemHalfW < margin) ix = margin - cx + itemHalfW;
-      if (cx + ix + itemHalfW > vw - margin) ix = vw - margin - cx - itemHalfW;
-      if (cy + iy - itemHalfH < margin) iy = margin - cy + itemHalfH;
-      if (cy + iy + itemHalfH > vh - margin) iy = vh - margin - cy - itemHalfH;
+      if (cx + x - itemHalfW < margin) x = margin - cx + itemHalfW;
+      if (cx + x + itemHalfW > vw - margin) x = vw - margin - cx - itemHalfW;
+      if (cy + y - itemHalfH < margin) y = margin - cy + itemHalfH;
+      if (cy + y + itemHalfH > vh - margin) y = vh - margin - cy - itemHalfH;
 
-      positions.push({ x: ix, y: iy });
-    }
-
-    // Inner ring: 3 items, offset by half-step for staggering
-    for (let i = 0; i < 3; i++) {
-      const angle = centerAngle - innerSpread / 2 + (innerSpread / 2) * i;
-      const rad = (angle * Math.PI) / 180;
-      let ix = Math.cos(rad) * innerRadius;
-      let iy = Math.sin(rad) * innerRadius;
-
-      if (cx + ix - itemHalfW < margin) ix = margin - cx + itemHalfW;
-      if (cx + ix + itemHalfW > vw - margin) ix = vw - margin - cx - itemHalfW;
-      if (cy + iy - itemHalfH < margin) iy = margin - cy + itemHalfH;
-      if (cy + iy + itemHalfH > vh - margin) iy = vh - margin - cy - itemHalfH;
-
-      positions.push({ x: ix, y: iy });
-    }
-
-    return positions;
+      return { x, y };
+    });
   };
 
   const itemPositions = getItemPositions();
