@@ -456,11 +456,13 @@ export function useEnvironmentTheme() {
   const [season, setSeason] = useState<Season>(getIndiaSeason);
   const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>(getTimeOfDay);
   const [climate, setClimate] = useState<Climate>("clear");
-  const [isDark, setIsDark] = useState(() =>
-    typeof window !== "undefined"
-      ? document.documentElement.classList.contains("dark")
-      : false
-  );
+  const [isDark, setIsDark] = useState(() => {
+    if (typeof window === "undefined") return false;
+    // Check both the DOM class AND localStorage to handle first-load race condition
+    // where useTheme hasn't applied the class yet
+    const savedTheme = localStorage.getItem("theme");
+    return savedTheme === "dark" || document.documentElement.classList.contains("dark");
+  });
 
   // Watch for dark mode changes
   useEffect(() => {
