@@ -18,6 +18,10 @@ import WeatherPage from "./pages/WeatherPage";
 import GovernmentSchemesPage from "./pages/GovernmentSchemesPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import CommunityForumPage from "./pages/CommunityForumPage";
+import AboutPage from "./pages/AboutPage";
+import BlogPage from "./pages/BlogPage";
+import DocumentaryPage from "./pages/DocumentaryPage";
+import ContactPage from "./pages/ContactPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
