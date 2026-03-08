@@ -40,6 +40,7 @@ const AnimatedRoutes = () => {
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
+      <HolographicNav />
     </PageTransition>
   );
 };
