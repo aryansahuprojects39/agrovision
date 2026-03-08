@@ -40,11 +40,19 @@ function getCropType(plantName: string): string {
   if (name.includes("rice") || name.includes("paddy")) return "rice";
   if (name.includes("corn") || name.includes("maize")) return "corn";
   if (name.includes("wheat") || name.includes("barley") || name.includes("oat")) return "wheat";
-  if (name.includes("tomato") || name.includes("potato") || name.includes("eggplant")) return "broad";
+  if (name.includes("tomato") || name.includes("potato") || name.includes("eggplant") || name.includes("pepper") || name.includes("capsicum")) return "broad";
   if (name.includes("grape") || name.includes("vine")) return "grape";
-  if (name.includes("mango") || name.includes("apple") || name.includes("citrus") || name.includes("orange") || name.includes("lemon")) return "oval";
+  if (name.includes("mango") || name.includes("apple") || name.includes("citrus") || name.includes("orange") || name.includes("lemon") || name.includes("guava")) return "oval";
   if (name.includes("banana") || name.includes("plantain")) return "banana";
-  if (name.includes("cotton") || name.includes("okra")) return "lobed";
+  if (name.includes("cotton") || name.includes("okra") || name.includes("hibiscus")) return "lobed";
+  if (name.includes("sugarcane") || name.includes("sugar cane")) return "sugarcane";
+  if (name.includes("tea") || name.includes("camellia")) return "tea";
+  if (name.includes("coffee") || name.includes("coffea")) return "coffee";
+  if (name.includes("soybean") || name.includes("soy") || name.includes("bean") || name.includes("pea") || name.includes("lentil")) return "legume";
+  if (name.includes("sunflower")) return "sunflower";
+  if (name.includes("coconut") || name.includes("palm") || name.includes("date")) return "palm";
+  if (name.includes("strawberry") || name.includes("raspberry")) return "strawberry";
+  if (name.includes("onion") || name.includes("garlic") || name.includes("leek")) return "allium";
   return "default";
 }
 
@@ -63,6 +71,88 @@ function createCropGeometry(cropType: string): THREE.ExtrudeGeometry {
       shape.bezierCurveTo(-0.2, -1, -0.15, -2, 0, -2.5);
       break;
     }
+    case "sugarcane": {
+      // Very long, narrow blade with slight curve - sugarcane leaf
+      shape.moveTo(0, -3);
+      shape.bezierCurveTo(0.2, -2.2, 0.3, -1, 0.28, 0);
+      shape.bezierCurveTo(0.25, 1.2, 0.18, 2.5, 0.08, 3.2);
+      shape.lineTo(0, 3.5);
+      shape.lineTo(-0.08, 3.2);
+      shape.bezierCurveTo(-0.18, 2.5, -0.25, 1.2, -0.28, 0);
+      shape.bezierCurveTo(-0.3, -1, -0.2, -2.2, 0, -3);
+      break;
+    }
+    case "tea": {
+      // Small, elliptical serrated leaf - tea leaf
+      shape.moveTo(0, -1.2);
+      shape.bezierCurveTo(0.4, -1, 0.65, -0.5, 0.7, 0);
+      shape.bezierCurveTo(0.65, 0.4, 0.55, 0.8, 0.4, 1.0);
+      shape.bezierCurveTo(0.25, 1.2, 0.1, 1.35, 0, 1.4);
+      shape.bezierCurveTo(-0.1, 1.35, -0.25, 1.2, -0.4, 1.0);
+      shape.bezierCurveTo(-0.55, 0.8, -0.65, 0.4, -0.7, 0);
+      shape.bezierCurveTo(-0.65, -0.5, -0.4, -1, 0, -1.2);
+      break;
+    }
+    case "coffee": {
+      // Elongated oval with wavy edges - coffee leaf
+      shape.moveTo(0, -1.6);
+      shape.bezierCurveTo(0.5, -1.3, 0.8, -0.6, 0.85, 0);
+      shape.bezierCurveTo(0.8, 0.6, 0.6, 1.1, 0.4, 1.4);
+      shape.bezierCurveTo(0.2, 1.6, 0.1, 1.7, 0, 1.8);
+      shape.bezierCurveTo(-0.1, 1.7, -0.2, 1.6, -0.4, 1.4);
+      shape.bezierCurveTo(-0.6, 1.1, -0.8, 0.6, -0.85, 0);
+      shape.bezierCurveTo(-0.8, -0.6, -0.5, -1.3, 0, -1.6);
+      break;
+    }
+    case "legume": {
+      // Small rounded leaflet - soybean/bean
+      shape.moveTo(0, -1.0);
+      shape.bezierCurveTo(0.5, -0.8, 0.8, -0.2, 0.75, 0.3);
+      shape.bezierCurveTo(0.65, 0.8, 0.35, 1.1, 0, 1.2);
+      shape.bezierCurveTo(-0.35, 1.1, -0.65, 0.8, -0.75, 0.3);
+      shape.bezierCurveTo(-0.8, -0.2, -0.5, -0.8, 0, -1.0);
+      break;
+    }
+    case "sunflower": {
+      // Large heart-shaped leaf
+      shape.moveTo(0, -1.6);
+      shape.bezierCurveTo(0.8, -1.2, 1.3, -0.3, 1.2, 0.4);
+      shape.bezierCurveTo(1.1, 1.0, 0.7, 1.5, 0, 1.7);
+      shape.bezierCurveTo(-0.7, 1.5, -1.1, 1.0, -1.2, 0.4);
+      shape.bezierCurveTo(-1.3, -0.3, -0.8, -1.2, 0, -1.6);
+      break;
+    }
+    case "palm": {
+      // Long frond segment - palm/coconut
+      shape.moveTo(0, -2.8);
+      shape.bezierCurveTo(0.12, -2, 0.18, -0.8, 0.15, 0.5);
+      shape.bezierCurveTo(0.12, 1.5, 0.08, 2.5, 0.03, 3);
+      shape.lineTo(0, 3.2);
+      shape.lineTo(-0.03, 3);
+      shape.bezierCurveTo(-0.08, 2.5, -0.12, 1.5, -0.15, 0.5);
+      shape.bezierCurveTo(-0.18, -0.8, -0.12, -2, 0, -2.8);
+      break;
+    }
+    case "strawberry": {
+      // Trifoliate rounded leaf
+      shape.moveTo(0, -1.1);
+      shape.bezierCurveTo(0.6, -0.8, 1.0, -0.2, 0.95, 0.3);
+      shape.bezierCurveTo(0.85, 0.7, 0.5, 1.0, 0, 1.1);
+      shape.bezierCurveTo(-0.5, 1.0, -0.85, 0.7, -0.95, 0.3);
+      shape.bezierCurveTo(-1.0, -0.2, -0.6, -0.8, 0, -1.1);
+      break;
+    }
+    case "allium": {
+      // Tubular/flat strap leaf - onion/garlic
+      shape.moveTo(0, -2.4);
+      shape.bezierCurveTo(0.1, -1.8, 0.12, -0.8, 0.1, 0.2);
+      shape.bezierCurveTo(0.08, 1.2, 0.05, 2, 0.02, 2.6);
+      shape.lineTo(0, 2.8);
+      shape.lineTo(-0.02, 2.6);
+      shape.bezierCurveTo(-0.05, 2, -0.08, 1.2, -0.1, 0.2);
+      shape.bezierCurveTo(-0.12, -0.8, -0.1, -1.8, 0, -2.4);
+      break;
+    }
     case "corn": {
       // Wide, long blade with pointed tip
       shape.moveTo(0, -2.2);
@@ -73,7 +163,6 @@ function createCropGeometry(cropType: string): THREE.ExtrudeGeometry {
       break;
     }
     case "wheat": {
-      // Thin grass-like blade
       shape.moveTo(0, -2.2);
       shape.bezierCurveTo(0.12, -1.5, 0.15, -0.5, 0.12, 0.5);
       shape.bezierCurveTo(0.1, 1.5, 0.06, 2.2, 0, 2.6);
@@ -82,7 +171,6 @@ function createCropGeometry(cropType: string): THREE.ExtrudeGeometry {
       break;
     }
     case "broad": {
-      // Broad, rounded leaf (tomato/potato)
       shape.moveTo(0, -1.5);
       shape.bezierCurveTo(0.9, -1, 1.4, 0, 1.2, 0.8);
       shape.bezierCurveTo(1, 1.4, 0.5, 1.8, 0, 2);
@@ -91,7 +179,6 @@ function createCropGeometry(cropType: string): THREE.ExtrudeGeometry {
       break;
     }
     case "grape": {
-      // Lobed grape leaf with serrated edges
       shape.moveTo(0, -1.3);
       shape.bezierCurveTo(0.6, -1, 1.1, -0.3, 1.2, 0.2);
       shape.bezierCurveTo(1.0, 0.5, 0.7, 0.4, 0.9, 0.8);
@@ -104,7 +191,6 @@ function createCropGeometry(cropType: string): THREE.ExtrudeGeometry {
       break;
     }
     case "banana": {
-      // Very long, wide tropical leaf
       shape.moveTo(0, -2.8);
       shape.bezierCurveTo(0.5, -2, 0.7, -0.5, 0.65, 0.5);
       shape.bezierCurveTo(0.6, 1.5, 0.4, 2.5, 0, 3.2);
@@ -113,7 +199,6 @@ function createCropGeometry(cropType: string): THREE.ExtrudeGeometry {
       break;
     }
     case "oval": {
-      // Oval leaf (mango, citrus)
       shape.moveTo(0, -1.6);
       shape.bezierCurveTo(0.7, -1.2, 1.0, -0.3, 0.95, 0.3);
       shape.bezierCurveTo(0.85, 1, 0.5, 1.5, 0, 1.8);
@@ -122,7 +207,6 @@ function createCropGeometry(cropType: string): THREE.ExtrudeGeometry {
       break;
     }
     case "lobed": {
-      // Lobed leaf (cotton, okra)
       shape.moveTo(0, -1.4);
       shape.bezierCurveTo(0.5, -1.1, 0.9, -0.5, 1.1, 0);
       shape.bezierCurveTo(0.8, 0.2, 1.0, 0.6, 0.8, 1.0);
@@ -133,7 +217,6 @@ function createCropGeometry(cropType: string): THREE.ExtrudeGeometry {
       break;
     }
     default: {
-      // Default leaf shape
       shape.moveTo(0, -1.8);
       shape.bezierCurveTo(0.8, -1, 1.2, 0, 0.9, 0.8);
       shape.bezierCurveTo(0.6, 1.4, 0.2, 1.8, 0, 2);
