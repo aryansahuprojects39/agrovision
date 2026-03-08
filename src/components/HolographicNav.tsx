@@ -196,20 +196,28 @@ const HolographicNav = () => {
     const spaceUp = cy;
     const spaceDown = vh - cy;
 
-    const dirX = spaceRight >= spaceLeft ? 1 : -1;
-    const dirY = spaceUp >= spaceDown ? -1 : 1;
+    // Expand toward the side with more space
+    const expandRight = spaceRight >= spaceLeft;
+    const expandUp = spaceUp >= spaceDown;
 
     const colGap = 120;
     const rowGap = 95;
+    const startOffset = 85; // distance from button to first row
 
     const positions = [];
     for (let i = 0; i < totalItems; i++) {
-      const row = Math.floor(i / 2);
-      const col = i % 2;
-      positions.push({
-        x: (col - 0.5) * colGap * dirX,
-        y: dirY * (-85 - row * rowGap),
-      });
+      const row = Math.floor(i / 2); // 0,0,1,1,2,2
+      const col = i % 2;             // 0,1,0,1,0,1
+
+      // Horizontal: center 2 columns, flip direction if near right edge
+      const colCenter = (col - 0.5) * colGap;
+      const x = expandRight ? colCenter : -colCenter;
+
+      // Vertical: stack rows away from nearest edge
+      const rowDist = startOffset + row * rowGap;
+      const y = expandUp ? -rowDist : rowDist;
+
+      positions.push({ x, y });
     }
     return positions;
   };
