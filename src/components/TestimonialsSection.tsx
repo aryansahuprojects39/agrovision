@@ -52,8 +52,8 @@ const TestimonialsSection = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {testimonials.map((t, i) => (
-            <ScrollReveal key={t.name} delay={i * 150} direction="up">
-              <Card className="h-full border-border/60 hover:shadow-xl hover:border-primary/20 transition-all duration-300">
+            <ScrollReveal key={t.name} delay={i * 200} direction="up">
+              <Card className="h-full border-border/60 hover:shadow-xl hover:border-primary/20 transition-all duration-500 hover:-translate-y-1">
                 <CardContent className="p-6 flex flex-col h-full">
                   {/* Stars */}
                   <div className="flex gap-1 mb-4">
