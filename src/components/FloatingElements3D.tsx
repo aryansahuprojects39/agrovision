@@ -203,9 +203,13 @@ function SeasonalFlower({
 function PollenParticle({
   position,
   pointer,
+  particleColor = "#f9fbe7",
+  particleEmissive = "#cddc39",
 }: {
   position: [number, number, number];
   pointer: React.MutableRefObject<{ x: number; y: number }>;
+  particleColor?: string;
+  particleEmissive?: string;
 }) {
   const ref = useRef<THREE.Mesh>(null);
   const speed = useMemo(() => 0.5 + Math.random() * 1.5, []);
@@ -232,8 +236,8 @@ function PollenParticle({
     <mesh ref={ref} position={position}>
       <sphereGeometry args={[0.025, 6, 6]} />
       <meshStandardMaterial
-        color="#f9fbe7"
-        emissive="#cddc39"
+        color={particleColor}
+        emissive={particleEmissive}
         emissiveIntensity={0.6}
         transparent
         opacity={0.5}
