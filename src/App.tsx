@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import PageTransition from "@/components/PageTransition";
+import HolographicNav from "@/components/HolographicNav";
 import Index from "./pages/Index";
 import AuthPage from "./pages/AuthPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
@@ -39,6 +40,7 @@ const AnimatedRoutes = () => {
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
+      <HolographicNav />
     </PageTransition>
   );
 };
