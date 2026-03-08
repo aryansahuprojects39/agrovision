@@ -202,18 +202,24 @@ const HolographicNav = () => {
     const centerY = Math.max(0, Math.min(1, 1 - Math.abs(cy - vh / 2) / (vh / 2 - edgeMargin)));
     const centeredness = Math.min(centerX, centerY);
 
-    // When centered: smaller radius, full 360°. At edge: larger radius, 150° arc
-    const radius = 180 - centeredness * 30; // 180px at edge → 150px when centered
-    const spreadAngle = ((150 + centeredness * 210) * Math.PI) / 180; // 150° → 360°
+    // When centered: full 360° circle. At edge: 150° arc upward
+    const radius = 200; // fixed radius large enough for 6 items
+    const isCircle = centeredness > 0.5;
+    const spreadAngle = isCircle
+      ? 2 * Math.PI // full circle
+      : (150 * Math.PI) / 180; // semicircle
 
     // Determine base direction (away from nearest edge)
     const expandUp = cy > vh / 2;
     const baseAngle = expandUp ? Math.PI / 2 : -Math.PI / 2;
 
-    const yOffset = centeredness > 0.7 ? 0 : expandUp ? -50 : 50;
+    const yOffset = isCircle ? 0 : expandUp ? -50 : 50;
 
     return NAV_ITEMS.map((_, i) => {
-      const angle = baseAngle + spreadAngle / 2 - (i / (count - 1)) * spreadAngle;
+      // For full circle, use count divisor (evenly spaced). For arc, use count-1.
+      const angle = isCircle
+        ? baseAngle + spreadAngle / 2 - (i / count) * spreadAngle
+        : baseAngle + spreadAngle / 2 - (i / (count - 1)) * spreadAngle;
       let x = Math.cos(angle) * radius;
       let y = -Math.sin(angle) * radius + yOffset;
 
