@@ -224,7 +224,7 @@ const DiseaseDetectionPage = () => {
                     </div>
                   )}
 
-                  {result.disease !== "Healthy" && result.disease !== "Not a crop image" && (
+                  {result.disease !== "Not a crop image" && (
                     <Button
                       variant="outline"
                       className="w-full mt-4"
