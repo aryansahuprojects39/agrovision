@@ -3,13 +3,14 @@ import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import Navbar from "@/components/Navbar";
+import TiltCard from "@/components/TiltCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Trash2, Edit2, Save, MapPin, Leaf, ShoppingCart, User, Home } from "lucide-react";
+import { Loader2, Trash2, Edit2, Save, MapPin, Leaf, ShoppingCart, User, Home, CloudSun, FlaskConical, TrendingUp, Heart } from "lucide-react";
 import { toast } from "sonner";
 
 interface Profile {
