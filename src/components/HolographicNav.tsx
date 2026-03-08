@@ -59,8 +59,10 @@ function NavCard({
           : `translate(0px, 0px) scale(0)`,
         opacity: isOpen ? 1 : 0,
         transition: `all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) ${delay}ms`,
-        left: "-44px",
-        top: "-36px",
+        left: "0px",
+        top: "0px",
+        marginLeft: "-50px",
+        marginTop: "-35px",
       }}
     >
       <div
@@ -72,7 +74,7 @@ function NavCard({
           boxShadow: isActive
             ? `0 8px 32px ${item.color}40, 0 0 48px ${item.color}15, inset 0 1px 0 ${item.color}40`
             : `0 8px 24px hsl(0 0% 0% / 0.4), 0 0 20px ${item.color}15, inset 0 1px 0 ${item.color}25`,
-          minWidth: "88px",
+          width: "100px",
           transition: "transform 0.15s ease-out, box-shadow 0.3s ease, border-color 0.3s ease",
           backdropFilter: "blur(16px)",
           transformStyle: "preserve-3d",
@@ -207,10 +209,10 @@ const HolographicNav = () => {
     const maxReachLeft = cx - margin - itemHalfW;
     const maxReachUp = cy - margin - itemHalfH;
     const maxReachDown = vh - cy - margin - itemHalfH;
-    const maxReach = Math.max(120, Math.min(maxReachRight, maxReachLeft, maxReachUp, maxReachDown, 220));
-    const radius = Math.min(220, maxReach);
+    const maxReach = Math.max(140, Math.min(maxReachRight, maxReachLeft, maxReachUp, maxReachDown, 260));
+    const radius = Math.min(260, maxReach);
 
-    const arcSpread = 140;
+    const arcSpread = 150;
     const startAngle = centerAngle - arcSpread / 2;
 
     const positions = [];
