@@ -83,6 +83,13 @@ const WeatherPage = () => {
           tempMin: Math.round(forecast.daily.temperature_2m_min[i]),
           weatherCode: forecast.daily.weather_code[i],
         })),
+        hourly: hourlyData.hourly.time.map((time: string, i: number) => ({
+          time,
+          temp: Math.round(hourlyData.hourly.temperature_2m[i]),
+          weatherCode: hourlyData.hourly.weather_code[i],
+          humidity: hourlyData.hourly.relative_humidity_2m[i],
+          windSpeed: Math.round(hourlyData.hourly.wind_speed_10m[i]),
+        })),
       });
     } catch {
       toast.error("Failed to fetch weather data");
