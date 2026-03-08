@@ -82,6 +82,38 @@ interface PageTransitionProps {
   children: ReactNode;
 }
 
+const SkeletonOverlay = () => (
+  <div className="fixed inset-0 z-[9998] bg-background pointer-events-none">
+    {/* Navbar skeleton */}
+    <div className="h-16 border-b border-border px-6 flex items-center gap-4">
+      <div className="h-8 w-8 rounded-full bg-muted animate-pulse" />
+      <div className="h-4 w-32 rounded bg-muted animate-pulse" />
+      <div className="flex-1" />
+      <div className="hidden sm:flex gap-4">
+        {[80, 60, 70, 50].map((w, i) => (
+          <div key={i} className="h-3 rounded bg-muted animate-pulse" style={{ width: w }} />
+        ))}
+      </div>
+    </div>
+    {/* Content skeleton */}
+    <div className="max-w-4xl mx-auto px-6 pt-10 space-y-6">
+      <div className="h-8 w-64 rounded bg-muted animate-pulse" />
+      <div className="h-4 w-96 max-w-full rounded bg-muted animate-pulse" />
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="h-32 rounded-lg bg-muted animate-pulse" />
+        ))}
+      </div>
+      <div className="h-48 rounded-lg bg-muted animate-pulse" />
+      <div className="space-y-3">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="h-4 rounded bg-muted animate-pulse" style={{ width: `${90 - i * 15}%` }} />
+        ))}
+      </div>
+    </div>
+  </div>
+);
+
 const PageTransition = ({ children }: PageTransitionProps) => {
   const location = useLocation();
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -90,6 +122,7 @@ const PageTransition = ({ children }: PageTransitionProps) => {
     children,
     pathname: location.pathname,
   });
+  const [showSkeleton, setShowSkeleton] = useState(false);
   const animatingRef = useRef(false);
   const isFirst = useRef(true);
 
@@ -105,7 +138,6 @@ const PageTransition = ({ children }: PageTransitionProps) => {
       bar.style.background = colors.gradient;
       bar.style.boxShadow = colors.glow;
 
-      // Pulsing glow animation
       bar.animate(
         [
           { boxShadow: colors.glow, offset: 0 },
@@ -164,8 +196,8 @@ const PageTransition = ({ children }: PageTransitionProps) => {
     const transition = getTransition(location.pathname);
     activeTransitionRef.current = transition;
     animateProgress(true);
+    setShowSkeleton(true);
 
-    // Cancel any lingering animations to prevent double-firing
     el.getAnimations().forEach((a) => a.cancel());
     el.style.transform = "";
     el.style.opacity = "";
@@ -177,7 +209,6 @@ const PageTransition = ({ children }: PageTransitionProps) => {
     });
 
     exit.onfinish = () => {
-      // Cancel exit fill before swapping
       exit.cancel();
       el.style.opacity = "0";
       setCurrent({ children, pathname: location.pathname });
@@ -196,6 +227,7 @@ const PageTransition = ({ children }: PageTransitionProps) => {
           el.style.transform = "";
           el.style.opacity = "";
           animatingRef.current = false;
+          setShowSkeleton(false);
           animateProgress(false);
         };
       });
@@ -204,6 +236,7 @@ const PageTransition = ({ children }: PageTransitionProps) => {
     return () => {
       exit.cancel();
       animatingRef.current = false;
+      setShowSkeleton(false);
       animateProgress(false);
     };
   }, [location.pathname]);
@@ -220,6 +253,8 @@ const PageTransition = ({ children }: PageTransitionProps) => {
           borderRadius: "0 3px 3px 0",
         }}
       />
+      {/* Skeleton overlay during transition */}
+      {showSkeleton && <SkeletonOverlay />}
       <div
         ref={wrapperRef}
         className="min-h-screen overflow-hidden"
