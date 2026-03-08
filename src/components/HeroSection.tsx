@@ -1,9 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Leaf } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import heroImage from "@/assets/hero-farm.jpg";
 
 const HeroSection = () => {
+  const { user } = useAuth();
+
   return (
     <section className="relative min-h-[100svh] flex items-center overflow-hidden">
       {/* Background image */}
@@ -32,17 +35,28 @@ const HeroSection = () => {
             Detect crop diseases, monitor soil health, optimize irrigation, and connect directly with buyers — all from one platform.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-3 pt-2">
-            <Button size="lg" className="text-base" asChild>
-              <Link to="/auth">
-                Start Free Trial
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-            <Button size="lg" variant="outline" className="text-base border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 bg-transparent" asChild>
-              <a href="/#features">Watch Demo</a>
-            </Button>
-          </div>
+          {!user ? (
+            <div className="flex flex-col sm:flex-row gap-3 pt-2">
+              <Button size="lg" className="text-base" asChild>
+                <Link to="/auth">
+                  Get Started
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+              <Button size="lg" variant="outline" className="text-base border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 bg-transparent" asChild>
+                <a href="/#features">Explore Features</a>
+              </Button>
+            </div>
+          ) : (
+            <div className="flex flex-col sm:flex-row gap-3 pt-2">
+              <Button size="lg" className="text-base" asChild>
+                <Link to="/dashboard">
+                  Go to Dashboard
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+          )}
 
           <div className="flex flex-wrap gap-x-8 gap-y-2 pt-4 text-sm text-primary-foreground/70">
             <span>✓ Free for Small Farmers</span>
