@@ -54,6 +54,7 @@ const AnimatedRoutes = () => {
       </PageTransition>
       
       <HolographicNav />
+      <AIChatbot />
     </>
   );
 };
