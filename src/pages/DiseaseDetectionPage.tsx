@@ -86,8 +86,8 @@ const DiseaseDetectionPage = () => {
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
       setResult(data);
-      // Auto-show 3D if disease detected
-      if (data.disease !== "Healthy" && data.disease !== "Not a crop image") {
+      // Show 3D visualization for all results (healthy or diseased)
+      if (data.disease !== "Not a crop image") {
         setShow3D(true);
       }
       if (user) {
