@@ -158,9 +158,11 @@ const HolographicNav = () => {
   }, []);
 
   const NAV_ITEMS = useMemo(() => {
-    const dashboardItem = isAdmin ? ADMIN_DASHBOARD : FARM_DASHBOARD;
     const items = [...BASE_NAV_ITEMS];
-    items.splice(2, 0, dashboardItem); // Insert dashboard at position 2
+    items.splice(2, 0, FARM_DASHBOARD); // Always show Farm Dashboard
+    if (isAdmin) {
+      items.splice(3, 0, ADMIN_DASHBOARD); // Add Admin Panel after Farm Dashboard
+    }
     return items;
   }, [isAdmin]);
 
