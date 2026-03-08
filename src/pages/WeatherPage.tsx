@@ -246,16 +246,15 @@ const WeatherPage = () => {
             <Card>
               <CardHeader><CardTitle className="text-base flex items-center gap-2"><Thermometer className="h-4 w-4" /> 24-Hour Forecast</CardTitle></CardHeader>
               <CardContent>
-                <div className="overflow-x-auto -mx-2 px-2">
-                  <div className="flex gap-2 min-w-max pb-2">
+                <ScrollArea className="w-full whitespace-nowrap">
+                  <div className="flex gap-2 pb-4">
                     {weather.hourly.map((hour, i) => {
-                      const info = weatherCodeToInfo(hour.weatherCode);
                       const timeStr = new Date(hour.time).toLocaleTimeString("en", { hour: "numeric", hour12: true });
                       const isNow = i === 0;
                       return (
                         <div
                           key={hour.time}
-                          className={`text-center p-3 rounded-lg min-w-[72px] transition-colors ${
+                          className={`text-center p-3 rounded-lg min-w-[72px] shrink-0 transition-colors ${
                             isNow ? "bg-primary/10 border border-primary/30" : "bg-muted/50"
                           }`}
                         >
@@ -276,7 +275,8 @@ const WeatherPage = () => {
                       );
                     })}
                   </div>
-                </div>
+                  <ScrollBar orientation="horizontal" />
+                </ScrollArea>
               </CardContent>
             </Card>
 
