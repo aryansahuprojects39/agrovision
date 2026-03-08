@@ -35,10 +35,142 @@ const severityEmissive: Record<string, string> = {
   critical: "#4a0028",
 };
 
-function LeafShape({ severity, cropImageUrl }: { severity: string; cropImageUrl?: string }) {
+function getCropType(plantName: string): string {
+  const name = plantName.toLowerCase();
+  if (name.includes("rice") || name.includes("paddy")) return "rice";
+  if (name.includes("corn") || name.includes("maize")) return "corn";
+  if (name.includes("wheat") || name.includes("barley") || name.includes("oat")) return "wheat";
+  if (name.includes("tomato") || name.includes("potato") || name.includes("eggplant")) return "broad";
+  if (name.includes("grape") || name.includes("vine")) return "grape";
+  if (name.includes("mango") || name.includes("apple") || name.includes("citrus") || name.includes("orange") || name.includes("lemon")) return "oval";
+  if (name.includes("banana") || name.includes("plantain")) return "banana";
+  if (name.includes("cotton") || name.includes("okra")) return "lobed";
+  return "default";
+}
+
+function createCropGeometry(cropType: string): THREE.ExtrudeGeometry {
+  const shape = new THREE.Shape();
+
+  switch (cropType) {
+    case "rice": {
+      // Long, narrow blade - rice paddy leaf
+      shape.moveTo(0, -2.5);
+      shape.bezierCurveTo(0.15, -2, 0.2, -1, 0.18, 0);
+      shape.bezierCurveTo(0.15, 1, 0.12, 2, 0.05, 2.8);
+      shape.lineTo(0, 3);
+      shape.lineTo(-0.05, 2.8);
+      shape.bezierCurveTo(-0.12, 2, -0.15, 1, -0.18, 0);
+      shape.bezierCurveTo(-0.2, -1, -0.15, -2, 0, -2.5);
+      break;
+    }
+    case "corn": {
+      // Wide, long blade with pointed tip
+      shape.moveTo(0, -2.2);
+      shape.bezierCurveTo(0.4, -1.5, 0.6, -0.5, 0.55, 0.5);
+      shape.bezierCurveTo(0.45, 1.5, 0.25, 2.2, 0, 2.8);
+      shape.bezierCurveTo(-0.25, 2.2, -0.45, 1.5, -0.55, 0.5);
+      shape.bezierCurveTo(-0.6, -0.5, -0.4, -1.5, 0, -2.2);
+      break;
+    }
+    case "wheat": {
+      // Thin grass-like blade
+      shape.moveTo(0, -2.2);
+      shape.bezierCurveTo(0.12, -1.5, 0.15, -0.5, 0.12, 0.5);
+      shape.bezierCurveTo(0.1, 1.5, 0.06, 2.2, 0, 2.6);
+      shape.bezierCurveTo(-0.06, 2.2, -0.1, 1.5, -0.12, 0.5);
+      shape.bezierCurveTo(-0.15, -0.5, -0.12, -1.5, 0, -2.2);
+      break;
+    }
+    case "broad": {
+      // Broad, rounded leaf (tomato/potato)
+      shape.moveTo(0, -1.5);
+      shape.bezierCurveTo(0.9, -1, 1.4, 0, 1.2, 0.8);
+      shape.bezierCurveTo(1, 1.4, 0.5, 1.8, 0, 2);
+      shape.bezierCurveTo(-0.5, 1.8, -1, 1.4, -1.2, 0.8);
+      shape.bezierCurveTo(-1.4, 0, -0.9, -1, 0, -1.5);
+      break;
+    }
+    case "grape": {
+      // Lobed grape leaf with serrated edges
+      shape.moveTo(0, -1.3);
+      shape.bezierCurveTo(0.6, -1, 1.1, -0.3, 1.2, 0.2);
+      shape.bezierCurveTo(1.0, 0.5, 0.7, 0.4, 0.9, 0.8);
+      shape.bezierCurveTo(1.0, 1.2, 0.6, 1.5, 0.3, 1.4);
+      shape.bezierCurveTo(0.15, 1.6, 0.05, 1.7, 0, 1.8);
+      shape.bezierCurveTo(-0.05, 1.7, -0.15, 1.6, -0.3, 1.4);
+      shape.bezierCurveTo(-0.6, 1.5, -1.0, 1.2, -0.9, 0.8);
+      shape.bezierCurveTo(-0.7, 0.4, -1.0, 0.5, -1.2, 0.2);
+      shape.bezierCurveTo(-1.1, -0.3, -0.6, -1, 0, -1.3);
+      break;
+    }
+    case "banana": {
+      // Very long, wide tropical leaf
+      shape.moveTo(0, -2.8);
+      shape.bezierCurveTo(0.5, -2, 0.7, -0.5, 0.65, 0.5);
+      shape.bezierCurveTo(0.6, 1.5, 0.4, 2.5, 0, 3.2);
+      shape.bezierCurveTo(-0.4, 2.5, -0.6, 1.5, -0.65, 0.5);
+      shape.bezierCurveTo(-0.7, -0.5, -0.5, -2, 0, -2.8);
+      break;
+    }
+    case "oval": {
+      // Oval leaf (mango, citrus)
+      shape.moveTo(0, -1.6);
+      shape.bezierCurveTo(0.7, -1.2, 1.0, -0.3, 0.95, 0.3);
+      shape.bezierCurveTo(0.85, 1, 0.5, 1.5, 0, 1.8);
+      shape.bezierCurveTo(-0.5, 1.5, -0.85, 1, -0.95, 0.3);
+      shape.bezierCurveTo(-1.0, -0.3, -0.7, -1.2, 0, -1.6);
+      break;
+    }
+    case "lobed": {
+      // Lobed leaf (cotton, okra)
+      shape.moveTo(0, -1.4);
+      shape.bezierCurveTo(0.5, -1.1, 0.9, -0.5, 1.1, 0);
+      shape.bezierCurveTo(0.8, 0.2, 1.0, 0.6, 0.8, 1.0);
+      shape.bezierCurveTo(0.5, 1.3, 0.2, 1.5, 0, 1.6);
+      shape.bezierCurveTo(-0.2, 1.5, -0.5, 1.3, -0.8, 1.0);
+      shape.bezierCurveTo(-1.0, 0.6, -0.8, 0.2, -1.1, 0);
+      shape.bezierCurveTo(-0.9, -0.5, -0.5, -1.1, 0, -1.4);
+      break;
+    }
+    default: {
+      // Default leaf shape
+      shape.moveTo(0, -1.8);
+      shape.bezierCurveTo(0.8, -1, 1.2, 0, 0.9, 0.8);
+      shape.bezierCurveTo(0.6, 1.4, 0.2, 1.8, 0, 2);
+      shape.bezierCurveTo(-0.2, 1.8, -0.6, 1.4, -0.9, 0.8);
+      shape.bezierCurveTo(-1.2, 0, -0.8, -1, 0, -1.8);
+      break;
+    }
+  }
+
+  const geo = new THREE.ExtrudeGeometry(shape, {
+    depth: 0.08,
+    bevelEnabled: true,
+    bevelThickness: 0.02,
+    bevelSize: 0.02,
+    bevelSegments: 3,
+  });
+
+  // Generate UV mapping
+  const pos = geo.attributes.position;
+  const uvs = new Float32Array(pos.count * 2);
+  const box = new THREE.Box3().setFromBufferAttribute(pos);
+  const size = new THREE.Vector3();
+  box.getSize(size);
+  for (let i = 0; i < pos.count; i++) {
+    uvs[i * 2] = (pos.getX(i) - box.min.x) / size.x;
+    uvs[i * 2 + 1] = (pos.getY(i) - box.min.y) / size.y;
+  }
+  geo.setAttribute("uv", new THREE.BufferAttribute(uvs, 2));
+
+  return geo;
+}
+
+function LeafShape({ severity, cropImageUrl, plantName }: { severity: string; cropImageUrl?: string; plantName: string }) {
   const ref = useRef<THREE.Mesh>(null);
   const healthyColor = "#43a047";
   const sickColor = severityColors[severity] || "#f44336";
+  const cropType = getCropType(plantName);
 
   const texture = useMemo(() => {
     if (!cropImageUrl) return null;
@@ -49,35 +181,7 @@ function LeafShape({ severity, cropImageUrl }: { severity: string; cropImageUrl?
     return tex;
   }, [cropImageUrl]);
 
-  const geometry = useMemo(() => {
-    const shape = new THREE.Shape();
-    shape.moveTo(0, -1.8);
-    shape.bezierCurveTo(0.8, -1, 1.2, 0, 0.9, 0.8);
-    shape.bezierCurveTo(0.6, 1.4, 0.2, 1.8, 0, 2);
-    shape.bezierCurveTo(-0.2, 1.8, -0.6, 1.4, -0.9, 0.8);
-    shape.bezierCurveTo(-1.2, 0, -0.8, -1, 0, -1.8);
-
-    const geo = new THREE.ExtrudeGeometry(shape, {
-      depth: 0.08,
-      bevelEnabled: true,
-      bevelThickness: 0.02,
-      bevelSize: 0.02,
-      bevelSegments: 3,
-    });
-
-    // Generate UV mapping for the leaf shape
-    const pos = geo.attributes.position;
-    const uvs = new Float32Array(pos.count * 2);
-    for (let i = 0; i < pos.count; i++) {
-      const x = pos.getX(i);
-      const y = pos.getY(i);
-      uvs[i * 2] = (x + 1.2) / 2.4;
-      uvs[i * 2 + 1] = (y + 1.8) / 3.8;
-    }
-    geo.setAttribute("uv", new THREE.BufferAttribute(uvs, 2));
-
-    return geo;
-  }, []);
+  const geometry = useMemo(() => createCropGeometry(cropType), [cropType]);
 
   useFrame((state) => {
     if (!ref.current) return;
