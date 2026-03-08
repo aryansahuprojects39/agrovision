@@ -17,11 +17,7 @@ const HolographicNav = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const containerRef = useRef<HTMLDivElement>(null);
-
-  // Hide on certain routes
-  if (HIDDEN_ROUTES.some((r) => location.pathname.startsWith(r))) {
-    return null;
-  }
+  const isHidden = HIDDEN_ROUTES.some((r) => location.pathname.startsWith(r));
 
   // Close on route change
   useEffect(() => {
