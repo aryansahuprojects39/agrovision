@@ -107,7 +107,7 @@ function NavCard({
             />
             <span
               className="text-sm font-extrabold whitespace-nowrap relative z-10"
-              style={{ color: item.color, textShadow: `0 0 8px ${item.color}, 0 0 20px ${item.color}, 0 0 40px ${item.color}90, 0 0 60px ${item.color}50`, filter: "brightness(1.3)" }}
+              style={{ color: item.color, textShadow: `0 0 8px ${item.color}, 0 0 20px ${item.color}, 0 0 40px ${item.color}90, 0 0 60px ${item.color}50`, filter: "brightness(1.3)", WebkitTextStroke: "0.5px hsl(0 0% 0%)" }}
             >
               {item.label}
             </span>
