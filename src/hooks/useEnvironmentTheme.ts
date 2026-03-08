@@ -38,6 +38,8 @@ interface ThemeVars {
   foreground: string;
   card: string;
   cardForeground: string;
+  popover: string;
+  popoverForeground: string;
   primary: string;
   primaryForeground: string;
   secondary: string;
@@ -424,6 +426,8 @@ function applyThemeVars(vars: Partial<ThemeVars>) {
     foreground: "--foreground",
     card: "--card",
     cardForeground: "--card-foreground",
+    popover: "--popover",
+    popoverForeground: "--popover-foreground",
     primary: "--primary",
     primaryForeground: "--primary-foreground",
     secondary: "--secondary",
@@ -504,7 +508,22 @@ export function useEnvironmentTheme() {
     const climateVars = CLIMATE_MODIFIERS[climate][mode];
 
     // Layer: base palette → climate modifier
-    const combined = { ...baseVars, ...climateVars };
+    const combined: Partial<ThemeVars> = { ...baseVars, ...climateVars };
+
+    // Auto-derive card/popover from background/foreground if not explicitly set
+    if (combined.background && !combined.card) {
+      combined.card = combined.background;
+    }
+    if (combined.foreground && !combined.cardForeground) {
+      combined.cardForeground = combined.foreground;
+    }
+    if (combined.background && !combined.popover) {
+      combined.popover = combined.background;
+    }
+    if (combined.foreground && !combined.popoverForeground) {
+      combined.popoverForeground = combined.foreground;
+    }
+
     applyThemeVars(combined);
 
     // Also update input & ring to match
