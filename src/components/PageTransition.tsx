@@ -93,11 +93,28 @@ const PageTransition = ({ children }: PageTransitionProps) => {
   const animatingRef = useRef(false);
   const isFirst = useRef(true);
 
-  const animateProgress = (show: boolean) => {
+  const activeTransitionRef = useRef<TransitionType>("fade");
+
+  const animateProgress = useCallback((show: boolean) => {
     const bar = progressRef.current;
     if (!bar) return;
+    const colors = TRANSITION_COLORS[activeTransitionRef.current];
+
     if (show) {
       bar.style.opacity = "1";
+      bar.style.background = colors.gradient;
+      bar.style.boxShadow = colors.glow;
+
+      // Pulsing glow animation
+      bar.animate(
+        [
+          { boxShadow: colors.glow, offset: 0 },
+          { boxShadow: colors.glow.replace(/0\.6/g, "0.9").replace(/0\.3/g, "0.6"), offset: 0.5 },
+          { boxShadow: colors.glow, offset: 1 },
+        ],
+        { duration: 600, iterations: Infinity, easing: "ease-in-out" }
+      );
+
       bar.animate(
         [
           { transform: "scaleX(0)", transformOrigin: "left" },
@@ -118,7 +135,7 @@ const PageTransition = ({ children }: PageTransitionProps) => {
         bar.getAnimations().forEach((a) => a.cancel());
       };
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (isFirst.current) {
