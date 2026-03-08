@@ -11,10 +11,17 @@ const NAV_ITEMS = [
   { label: "Community", href: "/community", icon: Users, color: "#a855f7" },
 ];
 
+const HIDDEN_ROUTES = ["/auth", "/admin", "/forgot-password", "/reset-password"];
+
 const HolographicNav = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Hide on certain routes
+  if (HIDDEN_ROUTES.some((r) => location.pathname.startsWith(r))) {
+    return null;
+  }
 
   // Close on route change
   useEffect(() => {
