@@ -47,9 +47,11 @@ const HolographicNav = () => {
   }, [isOpen]);
 
   const totalItems = NAV_ITEMS.length;
-  const arcSpread = 180; // degrees
-  const startAngle = -90 - arcSpread / 2; // center the arc upward
+  const arcSpread = 180;
+  const startAngle = -90 - arcSpread / 2;
   const radius = 140;
+
+  if (isHidden) return null;
 
   return (
     <div ref={containerRef} className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100]">
