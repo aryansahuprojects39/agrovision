@@ -9,31 +9,37 @@ const features = [
     icon: Leaf,
     title: "AI Crop Disease Detection",
     description: "Upload a leaf photo and get instant AI-powered disease diagnosis with treatment recommendations.",
+    link: "/disease-detection",
   },
   {
     icon: Droplets,
     title: "Smart Irrigation",
     description: "Monitor soil moisture in real-time and receive intelligent irrigation scheduling alerts.",
+    link: "/dashboard",
   },
   {
     icon: FlaskConical,
     title: "Soil Health Monitoring",
     description: "Analyze soil nutrients, get fertilizer suggestions, and track soil improvement over time.",
+    link: "/dashboard",
   },
   {
     icon: ShoppingCart,
     title: "Farmer Marketplace",
     description: "Sell crops directly to buyers, cutting out middlemen and increasing your profits.",
+    link: "/marketplace",
   },
   {
     icon: CloudSun,
     title: "Weather Intelligence",
     description: "Real-time forecasts, rain alerts, and pest outbreak warnings to protect your crops.",
+    link: "/weather",
   },
   {
     icon: Landmark,
     title: "Government Schemes",
     description: "Discover relevant subsidies and government programs personalized to your farm profile.",
+    link: "/government-schemes",
   },
 ];
 
