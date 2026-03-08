@@ -4,12 +4,12 @@ import { Microscope, LayoutDashboard, ShoppingCart, CloudSun, Users, Landmark, X
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 
 const NAV_ITEMS = [
-  { label: "Marketplace", href: "/marketplace", icon: ShoppingCart, color: "#f59e0b" },
-  { label: "Weather", href: "/weather", icon: CloudSun, color: "#06b6d4" },
-  { label: "Farm Dashboard", href: "/dashboard", icon: LayoutDashboard, color: "#3b82f6" },
-  { label: "Community", href: "/community", icon: Users, color: "#a855f7" },
-  { label: "AI Crop Doctor", href: "/disease-detection", icon: Microscope, color: "#22c55e" },
-  { label: "Gov Schemes", href: "/government-schemes", icon: Landmark, color: "#ef4444" },
+  { label: "Marketplace", href: "/marketplace", icon: ShoppingCart, color: "#f59e0b", desc: "Buy & sell farm products" },
+  { label: "Weather", href: "/weather", icon: CloudSun, color: "#06b6d4", desc: "Real-time weather forecasts" },
+  { label: "Farm Dashboard", href: "/dashboard", icon: LayoutDashboard, color: "#3b82f6", desc: "Monitor your farm stats" },
+  { label: "Community", href: "/community", icon: Users, color: "#a855f7", desc: "Connect with other farmers" },
+  { label: "AI Crop Doctor", href: "/disease-detection", icon: Microscope, color: "#22c55e", desc: "Detect crop diseases with AI" },
+  { label: "Gov Schemes", href: "/government-schemes", icon: Landmark, color: "#ef4444", desc: "Explore government benefits" },
 ];
 
 const HIDDEN_ROUTES = ["/auth", "/admin", "/forgot-password", "/reset-password"];
