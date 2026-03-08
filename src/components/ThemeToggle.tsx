@@ -10,34 +10,45 @@ const ThemeToggle = ({ className }: { className?: string }) => {
       onClick={toggleTheme}
       aria-label="Toggle theme"
       className={cn(
-        "relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring shrink-0",
+        "relative inline-flex h-7 w-14 items-center rounded-full transition-all duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring shrink-0 overflow-hidden",
         isDark
-          ? "bg-[hsl(220,20%,25%)]"
-          : "bg-[hsl(45,90%,70%)]",
+          ? "bg-[hsl(150,30%,15%)] shadow-[inset_0_1px_3px_rgba(0,0,0,0.4)]"
+          : "bg-[hsl(90,50%,75%)] shadow-[inset_0_1px_3px_rgba(0,0,0,0.1)]",
         className
       )}
     >
-      {isDark && (
+      {/* Background details */}
+      {isDark ? (
         <>
-          <span className="absolute left-1.5 top-1 h-0.5 w-0.5 rounded-full bg-primary-foreground/60 animate-pulse" />
-          <span className="absolute left-3 top-2.5 h-0.5 w-0.5 rounded-full bg-primary-foreground/40" />
+          {/* Stars */}
+          <span className="absolute left-1.5 top-1 h-0.5 w-0.5 rounded-full bg-primary-foreground/50 animate-pulse" />
+          <span className="absolute left-4 top-2 h-[3px] w-[3px] rounded-full bg-primary-foreground/30" />
+          <span className="absolute left-2.5 bottom-1.5 h-0.5 w-0.5 rounded-full bg-primary-foreground/40 animate-pulse" />
+          <span className="absolute left-5 bottom-1 h-[2px] w-[2px] rounded-full bg-primary-foreground/20" />
+        </>
+      ) : (
+        <>
+          {/* Little leaf/branch details */}
+          <span className="absolute right-2.5 top-1 text-[7px] leading-none opacity-60">🌿</span>
+          <span className="absolute right-5 bottom-0.5 text-[6px] leading-none opacity-40">🍃</span>
         </>
       )}
-      {!isDark && (
-        <span className="absolute right-1.5 top-1.5 h-1.5 w-2 rounded-full bg-primary-foreground/25" />
-      )}
+
+      {/* Knob */}
       <span
         className={cn(
-          "inline-flex h-4 w-4 items-center justify-center rounded-full shadow-sm transition-transform duration-300",
+          "relative inline-flex h-5 w-5 items-center justify-center rounded-full shadow-md transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]",
           isDark
-            ? "translate-x-6 bg-[hsl(220,10%,75%)]"
-            : "translate-x-1 bg-[hsl(45,80%,55%)]"
+            ? "translate-x-8 bg-[hsl(150,20%,30%)]"
+            : "translate-x-1 bg-[hsl(90,60%,45%)]"
         )}
       >
         {isDark ? (
-          <span className="h-1 w-1 rounded-full bg-[hsl(220,10%,60%)]" />
+          /* Dried leaf / moon */
+          <span className="text-[10px] leading-none">🍂</span>
         ) : (
-          <span className="h-2 w-2 rounded-full bg-[hsl(45,90%,65%)] shadow-[0_0_4px_hsl(45,90%,65%)]" />
+          /* Green leaf / sun */
+          <span className="text-[10px] leading-none">🌱</span>
         )}
       </span>
     </button>

@@ -1,6 +1,7 @@
 import { Leaf, Droplets, FlaskConical, ShoppingCart, CloudSun, Landmark } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import ScrollReveal from "@/components/ScrollReveal";
+import { useRef, useState, useEffect } from "react";
 
 const features = [
   {
@@ -35,9 +36,45 @@ const features = [
   },
 ];
 
+function TiltCard({ children, className }: { children: React.ReactNode; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [style, setStyle] = useState({});
+
+  const handleMove = (e: React.MouseEvent | React.TouchEvent) => {
+    if (!ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    const clientX = "touches" in e ? e.touches[0]?.clientX ?? 0 : e.clientX;
+    const clientY = "touches" in e ? e.touches[0]?.clientY ?? 0 : e.clientY;
+    const x = ((clientX - rect.left) / rect.width - 0.5) * 2;
+    const y = ((clientY - rect.top) / rect.height - 0.5) * 2;
+    setStyle({
+      transform: `perspective(600px) rotateY(${x * 5}deg) rotateX(${-y * 5}deg) scale(1.02)`,
+      transition: "transform 0.1s ease-out",
+    });
+  };
+
+  const handleLeave = () => {
+    setStyle({ transform: "perspective(600px) rotateY(0deg) rotateX(0deg) scale(1)", transition: "transform 0.4s ease-out" });
+  };
+
+  return (
+    <div
+      ref={ref}
+      onMouseMove={handleMove}
+      onTouchMove={handleMove}
+      onMouseLeave={handleLeave}
+      onTouchEnd={handleLeave}
+      className={className}
+      style={style}
+    >
+      {children}
+    </div>
+  );
+}
+
 const FeaturesSection = () => {
   return (
-    <section id="features" className="py-20 lg:py-28 bg-muted/50">
+    <section id="features" className="py-20 lg:py-28 bg-muted/50 relative overflow-hidden">
       <div className="container mx-auto px-4 lg:px-8">
         <ScrollReveal>
           <div className="text-center max-w-2xl mx-auto mb-14">
@@ -54,15 +91,17 @@ const FeaturesSection = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {features.map((feature, i) => (
             <ScrollReveal key={feature.title} delay={i * 100} direction={i % 2 === 0 ? "up" : "scale"}>
-              <Card className="group hover:shadow-lg transition-all duration-300 border-border/60 hover:border-primary/30 hover:-translate-y-1 h-full">
-                <CardContent className="p-6 space-y-4">
-                  <div className="h-12 w-12 rounded-lg bg-accent flex items-center justify-center group-hover:bg-primary/10 group-hover:scale-110 transition-all duration-300">
-                    <feature.icon className="h-6 w-6 text-primary" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-foreground">{feature.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
-                </CardContent>
-              </Card>
+              <TiltCard>
+                <Card className="group hover:shadow-xl transition-all duration-300 border-border/60 hover:border-primary/30 h-full">
+                  <CardContent className="p-6 space-y-4">
+                    <div className="h-12 w-12 rounded-lg bg-accent flex items-center justify-center group-hover:bg-primary/10 group-hover:scale-110 transition-all duration-300">
+                      <feature.icon className="h-6 w-6 text-primary" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-foreground">{feature.title}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
+                  </CardContent>
+                </Card>
+              </TiltCard>
             </ScrollReveal>
           ))}
         </div>
