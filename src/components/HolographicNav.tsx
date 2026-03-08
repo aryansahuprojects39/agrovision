@@ -184,32 +184,38 @@ const HolographicNav = () => {
     if (!hasDraggedRef.current) setIsOpen((prev) => !prev);
   }, []);
 
-  // Semicircular arc layout
+  // Adaptive arc layout: semicircle at edges, full circle when centered
   const getItemPositions = () => {
     const vw = typeof window !== "undefined" ? window.innerWidth : 1280;
     const vh = typeof window !== "undefined" ? window.innerHeight : 720;
     const cx = vw / 2 + position.x;
     const cy = vh - 24 - 28 + position.y;
 
-    const expandUp = cy > vh / 2;
-    const radius = 240;
     const count = NAV_ITEMS.length;
-    // Spread items across 150° arc (not full 180°) so side items lift higher
-    const spreadAngle = (150 * Math.PI) / 180;
-    const startAngle = Math.PI / 2 + spreadAngle / 2; // top-left
-    const endAngle = Math.PI / 2 - spreadAngle / 2;   // top-right
-
     const margin = 60;
     const itemHalfW = 55;
     const itemHalfH = 42;
-    // Lift the whole arc so the lowest items clear the button
-    const yOffset = -60;
+
+    // How centered is the button? (0 = edge, 1 = perfect center)
+    const edgeMargin = 120;
+    const centerX = Math.max(0, Math.min(1, 1 - Math.abs(cx - vw / 2) / (vw / 2 - edgeMargin)));
+    const centerY = Math.max(0, Math.min(1, 1 - Math.abs(cy - vh / 2) / (vh / 2 - edgeMargin)));
+    const centeredness = Math.min(centerX, centerY);
+
+    // When centered: smaller radius, full 360°. At edge: larger radius, 150° arc
+    const radius = 180 - centeredness * 30; // 180px at edge → 150px when centered
+    const spreadAngle = ((150 + centeredness * 210) * Math.PI) / 180; // 150° → 360°
+
+    // Determine base direction (away from nearest edge)
+    const expandUp = cy > vh / 2;
+    const baseAngle = expandUp ? Math.PI / 2 : -Math.PI / 2;
+
+    const yOffset = centeredness > 0.7 ? 0 : expandUp ? -50 : 50;
 
     return NAV_ITEMS.map((_, i) => {
-      const angle = startAngle - (i / (count - 1)) * (startAngle - endAngle);
+      const angle = baseAngle + spreadAngle / 2 - (i / (count - 1)) * spreadAngle;
       let x = Math.cos(angle) * radius;
-      const rawY = -Math.sin(angle) * radius + yOffset;
-      let y = expandUp ? rawY : -rawY;
+      let y = -Math.sin(angle) * radius + yOffset;
 
       // Clamp to viewport
       if (cx + x - itemHalfW < margin) x = margin - cx + itemHalfW;
