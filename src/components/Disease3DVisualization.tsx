@@ -10,6 +10,7 @@ interface AffectedZone {
 }
 
 interface Disease3DProps {
+  plant_name: string;
   disease: string;
   severity_level: string;
   infected_area_percent: number;
