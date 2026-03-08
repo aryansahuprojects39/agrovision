@@ -12,7 +12,7 @@ import AdminNotifications from "@/components/admin/AdminNotifications";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Users, ShoppingCart, Leaf, Trash2, Shield, UserCog, BarChart3, Menu, X, Sun, Moon } from "lucide-react";
+import { Loader2, Users, ShoppingCart, Leaf, Trash2, Shield, UserCog, BarChart3, Menu, X, Home } from "lucide-react";
 import { toast } from "sonner";
 
 const AdminDashboard = () => {
