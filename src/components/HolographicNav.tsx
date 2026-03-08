@@ -314,7 +314,7 @@ const HolographicNav = () => {
       )}
       <div
         ref={containerRef}
-        className="fixed z-[100]"
+        className="fixed z-[45]"
         style={{
           bottom: "24px",
           left: "50%",
