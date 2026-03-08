@@ -112,15 +112,13 @@ function NavCard({
               {item.label}
             </span>
 
-            {isActive && (
-              <div
-                className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 h-2 w-2 rounded-full"
-                style={{
-                  backgroundColor: item.color,
-                  boxShadow: `0 0 10px ${item.color}, 0 0 20px ${item.color}60`,
-                }}
-              />
-            )}
+            <div
+              className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 h-2 w-2 rounded-full"
+              style={{
+                backgroundColor: item.color,
+                boxShadow: isActive ? `0 0 10px ${item.color}, 0 0 20px ${item.color}60` : `0 0 6px ${item.color}80`,
+              }}
+            />
           </div>
         </Link>
       </TooltipTrigger>
