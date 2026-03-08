@@ -247,10 +247,10 @@ const HolographicNav = () => {
         let y = -Math.sin(angle) * r;
 
         // Clamp
-        if (cx + x - itemHalfW < margin) x = margin - cx + itemHalfW;
-        if (cx + x + itemHalfW > vw - margin) x = vw - margin - cx - itemHalfW;
-        if (cy + y - itemHalfH < margin) y = margin - cy + itemHalfH;
-        if (cy + y + itemHalfH > vh - margin) y = vh - margin - cy - itemHalfH;
+        if (cx + x - itemHalfW < marginSide) x = marginSide - cx + itemHalfW;
+        if (cx + x + itemHalfW > vw - marginSide) x = vw - marginSide - cx - itemHalfW;
+        if (cy + y - itemHalfH < marginTop) y = marginTop - cy + itemHalfH;
+        if (cy + y + itemHalfH > vh - marginBottom) y = vh - marginBottom - cy - itemHalfH;
 
         return { x, y };
       });
