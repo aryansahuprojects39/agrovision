@@ -122,11 +122,18 @@ const WeatherPage = () => {
       async (pos) => {
         const { latitude, longitude } = pos.coords;
         try {
-          const res = await fetch(`https://geocoding-api.open-meteo.com/v1/reverse?latitude=${latitude}&longitude=${longitude}&count=1`);
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&zoom=10`,
+            { headers: { "Accept-Language": "en" } }
+          );
           const data = await res.json();
-          const name = data.results?.length
-            ? `${data.results[0].name}, ${data.results[0].country}`
-            : `${latitude.toFixed(2)}°N, ${longitude.toFixed(2)}°E`;
+          const city = data.address?.city || data.address?.town || data.address?.village || data.address?.county || "";
+          const state = data.address?.state || "";
+          const country = data.address?.country || "";
+          const parts = [city, state, country].filter(Boolean);
+          const placeName = parts.length > 0 ? parts.join(", ") : "";
+          const coordStr = `${latitude.toFixed(2)}°N, ${longitude.toFixed(2)}°E`;
+          const name = placeName ? `${placeName} (${coordStr})` : coordStr;
           await fetchWeather(latitude, longitude, name);
         } catch {
           await fetchWeather(latitude, longitude, `${latitude.toFixed(2)}°N, ${longitude.toFixed(2)}°E`);
