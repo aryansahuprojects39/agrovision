@@ -68,7 +68,7 @@ const Navbar = () => {
           {user ? (
             <>
               <Button size="sm" className="rounded-full bg-secondary text-secondary-foreground hover:bg-secondary/90" asChild>
-                <Link to="/dashboard">Dashboard</Link>
+                <Link to={dashboardPath}>{dashboardLabel}</Link>
               </Button>
               <Button size="sm" variant="ghost" className="text-foreground/70 hover:text-foreground" onClick={handleSignOut}>
                 <LogOut className="mr-2 h-4 w-4" /> Sign Out
