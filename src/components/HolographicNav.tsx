@@ -202,7 +202,7 @@ const HolographicNav = () => {
     const cy = vh - 24 - 28 + position.y;
 
     const count = NAV_ITEMS.length;
-    const margin = 80; // keep items below navbar (64px) + padding
+    const margin = 100; // keep items well below navbar
     const itemHalfW = 55;
     const itemHalfH = 42;
 
