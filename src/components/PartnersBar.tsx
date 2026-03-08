@@ -11,7 +11,7 @@ const partners = [
 
 const PartnersBar = () => {
   return (
-    <section className="py-6 bg-hero-dark border-y border-primary/20 overflow-hidden">
+    <section className="py-6 bg-card border-y border-border overflow-hidden">
       <div className="relative">
         <div className="flex marquee">
           {[...partners, ...partners].map((partner, i) => (
@@ -19,8 +19,8 @@ const PartnersBar = () => {
               key={`${partner.name}-${i}`}
               className="flex items-center gap-2 px-8 shrink-0"
             >
-              <partner.icon className="h-4 w-4 text-hero-dark-foreground/50" />
-              <span className="text-sm font-medium text-hero-dark-foreground/50 whitespace-nowrap">
+              <partner.icon className="h-4 w-4 text-foreground/40" />
+              <span className="text-sm font-medium text-foreground/40 whitespace-nowrap">
                 {partner.name}
               </span>
             </div>
