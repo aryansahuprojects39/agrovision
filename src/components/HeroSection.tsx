@@ -114,9 +114,7 @@ const HeroSection = () => {
           )}
         </div>
       </div>
-
-      {/* Bottom gradient fade - subtle edge blend */}
-      <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-background/80 to-transparent z-10" />
+    </section>
     </section>
   );
 };
