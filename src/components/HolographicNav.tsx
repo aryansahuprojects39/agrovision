@@ -71,7 +71,7 @@ function NavCard({
             ref={cardRef}
             className="relative flex flex-col items-center gap-2.5 px-5 py-4 rounded-2xl border cursor-pointer"
             style={{
-              background: `linear-gradient(145deg, ${item.color}60, ${item.color}30 40%, hsl(0 0% 10% / 0.95))`,
+              background: `linear-gradient(145deg, ${item.color}50, ${item.color}25 40%, hsl(0 0% 4% / 0.97))`,
               borderColor: isActive ? item.color : `${item.color}80`,
               borderWidth: "2px",
               boxShadow: isActive
