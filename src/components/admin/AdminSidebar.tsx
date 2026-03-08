@@ -1,12 +1,15 @@
 import { cn } from "@/lib/utils";
-import { BarChart3, Users, ShoppingCart, Leaf, UserCog, Shield, LogOut, Home } from "lucide-react";
+import { BarChart3, Users, ShoppingCart, Leaf, UserCog, Shield, Home, Sun, Moon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { useTheme } from "@/hooks/use-theme";
+import AdminNotifications from "./AdminNotifications";
 
 interface AdminSidebarProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
   userEmail?: string;
+  profiles?: any[];
+  detections?: any[];
 }
 
 const navItems = [
@@ -18,20 +21,24 @@ const navItems = [
   { id: "detections", label: "Detections", icon: Leaf },
 ];
 
-const AdminSidebar = ({ activeTab, onTabChange, userEmail }: AdminSidebarProps) => {
+const AdminSidebar = ({ activeTab, onTabChange, userEmail, profiles = [], detections = [] }: AdminSidebarProps) => {
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
 
   return (
     <aside className="hidden lg:flex flex-col w-64 min-h-screen bg-card border-r border-border">
       {/* Brand */}
-      <div className="flex items-center gap-3 px-6 py-5 border-b border-border">
-        <div className="p-2 rounded-lg bg-primary">
-          <Shield className="h-5 w-5 text-primary-foreground" />
+      <div className="flex items-center justify-between px-6 py-5 border-b border-border">
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-lg bg-primary">
+            <Shield className="h-5 w-5 text-primary-foreground" />
+          </div>
+          <div>
+            <p className="font-bold text-foreground text-sm">AgroVision</p>
+            <p className="text-xs text-muted-foreground">Admin Console</p>
+          </div>
         </div>
-        <div>
-          <p className="font-bold text-foreground text-sm">AgroVision</p>
-          <p className="text-xs text-muted-foreground">Admin Console</p>
-        </div>
+        <AdminNotifications profiles={profiles} detections={detections} />
       </div>
 
       {/* Nav */}
@@ -43,7 +50,7 @@ const AdminSidebar = ({ activeTab, onTabChange, userEmail }: AdminSidebarProps) 
             className={cn(
               "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
               activeTab === item.id
-                ? "bg-primary/10 text-primary border-l-3 border-primary"
+                ? "bg-primary/10 text-primary"
                 : "text-muted-foreground hover:bg-muted hover:text-foreground"
             )}
           >
@@ -55,6 +62,13 @@ const AdminSidebar = ({ activeTab, onTabChange, userEmail }: AdminSidebarProps) 
 
       {/* Bottom */}
       <div className="border-t border-border p-4 space-y-2">
+        <button
+          onClick={toggleTheme}
+          className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+        >
+          {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          {theme === "dark" ? "Light Mode" : "Dark Mode"}
+        </button>
         <button
           onClick={() => navigate("/")}
           className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
