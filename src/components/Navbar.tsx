@@ -73,7 +73,7 @@ const Navbar = () => {
 
       {/* Mobile menu */}
       {open && (
-        <div className="md:hidden bg-hero-dark/95 backdrop-blur-md border-b border-primary/20 px-4 pb-4 space-y-3">
+        <div className="md:hidden bg-card/98 backdrop-blur-md border-b border-border px-4 pb-4 space-y-3">
           {navLinks.map((link) =>
             link.href.startsWith("/") && !link.href.includes("#") ? (
               <Link key={link.href} to={link.href} onClick={() => setOpen(false)} className="block text-sm font-medium text-hero-dark-foreground/70 hover:text-secondary py-2">
