@@ -202,8 +202,8 @@ const HolographicNav = () => {
     const centerY = Math.max(0, Math.min(1, 1 - Math.abs(cy - vh / 2) / (vh / 2 - edgeMargin)));
     const centeredness = Math.min(centerX, centerY);
 
-    const radius = 250;
-    const innerRadius = 150;
+    const radius = 300;
+    const innerRadius = 180;
 
     // Detect position zones
     const distTop = cy;
