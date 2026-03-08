@@ -154,12 +154,14 @@ function createCropGeometry(cropType: string): THREE.ExtrudeGeometry {
   // Generate UV mapping
   const pos = geo.attributes.position;
   const uvs = new Float32Array(pos.count * 2);
-  const box = new THREE.Box3().setFromBufferAttribute(pos);
+  const box = new THREE.Box3();
+  const posAttr = geo.attributes.position as THREE.BufferAttribute;
+  box.setFromBufferAttribute(posAttr);
   const size = new THREE.Vector3();
   box.getSize(size);
-  for (let i = 0; i < pos.count; i++) {
-    uvs[i * 2] = (pos.getX(i) - box.min.x) / size.x;
-    uvs[i * 2 + 1] = (pos.getY(i) - box.min.y) / size.y;
+  for (let i = 0; i < posAttr.count; i++) {
+    uvs[i * 2] = (posAttr.getX(i) - box.min.x) / size.x;
+    uvs[i * 2 + 1] = (posAttr.getY(i) - box.min.y) / size.y;
   }
   geo.setAttribute("uv", new THREE.BufferAttribute(uvs, 2));
 
