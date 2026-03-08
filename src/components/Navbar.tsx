@@ -17,8 +17,21 @@ const navLinks = [
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkAdmin = async () => {
+      if (!user) { setIsAdmin(false); return; }
+      const { data } = await supabase.rpc("has_role", { _user_id: user.id, _role: "admin" as const });
+      setIsAdmin(data === true);
+    };
+    checkAdmin();
+  }, [user]);
+
+  const dashboardPath = isAdmin ? "/admin" : "/dashboard";
+  const dashboardLabel = isAdmin ? "Admin Panel" : "Dashboard";
 
   const handleSignOut = async () => {
     try {
