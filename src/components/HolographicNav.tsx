@@ -135,6 +135,7 @@ function NavCard({
 }
 
 const HolographicNav = () => {
+  const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
