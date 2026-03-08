@@ -281,11 +281,11 @@ function LeafShape({ severity, cropImageUrl, plantName }: { severity: string; cr
           roughness={0.6}
           metalness={0.1}
           side={THREE.DoubleSide}
-          color={severity === "healthy" ? "#ffffff" : sickColor}
+          color="#ffffff"
         />
       ) : (
         <meshStandardMaterial
-          color={severity === "healthy" ? healthyColor : sickColor}
+          color={healthyColor}
           roughness={0.6}
           metalness={0.1}
           side={THREE.DoubleSide}
@@ -710,20 +710,20 @@ const Disease3DVisualization = ({ data }: { data: Disease3DProps }) => {
           </div>
         ) : (
           <>
-            <div className="text-center p-3 rounded-lg bg-accent/50">
-              <div className="text-2xl font-bold" style={{ color: severityColors[data.severity_level] }}>
+            <div className="text-center p-3 rounded-lg bg-accent/50 overflow-hidden">
+              <div className="text-lg sm:text-2xl font-bold" style={{ color: severityColors[data.severity_level] }}>
                 {data.infected_area_percent}%
               </div>
               <div className="text-xs text-muted-foreground mt-1">Infected Area</div>
             </div>
-            <div className="text-center p-3 rounded-lg bg-accent/50">
-              <div className="text-2xl font-bold capitalize" style={{ color: severityColors[data.severity_level] }}>
+            <div className="text-center p-3 rounded-lg bg-accent/50 overflow-hidden">
+              <div className="text-lg sm:text-2xl font-bold capitalize truncate" style={{ color: severityColors[data.severity_level] }}>
                 {data.severity_level}
               </div>
               <div className="text-xs text-muted-foreground mt-1">Severity</div>
             </div>
-            <div className="text-center p-3 rounded-lg bg-accent/50">
-              <div className="text-2xl font-bold capitalize text-foreground">
+            <div className="text-center p-3 rounded-lg bg-accent/50 overflow-hidden">
+              <div className="text-lg sm:text-2xl font-bold capitalize truncate text-foreground">
                 {data.spread_pattern}
               </div>
               <div className="text-xs text-muted-foreground mt-1">Spread Pattern</div>
