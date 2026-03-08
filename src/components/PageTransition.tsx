@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, useCallback, type ReactNode } from "react";
 import { useLocation } from "react-router-dom";
 
 type TransitionType = "cube" | "slide" | "zoom" | "fade";
