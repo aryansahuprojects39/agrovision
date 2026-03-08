@@ -90,7 +90,7 @@ const Navbar = () => {
               <Button size="sm" className="w-full rounded-full bg-secondary text-secondary-foreground" asChild>
                 <Link to="/dashboard" onClick={() => setOpen(false)}>Dashboard</Link>
               </Button>
-              <Button size="sm" variant="ghost" className="w-full text-hero-dark-foreground/70" onClick={() => { handleSignOut(); setOpen(false); }}>
+              <Button size="sm" variant="ghost" className="w-full text-foreground/70" onClick={() => { handleSignOut(); setOpen(false); }}>
                 <LogOut className="mr-2 h-4 w-4" /> Sign Out
               </Button>
             </>
