@@ -2,8 +2,9 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import PageTransition from "@/components/PageTransition";
 import Index from "./pages/Index";
 import AuthPage from "./pages/AuthPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
@@ -19,6 +20,29 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+const AnimatedRoutes = () => {
+  const location = useLocation();
+
+  return (
+    <PageTransition>
+      <Routes location={location}>
+        <Route path="/" element={<Index />} />
+        <Route path="/auth" element={<AuthPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route path="/marketplace" element={<MarketplacePage />} />
+        <Route path="/disease-detection" element={<DiseaseDetectionPage />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/weather" element={<WeatherPage />} />
+        <Route path="/government-schemes" element={<GovernmentSchemesPage />} />
+        <Route path="/community" element={<CommunityForumPage />} />
+        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </PageTransition>
+  );
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -26,20 +50,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/auth" element={<AuthPage />} />
-            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-            <Route path="/reset-password" element={<ResetPasswordPage />} />
-            <Route path="/marketplace" element={<MarketplacePage />} />
-            <Route path="/disease-detection" element={<DiseaseDetectionPage />} />
-            <Route path="/dashboard" element={<DashboardPage />} />
-            <Route path="/weather" element={<WeatherPage />} />
-            <Route path="/government-schemes" element={<GovernmentSchemesPage />} />
-            <Route path="/community" element={<CommunityForumPage />} />
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <AnimatedRoutes />
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
