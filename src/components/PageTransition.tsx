@@ -56,9 +56,9 @@ const enterKeyframes: Record<TransitionType, Keyframe[]> = {
   ],
 };
 
-const DURATION_EXIT = 400;
-const DURATION_ENTER = 550;
-const EASING = "cubic-bezier(0.22, 1, 0.36, 1)";
+const DURATION_EXIT = 300;
+const DURATION_ENTER = 400;
+const EASING = "cubic-bezier(0.25, 0.46, 0.45, 0.94)";
 
 interface PageTransitionProps {
   children: ReactNode;
@@ -139,7 +139,7 @@ const PageTransition = ({ children }: PageTransitionProps) => {
       exit.cancel();
       animatingRef.current = false;
     };
-  }, [location.pathname, location.key]);
+  }, [location.pathname]);
 
   return (
     <div
