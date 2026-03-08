@@ -67,14 +67,14 @@ function NavCard({
     >
       <div
         ref={cardRef}
-        className="relative flex flex-col items-center gap-2 px-4 py-3.5 rounded-2xl border cursor-pointer"
+        className="relative flex flex-col items-center gap-2.5 px-5 py-4 rounded-2xl border cursor-pointer"
         style={{
-          background: `linear-gradient(145deg, ${item.color}30, ${item.color}12 40%, hsl(0 0% 8% / 0.85))`,
+          background: `linear-gradient(145deg, ${item.color}40, ${item.color}18 40%, hsl(0 0% 6% / 0.92))`,
           borderColor: isActive ? item.color : `${item.color}50`,
           boxShadow: isActive
             ? `0 8px 32px ${item.color}40, 0 0 48px ${item.color}15, inset 0 1px 0 ${item.color}40`
             : `0 8px 24px hsl(0 0% 0% / 0.4), 0 0 20px ${item.color}15, inset 0 1px 0 ${item.color}25`,
-          width: "100px",
+          width: "110px",
           transition: "transform 0.15s ease-out, box-shadow 0.3s ease, border-color 0.3s ease",
           backdropFilter: "blur(16px)",
           transformStyle: "preserve-3d",
