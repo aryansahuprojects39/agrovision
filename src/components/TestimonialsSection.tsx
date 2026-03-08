@@ -34,7 +34,7 @@ const testimonials = [
 
 const TestimonialsSection = () => {
   return (
-    <section className="py-20 lg:py-28 bg-muted/50">
+    <section className="py-20 lg:py-28 bg-accent/30">
       <div className="container mx-auto px-4 lg:px-8">
         <ScrollReveal>
           <div className="text-center max-w-2xl mx-auto mb-14">
