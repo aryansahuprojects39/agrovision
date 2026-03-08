@@ -81,7 +81,7 @@ function TiltCard({ children, className }: { children: React.ReactNode; classNam
 
 const FeaturesSection = () => {
   return (
-    <section id="features" className="py-20 lg:py-28 bg-muted/50 relative overflow-hidden">
+    <section id="features" className="py-20 lg:py-28 bg-accent/20 relative overflow-hidden">
       <div className="container mx-auto px-4 lg:px-8">
         <ScrollReveal>
           <div className="text-center max-w-2xl mx-auto mb-14">
