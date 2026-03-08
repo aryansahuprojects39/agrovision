@@ -173,12 +173,12 @@ const HolographicNav = () => {
     const newX = dragStartRef.current.posX + dx;
     const newY = dragStartRef.current.posY + dy;
     const halfW = 28;
-    const maxX = window.innerWidth / 2 - halfW;
-    // Button is at bottom:24px. Max upward travel: stop 64px from top (below navbar)
-    const navbarHeight = 100; // large buffer so button + items stay below navbar
+    const edgePadding = 40; // keep button away from all edges
+    const maxX = window.innerWidth / 2 - halfW - edgePadding;
+    const navbarHeight = 100;
     const buttonBottom = 24;
     const maxUp = window.innerHeight - buttonBottom - halfW - navbarHeight;
-    const maxDown = halfW;
+    const maxDown = -edgePadding; // prevent going below viewport
     setPosition({
       x: Math.max(-maxX, Math.min(maxX, newX)),
       y: Math.max(-maxUp, Math.min(maxDown, newY)),
@@ -202,9 +202,11 @@ const HolographicNav = () => {
     const cy = vh - 24 - 28 + position.y;
 
     const count = NAV_ITEMS.length;
-    const margin = 100; // keep items well below navbar
-    const itemHalfW = 55;
-    const itemHalfH = 42;
+    const marginTop = 100; // below navbar
+    const marginSide = 30;
+    const marginBottom = 50;
+    const itemHalfW = 60;
+    const itemHalfH = 48;
 
     // How centered is the button? (0 = edge, 1 = perfect center)
     const edgeMargin = 120;
@@ -245,10 +247,10 @@ const HolographicNav = () => {
         let y = -Math.sin(angle) * r;
 
         // Clamp
-        if (cx + x - itemHalfW < margin) x = margin - cx + itemHalfW;
-        if (cx + x + itemHalfW > vw - margin) x = vw - margin - cx - itemHalfW;
-        if (cy + y - itemHalfH < margin) y = margin - cy + itemHalfH;
-        if (cy + y + itemHalfH > vh - margin) y = vh - margin - cy - itemHalfH;
+        if (cx + x - itemHalfW < marginSide) x = marginSide - cx + itemHalfW;
+        if (cx + x + itemHalfW > vw - marginSide) x = vw - marginSide - cx - itemHalfW;
+        if (cy + y - itemHalfH < marginTop) y = marginTop - cy + itemHalfH;
+        if (cy + y + itemHalfH > vh - marginBottom) y = vh - marginBottom - cy - itemHalfH;
 
         return { x, y };
       });
@@ -285,10 +287,10 @@ const HolographicNav = () => {
       let x = Math.cos(angle) * radius + xOffset;
       let y = -Math.sin(angle) * radius + yOffset;
 
-      if (cx + x - itemHalfW < margin) x = margin - cx + itemHalfW;
-      if (cx + x + itemHalfW > vw - margin) x = vw - margin - cx - itemHalfW;
-      if (cy + y - itemHalfH < margin) y = margin - cy + itemHalfH;
-      if (cy + y + itemHalfH > vh - margin) y = vh - margin - cy - itemHalfH;
+      if (cx + x - itemHalfW < marginSide) x = marginSide - cx + itemHalfW;
+      if (cx + x + itemHalfW > vw - marginSide) x = vw - marginSide - cx - itemHalfW;
+      if (cy + y - itemHalfH < marginTop) y = marginTop - cy + itemHalfH;
+      if (cy + y + itemHalfH > vh - marginBottom) y = vh - marginBottom - cy - itemHalfH;
 
       return { x, y };
     });
