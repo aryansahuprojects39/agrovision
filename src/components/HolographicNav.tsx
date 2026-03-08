@@ -59,10 +59,12 @@ const HolographicNav = () => {
       {/* Backdrop glow */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-[-1] pointer-events-none transition-opacity duration-500"
+          className="fixed inset-0 z-[-1] transition-opacity duration-500"
           style={{
-            background: "radial-gradient(circle at 50% 100%, hsl(var(--primary) / 0.08) 0%, transparent 60%)",
+            background: "radial-gradient(circle at 50% 100%, hsl(var(--primary) / 0.12) 0%, hsl(0 0% 0% / 0.6) 100%)",
+            backdropFilter: "blur(4px)",
           }}
+          onClick={() => setIsOpen(false)}
         />
       )}
 
