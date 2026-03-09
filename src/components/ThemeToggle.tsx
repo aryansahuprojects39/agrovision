@@ -129,8 +129,9 @@ const ThemeToggle = ({ className }: { className?: string }) => {
 
       {/* Knob */}
       <span
+        style={{ transitionTimingFunction: 'cubic-bezier(0.34,1.56,0.64,1)' }}
         className={cn(
-          "relative inline-flex h-5 w-5 items-center justify-center rounded-full shadow-md transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]",
+          "relative inline-flex h-5 w-5 items-center justify-center rounded-full shadow-md transition-all duration-500",
           isDark
             ? `translate-x-8 ${config.darkKnob}`
             : `translate-x-1 ${config.lightKnob}`

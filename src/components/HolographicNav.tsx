@@ -280,7 +280,7 @@ const HolographicNav = () => {
         const row = Math.floor(i / cols);
         // Center the grid
         const x = gridCenterX + (col - (cols - 1) / 2) * (cellW + gap);
-        let y = gridCenterY + (row - (rows - 1) / 2) * (cellH + gap);
+        const y = gridCenterY + (row - (rows - 1) / 2) * (cellH + gap);
 
         // Clamp to viewport
         const finalX = Math.max(marginSide - cx + itemHalfW, Math.min(vw - marginSide - cx - itemHalfW, x));
