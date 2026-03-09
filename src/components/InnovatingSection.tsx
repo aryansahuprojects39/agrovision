@@ -44,55 +44,62 @@ function AnimatedCounter({ value, suffix, label }: { value: number; suffix: stri
 
 const InnovatingSection = () => {
   return (
-    <section className="py-20 lg:py-28 bg-background">
-      <div className="container mx-auto px-4 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left: Images */}
-          <ScrollReveal direction="left">
-            <div className="grid grid-cols-2 gap-4">
-              <img
-                src={farmAerial}
-                alt="Aerial farm view"
-                className="w-full h-64 object-cover rounded-lg"
-              />
-              <img
-                src={farmCrops}
-                alt="Fresh crops"
-                className="w-full h-64 object-cover rounded-lg mt-8"
-              />
-            </div>
-          </ScrollReveal>
-
-          {/* Right: Content + Stats */}
-          <div className="space-y-8">
-            <ScrollReveal>
-              <p className="text-sm font-semibold uppercase tracking-wider text-primary mb-2">About Us</p>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground leading-tight">
-                Innovating the Future of Agriculture
-              </h2>
-              <p className="mt-4 text-muted-foreground leading-relaxed">
-                AgroVision combines modern technology and sustainable methods to help farmers grow smarter, faster, and greener. Our AI-powered platform brings precision agriculture to every farmer.
-              </p>
+    <>
+      <section className="py-20 lg:py-28 bg-background">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left: Images */}
+            <ScrollReveal direction="left">
+              <div className="grid grid-cols-2 gap-4">
+                <img
+                  src={farmAerial}
+                  alt="Aerial farm view"
+                  className="w-full h-64 object-cover rounded-lg"
+                />
+                <img
+                  src={farmCrops}
+                  alt="Fresh crops"
+                  className="w-full h-64 object-cover rounded-lg mt-8"
+                />
+              </div>
             </ScrollReveal>
 
-            <div className="grid grid-cols-2 gap-6 rounded-xl p-8 bg-primary">
-              <ScrollReveal delay={100}>
-                <AnimatedCounter value={100} suffix="%" label="Customer Satisfaction" />
-              </ScrollReveal>
-              <ScrollReveal delay={200}>
-                <AnimatedCounter value={20} suffix="+" label="Years of Experience" />
-              </ScrollReveal>
-              <ScrollReveal delay={300}>
-                <AnimatedCounter value={50} suffix="K+" label="Farmers Onboarded" />
-              </ScrollReveal>
-              <ScrollReveal delay={400}>
-                <AnimatedCounter value={95} suffix="%" label="Detection Accuracy" />
+            {/* Right: Content */}
+            <div className="space-y-8">
+              <ScrollReveal>
+                <p className="text-sm font-semibold uppercase tracking-wider text-primary mb-2">About Us</p>
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground leading-tight">
+                  Innovating the Future of Agriculture
+                </h2>
+                <p className="mt-4 text-muted-foreground leading-relaxed">
+                  AgroVision combines modern technology and sustainable methods to help farmers grow smarter, faster, and greener. Our AI-powered platform brings precision agriculture to every farmer.
+                </p>
               </ScrollReveal>
             </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      {/* Stats - full width */}
+      <section className="py-16 bg-primary">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+            <ScrollReveal delay={100}>
+              <AnimatedCounter value={100} suffix="%" label="Customer Satisfaction" />
+            </ScrollReveal>
+            <ScrollReveal delay={200}>
+              <AnimatedCounter value={20} suffix="+" label="Years of Experience" />
+            </ScrollReveal>
+            <ScrollReveal delay={300}>
+              <AnimatedCounter value={50} suffix="K+" label="Farmers Onboarded" />
+            </ScrollReveal>
+            <ScrollReveal delay={400}>
+              <AnimatedCounter value={95} suffix="%" label="Detection Accuracy" />
+            </ScrollReveal>
+          </div>
+        </div>
+      </section>
+    </>
   );
 };
 
