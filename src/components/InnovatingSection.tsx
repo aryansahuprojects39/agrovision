@@ -75,7 +75,7 @@ const InnovatingSection = () => {
               </p>
             </ScrollReveal>
 
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-2 gap-6 bg-[hsl(var(--hero-dark))] rounded-xl p-6">
               <ScrollReveal delay={100}>
                 <AnimatedCounter value={100} suffix="%" label="Customer Satisfaction" />
               </ScrollReveal>
