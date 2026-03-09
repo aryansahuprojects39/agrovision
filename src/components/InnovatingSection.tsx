@@ -36,8 +36,8 @@ function AnimatedCounter({ value, suffix, label }: { value: number; suffix: stri
 
   return (
     <div ref={ref} className="space-y-1">
-      <p className="text-4xl sm:text-5xl font-bold text-[hsl(var(--hero-dark-foreground))]">{count}{suffix}</p>
-      <p className="text-sm text-[hsl(var(--hero-dark-foreground)/0.7)]">{label}</p>
+      <p className="text-4xl sm:text-5xl font-bold text-primary-foreground">{count}{suffix}</p>
+      <p className="text-sm text-primary-foreground/70">{label}</p>
     </div>
   );
 }
@@ -75,7 +75,7 @@ const InnovatingSection = () => {
               </p>
             </ScrollReveal>
 
-            <div className="grid grid-cols-2 gap-6 rounded-xl p-8" style={{ backgroundColor: 'hsl(var(--hero-dark))' }}>
+            <div className="grid grid-cols-2 gap-6 rounded-xl p-8 bg-primary">
               <ScrollReveal delay={100}>
                 <AnimatedCounter value={100} suffix="%" label="Customer Satisfaction" />
               </ScrollReveal>
