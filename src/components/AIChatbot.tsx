@@ -8,7 +8,23 @@ import { cn } from "@/lib/utils";
 
 type Message = { role: "user" | "assistant"; content: string };
 
-const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
+const DEFAULT_SUPABASE_URL = "https://phllgypxmbtbzzgjgkul.supabase.co";
+const DEFAULT_SUPABASE_PUBLISHABLE_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBobGxneXB4bWJ0Ynp6Z2pna3VsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwNTE4MTEsImV4cCI6MjA4ODYyNzgxMX0.EctbRuULfLwytT57Tu03D5coXV_bMR6EJATSC3GNYHk";
+
+const ENV_SUPABASE_URL =
+  import.meta.env.VITE_SUPABASE_URL ?? import.meta.env.VITE_SUPABASE_PROJECT_URL;
+const ENV_SUPABASE_PUBLISHABLE_KEY =
+  import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ?? import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+const hasCompleteEnvPair = Boolean(ENV_SUPABASE_URL && ENV_SUPABASE_PUBLISHABLE_KEY);
+
+const SUPABASE_URL = hasCompleteEnvPair ? ENV_SUPABASE_URL! : DEFAULT_SUPABASE_URL;
+const SUPABASE_PUBLISHABLE_KEY = hasCompleteEnvPair
+  ? ENV_SUPABASE_PUBLISHABLE_KEY!
+  : DEFAULT_SUPABASE_PUBLISHABLE_KEY;
+
+const CHAT_URL = `${SUPABASE_URL}/functions/v1/chat`;
 
 async function streamChat({
   messages,
@@ -25,7 +41,7 @@ async function streamChat({
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+      Authorization: `Bearer ${SUPABASE_PUBLISHABLE_KEY}`,
     },
     body: JSON.stringify({ messages }),
   });

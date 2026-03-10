@@ -2,13 +2,26 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL ?? '';
-const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ?? '';
+const DEFAULT_SUPABASE_URL = "https://phllgypxmbtbzzgjgkul.supabase.co";
+const DEFAULT_SUPABASE_PUBLISHABLE_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBobGxneXB4bWJ0Ynp6Z2pna3VsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwNTE4MTEsImV4cCI6MjA4ODYyNzgxMX0.EctbRuULfLwytT57Tu03D5coXV_bMR6EJATSC3GNYHk";
 
-if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
+const ENV_SUPABASE_URL =
+  import.meta.env.VITE_SUPABASE_URL ?? import.meta.env.VITE_SUPABASE_PROJECT_URL;
+const ENV_SUPABASE_PUBLISHABLE_KEY =
+  import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ?? import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+const hasCompleteEnvPair = Boolean(ENV_SUPABASE_URL && ENV_SUPABASE_PUBLISHABLE_KEY);
+const hasPartialEnv = Boolean(ENV_SUPABASE_URL || ENV_SUPABASE_PUBLISHABLE_KEY) && !hasCompleteEnvPair;
+
+const SUPABASE_URL = hasCompleteEnvPair ? ENV_SUPABASE_URL! : DEFAULT_SUPABASE_URL;
+const SUPABASE_PUBLISHABLE_KEY = hasCompleteEnvPair
+  ? ENV_SUPABASE_PUBLISHABLE_KEY!
+  : DEFAULT_SUPABASE_PUBLISHABLE_KEY;
+
+if (hasPartialEnv) {
   console.warn(
-    'Missing VITE_SUPABASE_URL or VITE_SUPABASE_PUBLISHABLE_KEY env variables. ' +
-    'Create a .env file in the project root with these values.'
+    "Partial Supabase env detected. Provide both URL and key, or remove both to use defaults."
   );
 }
 
@@ -16,8 +29,8 @@ if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
 // import { supabase } from "@/integrations/supabase/client";
 
 export const supabase = createClient<Database>(
-  SUPABASE_URL || 'https://phllgypxmbtbzzgjgkul.supabase.co',
-  SUPABASE_PUBLISHABLE_KEY || 'placeholder',
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY,
   {
     auth: {
       storage: localStorage,
